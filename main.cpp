@@ -1,6 +1,8 @@
 
 #include "mbed.h"
 #include "mouvement.h"
+
+#include "Concience/InstinctPrimaire.h"
 //------------------------------------
 // Hyperterminal configuration
 // 9600 bauds, 8-bit data, no parity
