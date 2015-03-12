@@ -8,42 +8,41 @@
 #ifndef MEMREG_H
 #define MEMREG_H
 
-struct module
-{
+struct Module {
     char regA;
     char regB;
     char regC;
-    };
+};
 
-class MemReg
+class ListChainer
 {
-    
     /**
-     * @brief La classe node_t
-     */
+    * @brief La classe node_t
+    */
     class node_t
     {
 
     public:
-        Contact m_node;
+        Module m_node;
         node_t *m_next;
 
         /**
          * @brief Constructeur de la classe node_t
          * @param contact
          */
-        node_t(Contact contact);
+        node_t(Module module);
     };
 
     node_t *m_head;
     node_t *m_ptrList;
 
     /**
-     * @brief Fonction renvoyant un pointeur sur un node_t
-     * @param pos la position desirer
-     * @return un pointeur de node_t
-     */
+    * @brief Fonction renvoyant un pointeur sur un node_t
+    * @param pos la position desirer
+    * @return un pointeur de node_t
+    */
     node_t *getAtPos(int pos)const;
+    
     /**
      * @brief fonction de swap entre les 2 contacts
      * @param indexA
@@ -58,13 +57,13 @@ class MemReg
      * @param tmpList pointeur sur la liste chainee
      * @return index pour le tri rapide
      */
-    int partitionner(int start, int end, LListContact& tmpList);
-
-public:
+    //int partitionner(int start, int end, ListChainer& tmpList);//Implementation future ( Module na pas loperateur  < et > )//
+    
+    public:
     /**
      * @brief Constructeur de la classe LList
      */
-    LListContact();
+    ListChainer();
     /**
      * @brief Fonction utiliser pour avoire la longueur de la liste chainee
      * @return  longueur de la liste chainee
@@ -72,33 +71,9 @@ public:
     int getSize ();
     /**
      * @brief Fonction utiliser pour ajouter a la fin de la liste chainee
-     * @param newContact variable de type Contact
+     * @param newModule variable de type Module
      */
-    void addNode(Contact newContact);
-    /**
-     * @brief Fonction permettant la lecture d'un nom dans la liste chainee
-     * @param index index de l'endroit desiree dans la liste chainee
-     * @return nom desiree
-     */
-    QString getNameAt (int index);
-    /**
-     * @brief Fonction permettant la lecture d'un prenom dans la liste chainee
-     * @param index index de l'endroit desiree dans la liste chainee
-     * @param texte prenom desiree
-     */
-    QString getPrenameAt (int index);
-    /**
-     * @brief Fonction permettant la lecture d'un adresse courriel dans la liste chainee
-     * @param index index de l'endroit desiree dans la liste chainee
-     * @return courriel desiree
-     */
-    QString getMailAt (int index);
-    /**
-     * @brief Fonction permettant la lecture d'un numero de telephone dans la liste chainee
-     * @param index index de l'endroit desiree dans la liste chainee
-     * @return numero de telephone desiree
-     */
-    QString getTelAt (int index);
+    void addNode(Module newModule);
     /**
      * @brief Fonction utiliser pour supprimer a un endroit dans la liste chainee
      * @param pos index de l'endroit a supprimer
@@ -119,7 +94,7 @@ public:
      * @param b index de fin desiree
      * @author model inspirer de: wikipedia
      */
-    void triRapidePartition(int a, int b);
+    //void triRapidePartition(int a, int b);//Implementation future//
 
     //node_t &operator [] (int index);
 
@@ -128,7 +103,23 @@ public:
      * @param index
      * @return
      */
-    Contact &operator [](int index);
+    Module &operator [](int index);
+    
+};
+
+
+class MemReg
+{
+
+
+
+
+
+
+
+
+
+
 };
 #endif // MEMREG_H/*
 
