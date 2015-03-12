@@ -36,7 +36,7 @@ int main()
 
 
     while(1) {
-        wait(1);// a enlever plus tard pour gain de vitesse//
+        
 
         taskCritt->exec();
         taskAlert->exec();

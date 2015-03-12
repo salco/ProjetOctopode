@@ -22,7 +22,7 @@ Directive::~Directive()
 void Directive::task(void)//ALL CODE HERE//
 {
 
-    wait(1);
+   wait(1);// a enlever plus tard pour gain de vitesse//
     ////////////////
 // Inspection //
 ////////////////

@@ -13,7 +13,7 @@
 
 class TTaskGen : public TTask
 {
-    // Directive * m_userTask;
+     Directive * m_userTask;
 
 protected:
     virtual void task(void);
