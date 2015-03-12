@@ -3,19 +3,21 @@
 //#include "mouvement.h"
 
 //#include "Concience/InstinctPrimaire.h"
-#include "Task/TTaskGen.h"
-#include "Motrice/mouvement.h"
+#include "source/Task/TTaskCritt.h"
+#include "source/Task/TTaskAlert.h"
+#include "source/Task/TTaskGen.h"
+
+
 //------------------------------------
 // Hyperterminal configuration
 // 9600 bauds, 8-bit data, no parity
 //------------------------------------
 
-Serial pc(SERIAL_TX, SERIAL_RX);
-Serial ssc32(PA_9, PA_10);
+
 
 DigitalOut myled(LED1);
 //char str [80];
-char c;
+
 int main()
 {
     //  int i = 1;
@@ -25,49 +27,31 @@ int main()
     //         string test="allo";
     //    pc.printf(test.c_str());
 
+    TTaskCritt *taskCritt = new TTaskCritt(10);
+    TTaskAlert *taskAlert = new TTaskAlert(20);
+    TTaskGen   *taskGen   = new TTaskGen(40);
 //////////
 // Boot //
 //////////
-    c=0;
-    Faculter_motrice ctrDesPattes(&/*ssc32*/pc);
+
 
     while(1) {
-        wait(1);
-////////////////
-// Inspection //
-////////////////
-        if(pc.readable()) {
-            c=pc.getc();//pc.scanf ("%79s",str);
-            pc.printf("AK %c\n",c);//pc.printf("AK %s\n",str);// pc.printf("This program is %d .\n", i);
-        }
-//////////////////////////////
-// Traitement du Labyrinthe //
-//////////////////////////////
-        if (c == 'g') {
-            ctrDesPattes.calibre();
-            c=0;
-        }
-        if(c == 'h')
-        {
-            pc.printf(" ID seq: %i \n\r",ctrDesPattes.get_idSeq());
-            c=0;
-        }
-///////////////
-// Mouvement //
-///////////////
-      //  ctrDesPattes.exec();
-////////////////////
-// Update memoire //
-////////////////////
+        wait(1);// a enlever plus tard pour gain de vitesse//
 
-////////////
-// Autre? //
-////////////
-
+        taskCritt->exec();
+        taskAlert->exec();
+        taskGen->exec();
 
 
 
 
         myled = !myled;
     }
+    
+    if(taskCritt)
+        delete taskCritt;
+    if(taskAlert)
+        delete taskAlert;
+    if(taskGen)
+        delete taskGen;
 }

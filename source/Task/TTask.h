@@ -25,7 +25,7 @@ class TTask
     virtual ~TTask(){
         }
     
-    virtual void start(void){
+    virtual void exec(void){
         if(m_priorityCount >= m_priority)
         { 
             m_priorityCount=0;

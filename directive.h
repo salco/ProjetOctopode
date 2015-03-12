@@ -8,10 +8,16 @@
 #ifndef DIRECTIVE_H
 #define DIRECTIVE_H
 
+#include "mbed.h"
 #include "source/Task/TTask.h"
+#include "Motrice/mouvement.h"
 
 class Directive : public TTask
 {
+    Serial *pc;
+    Serial *ssc32;
+    Faculter_motrice *ctrDesPattes;
+    char c;
 protected:
     virtual void task(void);
 

@@ -9,6 +9,7 @@
 #define TTASKALERT_H
 
 #include "Task/TTask.h"
+
 class TTaskAlert : public TTask
 {
     protected:
