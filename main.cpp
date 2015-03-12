@@ -1,8 +1,10 @@
 
 #include "mbed.h"
-#include "mouvement.h"
+//#include "mouvement.h"
 
-#include "Concience/InstinctPrimaire.h"
+//#include "Concience/InstinctPrimaire.h"
+#include "Task/TTaskGen.h"
+#include "Motrice/mouvement.h"
 //------------------------------------
 // Hyperterminal configuration
 // 9600 bauds, 8-bit data, no parity
@@ -53,7 +55,7 @@ int main()
 ///////////////
 // Mouvement //
 ///////////////
-        ctrDesPattes.exec();
+      //  ctrDesPattes.exec();
 ////////////////////
 // Update memoire //
 ////////////////////

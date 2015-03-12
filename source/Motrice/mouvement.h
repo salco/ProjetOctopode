@@ -114,5 +114,5 @@ public:
 
 
 };
-
+extern Faculter_motrice *ptrFaculterMotrice;
 #endif /* MOUVEMENT_H_ */

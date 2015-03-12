@@ -6,6 +6,8 @@
  */
 #include "mouvement.h"
 
+Faculter_motrice *ptrFaculterMotrice;
+
 Faculter_motrice::Faculter_motrice(Serial* com):m_com(com)
 {
     m_seq = new homemadeSequence();
