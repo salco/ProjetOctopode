@@ -1,17 +1,11 @@
-/*
- * memoireRegistre.cpp
- *
- *  Created on: Mar 10, 2015
- *      Author: salco
- */
- /**
-* @file llistcontact.cpp
-* @brief Formulaire de la class LList et node_t
-* @author Alexandre Salconi-Denis
-* @version 3.01
-* @date 06 mars 2014
-*/
-#include "memReg.h"
+/**
+  * @file       ListChainer.cpp
+  * @brief      Cette class est une liste chainer pour les modules.
+  * @author     Salco
+  * @version    2.00
+  * @date       12 mars 2015
+  */
+#include "ListChainer.h"
 
 int m_item=0;
 
@@ -157,13 +151,14 @@ ListChainer::node_t::node_t(Module contact):
     m_node(contact), m_next(0)
 {
 }
+
 /**
  * @brief triRapidePartition Fonction de tri rapide, adapter pour la liste chainer
  * @param a index de debut desiree
  * @param b index de fin desiree
  * @author model inspirer de: wikipedia
  */
-/*void ListChainer::triRapidePartition(int a, int b)//Implementation future//
+void ListChainer::triRapidePartition(int a, int b)//Implementation future//
 {
     int q;
 
@@ -173,7 +168,8 @@ ListChainer::node_t::node_t(Module contact):
         triRapidePartition( a, q);
         triRapidePartition( q+1, b);
     }
-}*/
+}
+
 /**
  * @brief partitionner Seconde fonction du tri rapide
  * @param start index de debut desiree
@@ -181,14 +177,14 @@ ListChainer::node_t::node_t(Module contact):
  * @param tmpList pointeur sur la liste chainee
  * @return index pour le tri rapide
  */
-/*int ListChainer::partitionner(int start, int end, ListChainer& tmpList)//Implementation future ( Module na pas loperateur  < et > )//
-{
-    int   i = start-1, j = end+1;
-    Module pivot=(*this)[start];
+int ListChainer::partitionner(int start, int end, ListChainer& tmpList)
+{//Implementation future ( Module na pas loperateur  < et > )//
+    //int   i = start-1, j = end+1;
+   // Module pivot=(*this)[start];
 
     while (1)
     {
-        do
+     /*   do
             j--;
         while (tmpList[j] > pivot);
 
@@ -203,9 +199,11 @@ ListChainer::node_t::node_t(Module contact):
             tmpList[j] = tmp;
         }
         else
-            return j;
+            return j;*/
     }
-}*/
+}
+
+
 /**
  * @brief operator [] Operateur surchargent la methode operator[]
  * @param index
