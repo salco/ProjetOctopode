@@ -7,7 +7,7 @@
   */
 #ifndef COMSPI_H
 #define COMSPI_H
-
+// faire un debug pour la com spi
 #define SYNC 84 //0b01010100
 #define PFB0 0
 #define PFB1 1

@@ -1,7 +1,7 @@
 
 #include "mbed.h"
 //#include "mouvement.h"
-
+#include "debug.h"
 //#include "Concience/InstinctPrimaire.h"
 #include "source/Task/TTaskCritique.h"
 #include "source/Task/TTaskAlerte.h"
@@ -37,7 +37,7 @@ int main()
 
     while(1) {
         
-
+        
         taskCritique.exec();
         taskAlerte.exec();
         taskGeneral.exec();
