@@ -7,22 +7,11 @@
   */
 #ifndef COMSPI_H
 #define COMSPI_H
-// faire un debug pour la com spi
-#define SYNC 84 //0b01010100
-#define PFB0 0
-#define PFB1 1
-#define PFB2 2
-#define PFB3 3
-#define NOACK 0
-#define TXACK 1
-#define RXACK 2
-#define RXNAK 3
-#define NDB00 0
-#define NDB01 1
-#define NDB02 2
+
 
 
 #include "mbed.h"
+#include "ComSpiDefine.h"
 
 class ComSpi : public SPI
 {
@@ -41,9 +30,9 @@ public:
     virtual ~ComSpi();
 
 
-
-    bool next_demux(void);
-    bool back_demux(void);
+ // renvois la position qu'il est rendu ( -1 == pas de demux ou problem)
+    char next_demux(void);
+    char back_demux(void);
 
 
 

@@ -6,24 +6,27 @@ CtrlBridge *CtrlBridge::uniqueInstance;
 /**
  * @brief Constructeur priver appler par la fonction getInstance()
  */
-CtrlBridge::CtrlBridge() 
-: pc(SERIAL_TX, SERIAL_RX), ssc32(PA_9, PA_10),
-spiLowSpeed (SPI_LOW_MOSI, SPI_LOW_MISO, SPI_LOW_SCK, SPI_LOW_DEMUXA, SPI_LOW_DEMUXB, SPI_LOW_DEMUXC, SPI_LOW_DEMUXD, SPI_LOW_CS),
-spiHighSpeed(SPI_HIGH_MOSI, SPI_HIGH_MISO, SPI_HIGH_SCK, SPI_HIGH_DEMUXA, SPI_HIGH_DEMUXB, SPI_HIGH_DEMUXC, SPI_HIGH_DEMUXD, SPI_HIGH_CS)
+CtrlBridge::CtrlBridge()
+    : m_Memory(), pc(SERIAL_TX, SERIAL_RX), ssc32(PA_9, PA_10),
+      spiLowSpeed (SPI_LOW_MOSI, SPI_LOW_MISO, SPI_LOW_SCK, SPI_LOW_DEMUXA, SPI_LOW_DEMUXB, SPI_LOW_DEMUXC, SPI_LOW_DEMUXD, SPI_LOW_CS),
+      spiHighSpeed(SPI_HIGH_MOSI, SPI_HIGH_MISO, SPI_HIGH_SCK, SPI_HIGH_DEMUXA, SPI_HIGH_DEMUXB, SPI_HIGH_DEMUXC, SPI_HIGH_DEMUXD, SPI_HIGH_CS)
 {
+    //faire en sorte d'init SPI speed ici
+    m_regPortUse=0;
+    m_regPortLost=0;
 }
 
 CtrlBridge::~CtrlBridge()
 {
-    }
-    
+}
+
 /**
  * @brief Methode permetant une seul instance de la classe
  * @return Retourne l'unique instance de la classe
  */
 CtrlBridge *CtrlBridge::getInstance()
 {
-    if(!uniqueInstance){
+    if(!uniqueInstance) {
         uniqueInstance = new CtrlBridge();
     }
     return uniqueInstance;
@@ -31,6 +34,26 @@ CtrlBridge *CtrlBridge::getInstance()
 
 bool CtrlBridge::initCom(void)
 {
-    
-    return true;
+    //char positionInitial;
+    bool portUse;
+    char flag = Request_Init_Info;
+    char data = 0;
+    Module templateModule;
+
+    //positionInitial = spiLowSpeed.next_demux();
+    for(char i=0; i != 15; i++) {
+        portUse = spiLowSpeed.send(i,0,&flag,&data);
+        
+        if( portUse )
+        {
+            m_regPortUse|=(1<< i);
+           /* do{
+                templateModule.regA = ;
+                }while();
+            */
+            }
     }
+
+
+    return true;
+}

@@ -37,7 +37,8 @@ class CtrlBridge
     //ssc32= new Serial(PA_9, PA_10);
     int m_regPortUse; // set in the init
     int m_regPortLost;// flag 1 si lost
-
+    MemRegistre m_Memory;
+    
     bool initCom(void);
 
     bool isValide(char portID);
@@ -47,9 +48,11 @@ class CtrlBridge
     */
     CtrlBridge();
     ~CtrlBridge();
+    
 private:
 Serial pc;
 Serial ssc32;
+
 public:
     /**
     * @brief Methode permetant une seul instance de la classe

@@ -13,49 +13,73 @@
 */
 #include "MemRegistre.h"
 
+
+
 MemRegistre::MemRegistre()
 {
-    m_positionActioneur = 0;
-    m_positionCapteur = 0;
-    m_positionMemoire = 0;
+    m_positionActioneur = m_moduleActioneur.begin();
+    m_positionCapteur = m_moduleCapteur.begin();
+    m_positionMemoire = m_moduleMemoire.begin();
 }
 MemRegistre::~MemRegistre()
 {
 }
+
+unsigned char MemRegistre::getAdressDispo()
+{
+    list<Module>::iterator it1;
+    unsigned char addrDispo=1;
+
+    //Module templateModule;
+    for(bool addrFind=true; (addrDispo!=0)&&(!addrFind); addrDispo++) {
+
+        for (list<Module>::iterator it=m_moduleActioneur.begin(); it != m_moduleActioneur.end(); ++it)
+            if(it->regA == addrDispo) addrFind = false;
+
+        for (std::list<Module>::iterator it=m_moduleCapteur.begin(); it != m_moduleCapteur.end(); ++it)
+            if(it->regA == addrDispo) addrFind = false;
+        
+        for (std::list<Module>::iterator it=m_moduleMemoire.begin(); it != m_moduleMemoire.end(); ++it)
+            if(it->regA == addrDispo) addrFind = false;
+        
+        if((addrDispo==255) && (!addrFind))addrDispo=0; //les 255 adresses son utiliser // bravo le robot doit etre under heavy load.
+    }
+    return addrDispo;
+}
 Module MemRegistre::firstActioneur(void)
 {
-    m_positionActioneur = 0;
-    return m_moduleActioneur[m_positionActioneur];
+    m_positionActioneur =m_moduleActioneur.begin();
+    return *m_positionActioneur;//m_moduleActioneur.begin();
 }
 Module MemRegistre::nextActioneur(void)
 {
-    if(m_moduleActioneur.getSize()> m_positionActioneur)
+    if(m_moduleActioneur.end()!= m_positionActioneur)
         m_positionActioneur++;
 
-    return m_moduleActioneur[m_positionActioneur];
+    return *m_positionActioneur;//return m_moduleActioneur[m_positionActioneur];
 }
 
 Module MemRegistre::firstCapteur(void)
 {
-    m_positionCapteur = 0;
-    return m_moduleCapteur[m_positionCapteur];
+    m_positionCapteur =m_moduleCapteur.begin();
+    return *m_positionCapteur;//return m_moduleCapteur[m_positionCapteur];
 }
 Module MemRegistre::nextCapteur(void)
 {
-    if(m_moduleCapteur.getSize()> m_positionCapteur)
+    if(m_moduleCapteur.end()!= m_positionCapteur)
         m_positionCapteur++;
 
-    return m_moduleCapteur[m_positionCapteur];
+    return *m_positionCapteur;//return m_moduleActioneur[m_positionCapteur];
 }
 Module MemRegistre::firstMemoire(void)
 {
-    m_positionMemoire = 0;
-    return m_moduleMemoire[m_positionMemoire];
+    m_positionMemoire =m_moduleMemoire.begin();
+    return *m_positionMemoire;//return m_moduleMemoire[m_positionMemoire];
 }
 Module MemRegistre::nextMemoire(void)
 {
-    if(m_moduleMemoire.getSize()> m_positionMemoire)
+    if(m_moduleMemoire.end()!= m_positionMemoire)
         m_positionMemoire++;
 
-    return m_moduleMemoire[m_positionMemoire];
+    return *m_positionMemoire;//return m_moduleActioneur[m_positionMemoire];
 }

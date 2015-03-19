@@ -24,6 +24,7 @@ ComSpi::~ComSpi()
 }
 void ComSpi::change_demux(void)
 {
+    if(demuxIsUse) {
     DigitalOut pinDemuxA(m_demuxA);
     DigitalOut pinDemuxB(m_demuxB);
     DigitalOut pinDemuxC(m_demuxC);
@@ -42,6 +43,7 @@ void ComSpi::change_demux(void)
     else pinDemuxD=0;
 
     pinDemuxEnable=1;
+    }
 }
 int ComSpi::write(int value)
 {
@@ -49,24 +51,26 @@ int ComSpi::write(int value)
     a= SPI::write(value);
     return a;
 }
-bool ComSpi::next_demux(void)
+char ComSpi::next_demux(void)
 {
-    bool result=false;
+    char result = (char)-1;
 
     if(demuxIsUse) {
         (m_demuxPos == 15)? m_demuxPos=0:m_demuxPos++;
         change_demux();
+        result = m_demuxPos;
         result = true;
     }
     return result;
 }
-bool ComSpi::back_demux(void)
+char ComSpi::back_demux(void)
 {
-    bool result=false;
-
+    char result = (char)-1;
+    
     if(demuxIsUse) {
         (m_demuxPos == 0)? m_demuxPos=15:m_demuxPos--;
         change_demux();
+        
         result = true;
     }
     return result;
@@ -77,6 +81,11 @@ bool ComSpi::send(char portID, char adresseModule,char *flag,char *data)
     int valueSend = SYNC;
     int valueReceive=0;
     //int CRC
+    
+    if(portID =! -1){
+        m_demuxPos = portID;
+        change_demux();
+        }
 
     valueReceive=write(valueSend);
     if(valueReceive == valueSend) {

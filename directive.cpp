@@ -4,7 +4,6 @@
 Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les fois que TTaskGen sexecute.
 {
     c=0;
-
     pc = new Serial(SERIAL_TX, SERIAL_RX);
     ssc32= new Serial(PA_9, PA_10);
 
