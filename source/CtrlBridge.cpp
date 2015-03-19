@@ -36,24 +36,52 @@ bool CtrlBridge::initCom(void)
 {
     //char positionInitial;
     bool portUse;
-    char flag = Request_Init_Info;
-    char data = 0;
-    Module templateModule;
-
+    string flag;
+    string data;
+    Module* templateModule ;
+    templateModule= new Module;
+    
+    flag.append(1,Request_Init_Info);
     //positionInitial = spiLowSpeed.next_demux();
     for(char i=0; i != 15; i++) {
         portUse = spiLowSpeed.send(i,0,&flag,&data);
-        
-        if( portUse )
-        {
+
+        if( portUse ) {
             m_regPortUse|=(1<< i);
-           /* do{
-                templateModule.regA = ;
-                }while();
-            */
-            }
+           
+            do {
+                
+                templateModule->regA = m_Memory.getAdressDispo();
+                templateModule->regB = (spiLowSpeed.get_demux()<<4)+(data[0]&0x0F);
+                templateModule->regC = data[1];
+                templateModule->regD = data[2];
+
+                switch(templateModule->regD >>6) {
+                    case 1://Capteur
+                        m_Memory.addCapteur(*templateModule);
+                        break;
+
+                    case 2://Actionneur
+                        m_Memory.addActioneur(*templateModule);
+                        break;
+
+
+                    case 3://Memoire
+                        m_Memory.addMemoire(*templateModule);
+                        break;
+                        
+                        default:
+                        break;
+                }
+
+                if(flag[0] != Contien_AUTRE_MODULE)
+                    portUse=false;
+            } while(portUse); 
+        }
     }
 
-
+    if(templateModule)
+    delete templateModule;
+    
     return true;
 }

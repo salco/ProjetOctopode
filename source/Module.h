@@ -1,4 +1,5 @@
-
+#ifndef MODULE_H
+#define MODULE_H
 /**
  * Structure des registe de memoire des modules
  *  @note 
@@ -65,3 +66,4 @@ struct Module {
                 * </table> */
                 
 };
+#endif // MODULE_H //

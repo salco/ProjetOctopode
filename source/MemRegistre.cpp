@@ -38,10 +38,10 @@ unsigned char MemRegistre::getAdressDispo()
 
         for (std::list<Module>::iterator it=m_moduleCapteur.begin(); it != m_moduleCapteur.end(); ++it)
             if(it->regA == addrDispo) addrFind = false;
-        
+
         for (std::list<Module>::iterator it=m_moduleMemoire.begin(); it != m_moduleMemoire.end(); ++it)
             if(it->regA == addrDispo) addrFind = false;
-        
+
         if((addrDispo==255) && (!addrFind))addrDispo=0; //les 255 adresses son utiliser // bravo le robot doit etre under heavy load.
     }
     return addrDispo;

@@ -11,6 +11,7 @@
 
 
 #include "mbed.h"
+#include <string>
 #include "ComSpiDefine.h"
 
 class ComSpi : public SPI
@@ -33,14 +34,16 @@ public:
  // renvois la position qu'il est rendu ( -1 == pas de demux ou problem)
     char next_demux(void);
     char back_demux(void);
+    char get_demux(void);
 
 
 
 
     virtual int write(int value);
-    bool send(char portID, char adresseModule,char *flag,char *data);
+    bool send(char portID, char adresseModule,string *flag,string *data);
+   /* bool send(char portID, char adresseModule,char *flag,char *data);
     bool send(char portID, char adresseModule,int *flag,char *data);
     bool send(char portID, char adresseModule,char *flag,int *data);
-    bool send(char portID, char adresseModule,int *flag,int *data);
+    bool send(char portID, char adresseModule,int *flag,int *data);*/
 };
 #endif // COMSPI_H

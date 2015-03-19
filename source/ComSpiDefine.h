@@ -24,7 +24,8 @@ typedef enum {
     PFB3  =3
 } PFBvalue;
 typedef enum {
-    Request_Init_Info = 1
+    Request_Init_Info = 1,
+    Contien_AUTRE_MODULE = 2
 
 } FLAGName;
 

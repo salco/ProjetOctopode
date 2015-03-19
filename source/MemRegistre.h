@@ -18,10 +18,10 @@ class MemRegistre
 {
     list<Module> m_moduleActioneur;//ListChainer m_moduleActioneur;
     list<Module>::iterator m_positionActioneur;//int m_positionActioneur;
-    
+
     list<Module> m_moduleCapteur;//ListChainer m_moduleCapteur;
     list<Module>::iterator m_positionCapteur;//int m_positionCapteur;
-    
+
     list<Module> m_moduleMemoire;//ListChainer m_moduleMemoire;
     list<Module>::iterator m_positionMemoire;//int m_positionMemoire;
 
@@ -38,12 +38,12 @@ public:
         m_moduleActioneur.clear();
         return 1;
     }
-    inline bool remActioneur(int position){
-    list<Module>::iterator it1=m_moduleActioneur.begin();
-    for(char i=position; i>1; i--) it1++;
-    m_moduleActioneur.erase(it1);
-    return 1;
-}
+    inline bool remActioneur(int position) {
+        list<Module>::iterator it1=m_moduleActioneur.begin();
+        for(char i=position; i>1; i--) it1++;
+        m_moduleActioneur.erase(it1);
+        return 1;
+    }
     bool addActioneur(Module module) {
         m_moduleActioneur.push_back(module);
         return 1;
@@ -59,8 +59,8 @@ public:
         return 1;
     }
     bool remCapteur(int position) {
-            list<Module>::iterator it1=m_moduleCapteur.begin();
-    for(char i=position; i>1; i--) it1++;
+        list<Module>::iterator it1=m_moduleCapteur.begin();
+        for(char i=position; i>1; i--) it1++;
         m_moduleCapteur.erase(it1);
         return 1;
     }
@@ -79,8 +79,8 @@ public:
         return 1;
     }
     bool remMemoire(int position) {
-                    list<Module>::iterator it1=m_moduleMemoire.begin();
-    for(char i=position; i>1; i--) it1++;
+        list<Module>::iterator it1=m_moduleMemoire.begin();
+        for(char i=position; i>1; i--) it1++;
         m_moduleMemoire.erase(it1);
         return 1;
     }

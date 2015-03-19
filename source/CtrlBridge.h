@@ -27,9 +27,10 @@
 #define SPI_LOW_DEMUXD PC_7
 
 #include "mbed.h"
+#include <string>
 #include "ComSpi.h" //utiliser pour comuniquer avec les module
 #include "MemRegistre.h" //enregistrer les info
-
+#include "Module.h"
 class CtrlBridge
 {
     static CtrlBridge *uniqueInstance;
