@@ -1,5 +1,5 @@
 /**
-  * @file       MemReg.h
+  * @file       MemRegistre.h
   * @brief      Cette classe est le modele des 3 taches de controle.
   * @author     Salco
   * @version    2.00
@@ -11,7 +11,7 @@
 
 #include "ListChainer.h"
 
-class MemReg
+class MemRegistre
 {
 ListChainer m_moduleActioneur;
 int m_positionActioneur;
@@ -23,8 +23,8 @@ int m_positionMemoire;
 
 public:
 
-MemReg();
-virtual ~MemReg();
+MemRegistre();
+virtual ~MemRegistre();
 
 bool remAllActioneur(void){m_moduleActioneur.remAll();return 1;}
 bool remActioneur(int position){m_moduleActioneur.remAtPos(position);return 1;}

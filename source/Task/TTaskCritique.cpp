@@ -1,19 +1,19 @@
 
-#include "TTaskCritt.h"
+#include "TTaskCritique.h"
 
-TTaskCritt::TTaskCritt(int priority):TTask(priority)
+TTaskCritique::TTaskCritique(int priority):TTask(priority)
 {
    // m_userTask= new Directive();
 }
 
-TTaskCritt::~TTaskCritt()
+TTaskCritique::~TTaskCritique()
 {
    /* if(m_userTask) {
         delete m_userTask;
     }*/
     return;
 }
-void TTaskCritt::task(void)
+void TTaskCritique::task(void)
 {
     //m_userTask->start();
 }

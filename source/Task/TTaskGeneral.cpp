@@ -1,19 +1,19 @@
 
-#include "TTaskGen.h"
+#include "TTaskGeneral.h"
 
-TTaskGen::TTaskGen(int priority):TTask(priority)
+TTaskGeneral::TTaskGeneral(int priority):TTask(priority)
 {
     m_userTask= new Directive();
 }
 
-TTaskGen::~TTaskGen()
+TTaskGeneral::~TTaskGeneral()
 {
     if(m_userTask) {
         delete m_userTask;
     }
     return;
 }
-void TTaskGen::task(void)
+void TTaskGeneral::task(void)
 {
     m_userTask->exec();
 }

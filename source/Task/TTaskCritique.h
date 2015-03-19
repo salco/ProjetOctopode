@@ -1,22 +1,22 @@
 /**
-  * @file       TTaskAlert.h
+  * @file       TTaskCritiqueiquet.h
   * @brief      Cette classe controle tout ce qui ce relie au Flag Critique et a la gestion prioritaire.
   * @author     Salco
   * @version    2.00
   * @date       11 mars 2015
   */
-#ifndef TTASKALERT_H
-#define TTASKALERT_H
+#ifndef TTASKCRITIQUE_H
+#define TTASKCRITIQUE_H
 
 #include "Task/TTask.h"
 
-class TTaskAlert : public TTask
+class TTaskCritique : public TTask
 {
     protected:
     virtual void task(void);
     
     public:
-    TTaskAlert(int priority=0);
-    virtual ~TTaskAlert();
+    TTaskCritique(int priority=0);
+    virtual ~TTaskCritique();
 };
-#endif // TTASKALERT_H
+#endif // TTASKCRITIQUE_H

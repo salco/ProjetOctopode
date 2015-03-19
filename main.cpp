@@ -3,9 +3,9 @@
 //#include "mouvement.h"
 
 //#include "Concience/InstinctPrimaire.h"
-#include "source/Task/TTaskCritt.h"
-#include "source/Task/TTaskAlert.h"
-#include "source/Task/TTaskGen.h"
+#include "source/Task/TTaskCritique.h"
+#include "source/Task/TTaskAlerte.h"
+#include "source/Task/TTaskGeneral.h"
 
 
 //------------------------------------
@@ -27,9 +27,9 @@ int main()
     //         string test="allo";
     //    pc.printf(test.c_str());
 
-    TTaskCritt *taskCritt = new TTaskCritt(10);
-    TTaskAlert *taskAlert = new TTaskAlert(20);
-    TTaskGen   *taskGen   = new TTaskGen(40);
+    TTaskCritique taskCritique(10);
+    TTaskAlerte taskAlerte(20);
+    TTaskGeneral  taskGeneral(40);
 //////////
 // Boot //
 //////////
@@ -38,9 +38,9 @@ int main()
     while(1) {
         
 
-        taskCritt->exec();
-        taskAlert->exec();
-        taskGen->exec();
+        taskCritique.exec();
+        taskAlerte.exec();
+        taskGeneral.exec();
 
 
 
@@ -48,10 +48,10 @@ int main()
         myled = !myled;
     }
     
-    if(taskCritt)
+    /*if(taskCritt)
         delete taskCritt;
     if(taskAlert)
         delete taskAlert;
     if(taskGen)
-        delete taskGen;
+        delete taskGen;*/
 }

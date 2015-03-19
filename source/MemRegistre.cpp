@@ -11,23 +11,23 @@
 * @version 3.01
 * @date 06 mars 2014
 */
-#include "MemReg.h"
+#include "MemRegistre.h"
 
-MemReg::MemReg()
+MemRegistre::MemRegistre()
 {
     m_positionActioneur = 0;
     m_positionCapteur = 0;
     m_positionMemoire = 0;
 }
-MemReg::~MemReg()
+MemRegistre::~MemRegistre()
 {
 }
-Module MemReg::firstActioneur(void)
+Module MemRegistre::firstActioneur(void)
 {
     m_positionActioneur = 0;
     return m_moduleActioneur[m_positionActioneur];
 }
-Module MemReg::nextActioneur(void)
+Module MemRegistre::nextActioneur(void)
 {
     if(m_moduleActioneur.getSize()> m_positionActioneur)
         m_positionActioneur++;
@@ -35,24 +35,24 @@ Module MemReg::nextActioneur(void)
     return m_moduleActioneur[m_positionActioneur];
 }
 
-Module MemReg::firstCapteur(void)
+Module MemRegistre::firstCapteur(void)
 {
     m_positionCapteur = 0;
     return m_moduleCapteur[m_positionCapteur];
 }
-Module MemReg::nextCapteur(void)
+Module MemRegistre::nextCapteur(void)
 {
     if(m_moduleCapteur.getSize()> m_positionCapteur)
         m_positionCapteur++;
 
     return m_moduleCapteur[m_positionCapteur];
 }
-Module MemReg::firstMemoire(void)
+Module MemRegistre::firstMemoire(void)
 {
     m_positionMemoire = 0;
     return m_moduleMemoire[m_positionMemoire];
 }
-Module MemReg::nextMemoire(void)
+Module MemRegistre::nextMemoire(void)
 {
     if(m_moduleMemoire.getSize()> m_positionMemoire)
         m_positionMemoire++;

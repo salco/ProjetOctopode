@@ -1,19 +1,19 @@
 
-#include "TTaskAlert.h"
+#include "TTaskAlerte.h"
 
-TTaskAlert::TTaskAlert(int priority):TTask(priority)
+TTaskAlerte::TTaskAlerte(int priority):TTask(priority)
 {
    // m_userTask= new Directive();
 }
 
-TTaskAlert::~TTaskAlert()
+TTaskAlerte::~TTaskAlerte()
 {
    /* if(m_userTask) {
         delete m_userTask;
     }*/
     return;
 }
-void TTaskAlert::task(void)
+void TTaskAlerte::task(void)
 {
     //m_userTask->start();
 }
