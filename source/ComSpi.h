@@ -13,6 +13,7 @@
 #include "mbed.h"
 #include <string>
 #include "debug.h"
+#include "CRC16.h"
 #include "ComSpiDefine.h"
 
 class ComSpi : public SPI

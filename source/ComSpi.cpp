@@ -172,56 +172,84 @@ bool ComSpi::send(char portID, char adresseModule,string *flag,string *data)
     debug(DEBUG_SEND, "\n\r    -Fin data. ");
 
     // CRC //
-    //Create CRC
-    //Send CRC
-    //Compare
+    debug(DEBUG_SEND, "\n\r    -Debut CRC16. ");
+    CRC16* templateCRC;
+    templateCRC = new CRC16();
+    unsigned short templateValue;
+    char templateTable[34];
+    for (unsigned i=0; i<34; ++i) templateTable[i]=0;
+    for (unsigned i=0; i<formatedDataSend.length(); ++i) templateTable[i]=formatedDataSend[i];
+    debug(DEBUG_SEND, "\n\r     - envoi au crc: %i,%i,%i,%i,%i,%i ",templateTable[0],templateTable[1],templateTable[2],templateTable[3],templateTable[4],templateTable[5],templateTable[6]);
 
-    int tempValue=0;
+    templateValue = templateCRC->calculateCRC16(templateTable,formatedDataSend.size()-1); //atention pt un probleme de sortie du range
+
+    formatedDataSend.append(1,templateValue>>8);
+    formatedDataSend.append(1,templateValue & 0xFF);
+
+    if(templateCRC)
+        delete templateCRC;
+
+    debug(DEBUG_SEND, "\n\r    -Fin CRC16. ");
+
     //Send Data
     debug(DEBUG_SEND, "\n\r    -Debut Send Data. ");
     debug(DEBUG_SEND, "\n\r     -Send: ");
-    for (unsigned i=0; i<formatedDataSend.length(); ++i) {
-        debug(DEBUG_SEND, "%i,",formatedDataSend.at(i));
+    for (unsigned i=0; i<formatedDataSend.length(); ++i) debug(DEBUG_SEND, "%i,",formatedDataSend.at(i));
+
+    int twoBytesArray;
+    twoBytesArray = (formatedDataSend[0]<<8)+formatedDataSend[1];
+
+    for(int i=0; (i<3) && (!result); i++) {
+        debug(DEBUG_SEND, "\n\r      -Tentative: %d",i);
+
+        twoBytesArray=write(twoBytesArray);
+
+        if(twoBytesArray>>8 == SYNC) {// twoBytesArray ==(Sync)//+(PFB+ACK+NDB))
+            // Envoie le reste si liker si liker //
+            debug(DEBUG_SEND, "\n\r    -Debut Traitement de l'information. ");
+            debug(DEBUG_SEND, "\n\r     -Receive: ");
+
+            formatedDataReceive.clear();
+            formatedDataReceive.append(1,twoBytesArray>>8);
+            formatedDataReceive.append(1,twoBytesArray & 0xFF);
+
+            for (unsigned i=2; i<formatedDataSend.length(); ++i) {
+                twoBytesArray = formatedDataSend[i];
+                i++;
+                if(i<formatedDataSend.length())
+                    twoBytesArray = (twoBytesArray<<8) + formatedDataSend[i];
+
+                twoBytesArray=write(twoBytesArray);
+                formatedDataReceive.append(1,twoBytesArray>>8);
+                formatedDataReceive.append(1,twoBytesArray&0xFF);
+            }
+
+            // CRC //
+            unsigned short templateValue=1;
+            templateValue=formatedDataReceive.at(formatedDataReceive.length()-2) << 8;
+            templateValue|=formatedDataReceive.at(formatedDataReceive.length()-1);
+
+            for (unsigned i=0; i<formatedDataReceive.length()-2; ++i) {
+                templateValue-=formatedDataReceive[i];
+            }
+            debug(DEBUG_SEND, "\n\r    -CRC==0? value: %i. ", templateValue);
+            (templateValue==0)? result=true:result=false;
+        }
     }
-
-    tempValue = (formatedDataSend[0]<<8)+formatedDataSend[1];
-    tempValue=write(tempValue);
-
     debug(DEBUG_SEND, "\n\r    -Fin Send Data. ");
 
-        // Envoie si liker //
+    if(result) {
+        // Traitement de l'information //
         debug(DEBUG_SEND, "\n\r    -Debut Traitement de l'information. ");
         debug(DEBUG_SEND, "\n\r     -Receive: ");
-    if(tempValue == (formatedDataSend[0]<<8)+formatedDataSend[1]) {// tempValue ==(Sync+(PFB+ACK+NDB))
-        formatedDataReceive.append(1,formatedDataSend[0]);
-        formatedDataReceive.append(1,formatedDataSend[1]);
-
-        for (unsigned i=2; i<formatedDataSend.length(); ++i) {
-            tempValue = formatedDataSend[i];
-            i++;
-            if(i<formatedDataSend.length()) {
-                tempValue = (tempValue<<8) + formatedDataSend[i];
-            }
-            tempValue=write(tempValue);
-            formatedDataReceive.append(1,tempValue>>8);
-            formatedDataReceive.append(1,tempValue&0xFF);
-        }
-
-
-
-        // Traitement de l'information //
-        //debug(DEBUG_SEND, "\n\r    -Debut Traitement de l'information. ");
-        //debug(DEBUG_SEND, "\n\r     -Send: ");
-        for (unsigned i=0; i<formatedDataReceive.length(); ++i) {
-            debug(DEBUG_SEND, "%i,",formatedDataReceive.at(i));
-        }
-
-        tempValue=formatedDataReceive[2];
-        string::iterator it=formatedDataReceive.begin()+3;
+        for (unsigned i=0; i<formatedDataReceive.length(); ++i)debug(DEBUG_SEND, "%i,",formatedDataReceive.at(i));
 
         // flag //
         flag->clear();
-        switch(tempValue>>6) {
+        twoBytesArray=formatedDataReceive[2];
+        string::iterator it=formatedDataReceive.begin()+3;
+
+        switch(twoBytesArray>>6) {
             case 1:
                 flag->append(1,*it);
                 it++;
@@ -253,7 +281,7 @@ bool ComSpi::send(char portID, char adresseModule,string *flag,string *data)
 
         // NDB //
         data->clear();
-        switch(tempValue&0xFF) {
+        switch(twoBytesArray&0xFF) {
             case 1:
                 data->append(1,*it);
                 it++;
@@ -279,13 +307,8 @@ bool ComSpi::send(char portID, char adresseModule,string *flag,string *data)
 
                     break;*/
         }
-
-        // CRC //
-        //
-
-        result=true;
     }
-    
+
     debug(DEBUG_SEND, "\n\r    -Fin Traitement de l'information. ");
     debug(DEBUG_SEND, "\n\r   -Fin du send. ");
     return result;

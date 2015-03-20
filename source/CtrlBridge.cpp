@@ -83,7 +83,7 @@ bool CtrlBridge::initCom(void)
                     portUse=false;
             } while(portUse); 
         }
-        debug(DEBUG_INITMODULE, "\n\r  Fin de boucle :%d", i);
+        debug(DEBUG_INITMODULE, "\n\r  -Fin de boucle :%d", i);
     }
 
     if(templateModule)
