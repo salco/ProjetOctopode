@@ -86,26 +86,30 @@ char ComSpi::get_demux(void)
 bool ComSpi::send(char portID, char adresseModule,string *flag,string *data)
 {
     bool result=false;
-
     string formatedDataSend;
     string formatedDataReceive;
     //int valueReceive=0;
     //int CRC
+
     debug(DEBUG_SEND, "\n\r   -Debut du send. ");
+
     debug(DEBUG_SEND, "\n\r    -Debut set demux. ");
-    if(portID > (char)-1) {
+    if(portID > 0xFF) { //(char)-1) {
         m_demuxPos = portID;
         change_demux();
     }
     debug(DEBUG_SEND, "\n\r    -Fin set demux. ");
+
     // Sync //
     debug(DEBUG_SEND, "\n\r    -Debut Sync. ");
     formatedDataSend.append(1,SYNC);
     debug(DEBUG_SEND, "\n\r    -Fin Sync. ");
+
     // Address //
     debug(DEBUG_SEND, "\n\r    -Debut Address. ");
     formatedDataSend.append(1,adresseModule);
     debug(DEBUG_SEND, "\n\r    -Fin Address. ");
+
     // PFB //
     debug(DEBUG_SEND, "\n\r    -Debut PFB. ");
     switch(flag->size()) {
@@ -126,40 +130,47 @@ bool ComSpi::send(char portID, char adresseModule,string *flag,string *data)
             break;
     }
     debug(DEBUG_SEND, "\n\r    -Fin PFB. ");
+
     // gestion ACK/NAK
     debug(DEBUG_SEND, "\n\r    -Debut ACK/NAK. ");
-    formatedDataSend.at(formatedDataSend.length()) |= (NOACK << 4);
+    formatedDataSend.at(formatedDataSend.length()-1) |= (NOACK << 4);
     debug(DEBUG_SEND, "\n\r    -Fin ACK/NAK. ");
+
     // NDB //
     debug(DEBUG_SEND, "\n\r    -Debut NDB. ");
     switch(data->size()) {
         case 1:
-            formatedDataSend.at(formatedDataSend.length()) |= 1;
+            formatedDataSend.at(formatedDataSend.length()-1) |= 1;
             break;
 
         case 2:
-            formatedDataSend.at(formatedDataSend.length()) |= 2;
+            formatedDataSend.at(formatedDataSend.length()-1) |= 2;
             break;
 
         case 3:
-            formatedDataSend.at(formatedDataSend.length()) |= 3;
+            formatedDataSend.at(formatedDataSend.length()-1) |= 3;
             break;
 
         default:
-            formatedDataSend.at(formatedDataSend.length()) |= 0;
+            formatedDataSend.at(formatedDataSend.length()-1) |= 0;
             break;
     }
     debug(DEBUG_SEND, "\n\r    -Fin NDB. ");
+
     // flag //
     debug(DEBUG_SEND, "\n\r    -Debut flag. ");
-    if(flag->size() != 0)
+    if(flag->size() != 0) {
         formatedDataSend.append(*flag);
+    }
     debug(DEBUG_SEND, "\n\r    -Fin flag. ");
+
     // data //
     debug(DEBUG_SEND, "\n\r    -Debut data. ");
-    if(data->size() != 0)
+    if(data->size() != 0) {
         formatedDataSend.append(*flag);
+    }
     debug(DEBUG_SEND, "\n\r    -Fin data. ");
+
     // CRC //
     //Create CRC
     //Send CRC
@@ -168,27 +179,46 @@ bool ComSpi::send(char portID, char adresseModule,string *flag,string *data)
     int tempValue=0;
     //Send Data
     debug(DEBUG_SEND, "\n\r    -Debut Send Data. ");
+    debug(DEBUG_SEND, "\n\r     -Send: ");
+    for (unsigned i=0; i<formatedDataSend.length(); ++i) {
+        debug(DEBUG_SEND, "%i,",formatedDataSend.at(i));
+    }
+
     tempValue = (formatedDataSend[0]<<8)+formatedDataSend[1];
     tempValue=write(tempValue);
-    if(tempValue == (formatedDataSend[0]<<8)+formatedDataSend[1]) {
+
+    debug(DEBUG_SEND, "\n\r    -Fin Send Data. ");
+
+        // Envoie si liker //
+        debug(DEBUG_SEND, "\n\r    -Debut Traitement de l'information. ");
+        debug(DEBUG_SEND, "\n\r     -Receive: ");
+    if(tempValue == (formatedDataSend[0]<<8)+formatedDataSend[1]) {// tempValue ==(Sync+(PFB+ACK+NDB))
         formatedDataReceive.append(1,formatedDataSend[0]);
         formatedDataReceive.append(1,formatedDataSend[1]);
 
         for (unsigned i=2; i<formatedDataSend.length(); ++i) {
             tempValue = formatedDataSend[i];
             i++;
-            if(i<formatedDataSend.length())
+            if(i<formatedDataSend.length()) {
                 tempValue = (tempValue<<8) + formatedDataSend[i];
-
+            }
             tempValue=write(tempValue);
             formatedDataReceive.append(1,tempValue>>8);
             formatedDataReceive.append(1,tempValue&0xFF);
         }
-        debug(DEBUG_SEND, "\n\r    -Fin Send Data. ");
+
+
+
         // Traitement de l'information //
-        debug(DEBUG_SEND, "\n\r    -Debut Traitement de l'information. ");
+        //debug(DEBUG_SEND, "\n\r    -Debut Traitement de l'information. ");
+        //debug(DEBUG_SEND, "\n\r     -Send: ");
+        for (unsigned i=0; i<formatedDataReceive.length(); ++i) {
+            debug(DEBUG_SEND, "%i,",formatedDataReceive.at(i));
+        }
+
         tempValue=formatedDataReceive[2];
         string::iterator it=formatedDataReceive.begin()+3;
+
         // flag //
         flag->clear();
         switch(tempValue>>6) {
@@ -217,6 +247,7 @@ bool ComSpi::send(char portID, char adresseModule,string *flag,string *data)
                     formatedDataSend.append(1,0<<6);
                     break;*/
         }
+
         // ACK/NAK
         //
 
@@ -248,11 +279,14 @@ bool ComSpi::send(char portID, char adresseModule,string *flag,string *data)
 
                     break;*/
         }
+
         // CRC //
         //
-        debug(DEBUG_SEND, "\n\r    -Fin Traitement de l'information. ");
+
         result=true;
     }
+    
+    debug(DEBUG_SEND, "\n\r    -Fin Traitement de l'information. ");
     debug(DEBUG_SEND, "\n\r   -Fin du send. ");
     return result;
 }

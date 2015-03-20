@@ -42,7 +42,7 @@ bool CtrlBridge::initCom(void)
     Module* templateModule ;
     templateModule= new Module;
     
-     debug(DEBUG_INITMODULE, "Init::debut");
+     debug(DEBUG_INITMODULE, "\n\rInit::debut");
     //flag.clear();
     //flag.append(1,Request_Init_Info);
     //positionInitial = spiLowSpeed.next_demux();
@@ -89,6 +89,6 @@ bool CtrlBridge::initCom(void)
     if(templateModule)
     delete templateModule;
     
-    debug(DEBUG_INITMODULE, "Init::Fin");
+    debug(DEBUG_INITMODULE, "\n\rInit::Fin");
     return true;
 }
