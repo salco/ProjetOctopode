@@ -8,10 +8,11 @@
 #ifndef COMSPI_H
 #define COMSPI_H
 
-
+#define DEBUG_SEND 1
 
 #include "mbed.h"
 #include <string>
+#include "debug.h"
 #include "ComSpiDefine.h"
 
 class ComSpi : public SPI

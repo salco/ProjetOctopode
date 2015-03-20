@@ -14,8 +14,7 @@
 
 class Directive : public TTask
 {
-    Serial *pc;
-    Serial *ssc32;
+
     Faculter_motrice *ctrDesPattes;
     char c;
 protected:

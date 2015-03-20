@@ -11,7 +11,7 @@ ComSpi::ComSpi(PinName mosi, PinName miso, PinName sclk, PinName _unused) : SPI(
 }
 
 ComSpi::ComSpi(PinName mosi, PinName miso, PinName sclk, PinName demuxA, PinName demuxB, PinName demuxC, PinName demuxD, PinName demuxEnable)
-    : SPI(mosi,miso,sclk,NC), m_demuxA(demuxA), m_demuxB(demuxB), m_demuxC(demuxC), m_demuxD(demuxD), m_demuxEnable(demuxEnable)
+    : SPI(mosi,miso,sclk), m_demuxA(demuxA), m_demuxB(demuxB), m_demuxC(demuxC), m_demuxD(demuxD), m_demuxEnable(demuxEnable)
 {
     m_demuxPos=0;
     demuxIsUse=true;
@@ -91,16 +91,23 @@ bool ComSpi::send(char portID, char adresseModule,string *flag,string *data)
     string formatedDataReceive;
     //int valueReceive=0;
     //int CRC
-
+    debug(DEBUG_SEND, "\n\r   -Debut du send. ");
+    debug(DEBUG_SEND, "\n\r    -Debut set demux. ");
     if(portID > (char)-1) {
         m_demuxPos = portID;
         change_demux();
     }
+    debug(DEBUG_SEND, "\n\r    -Fin set demux. ");
     // Sync //
+    debug(DEBUG_SEND, "\n\r    -Debut Sync. ");
     formatedDataSend.append(1,SYNC);
+    debug(DEBUG_SEND, "\n\r    -Fin Sync. ");
     // Address //
+    debug(DEBUG_SEND, "\n\r    -Debut Address. ");
     formatedDataSend.append(1,adresseModule);
+    debug(DEBUG_SEND, "\n\r    -Fin Address. ");
     // PFB //
+    debug(DEBUG_SEND, "\n\r    -Debut PFB. ");
     switch(flag->size()) {
         case 1:
             formatedDataSend.append(1,1<<6);
@@ -118,9 +125,13 @@ bool ComSpi::send(char portID, char adresseModule,string *flag,string *data)
             formatedDataSend.append(1,0<<6);
             break;
     }
+    debug(DEBUG_SEND, "\n\r    -Fin PFB. ");
     // gestion ACK/NAK
+    debug(DEBUG_SEND, "\n\r    -Debut ACK/NAK. ");
     formatedDataSend.at(formatedDataSend.length()) |= (NOACK << 4);
+    debug(DEBUG_SEND, "\n\r    -Fin ACK/NAK. ");
     // NDB //
+    debug(DEBUG_SEND, "\n\r    -Debut NDB. ");
     switch(data->size()) {
         case 1:
             formatedDataSend.at(formatedDataSend.length()) |= 1;
@@ -138,12 +149,17 @@ bool ComSpi::send(char portID, char adresseModule,string *flag,string *data)
             formatedDataSend.at(formatedDataSend.length()) |= 0;
             break;
     }
+    debug(DEBUG_SEND, "\n\r    -Fin NDB. ");
     // flag //
+    debug(DEBUG_SEND, "\n\r    -Debut flag. ");
     if(flag->size() != 0)
         formatedDataSend.append(*flag);
+    debug(DEBUG_SEND, "\n\r    -Fin flag. ");
     // data //
+    debug(DEBUG_SEND, "\n\r    -Debut data. ");
     if(data->size() != 0)
         formatedDataSend.append(*flag);
+    debug(DEBUG_SEND, "\n\r    -Fin data. ");
     // CRC //
     //Create CRC
     //Send CRC
@@ -151,6 +167,7 @@ bool ComSpi::send(char portID, char adresseModule,string *flag,string *data)
 
     int tempValue=0;
     //Send Data
+    debug(DEBUG_SEND, "\n\r    -Debut Send Data. ");
     tempValue = (formatedDataSend[0]<<8)+formatedDataSend[1];
     tempValue=write(tempValue);
     if(tempValue == (formatedDataSend[0]<<8)+formatedDataSend[1]) {
@@ -167,8 +184,9 @@ bool ComSpi::send(char portID, char adresseModule,string *flag,string *data)
             formatedDataReceive.append(1,tempValue>>8);
             formatedDataReceive.append(1,tempValue&0xFF);
         }
-
+        debug(DEBUG_SEND, "\n\r    -Fin Send Data. ");
         // Traitement de l'information //
+        debug(DEBUG_SEND, "\n\r    -Debut Traitement de l'information. ");
         tempValue=formatedDataReceive[2];
         string::iterator it=formatedDataReceive.begin()+3;
         // flag //
@@ -232,7 +250,9 @@ bool ComSpi::send(char portID, char adresseModule,string *flag,string *data)
         }
         // CRC //
         //
+        debug(DEBUG_SEND, "\n\r    -Fin Traitement de l'information. ");
         result=true;
     }
+    debug(DEBUG_SEND, "\n\r   -Fin du send. ");
     return result;
 }

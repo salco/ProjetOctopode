@@ -94,11 +94,6 @@ public:
         return m_moduleMemoire.size();
     }
 
-
-
-
-
-
 };
 #endif // MEMREG_H //
 

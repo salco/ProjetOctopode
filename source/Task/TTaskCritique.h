@@ -13,6 +13,7 @@
 class TTaskCritique : public TTask
 {
     protected:
+    CtrlBridge* m_CtrlBridge;
     virtual void task(void);
     
     public:

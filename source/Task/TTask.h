@@ -13,34 +13,41 @@
 
 class TTask
 {
-    private:
+private:
     int m_priorityCount;//m_countCycle;
     int m_priority;//m_cycleSet;
     //bool startSignal;
-    
-    protected:
+
+
+protected:
     static TTask *ptrThis;
-    
-    public:
-    TTask(int priority=0){m_priority=priority; m_priorityCount=0;}
-    virtual ~TTask(){
-        }
-    
-    virtual void exec(void){
-        if(m_priorityCount >= m_priority)
-        { 
+    //CtrlBridge* m_CtrlBridge;
+
+public:
+    TTask(int priority=0) {
+        m_priority=priority;
+        m_priorityCount=0;
+    }
+    virtual ~TTask() {
+    }
+
+    virtual void exec(void) {
+        if(m_priorityCount >= m_priority) {
             m_priorityCount=0;
             this->task();
-        }
-        else
-         m_priorityCount++;
-        }
-        
+        } else
+            m_priorityCount++;
+    }
+
     //virtual void signalStart(void);
     virtual void task(void) = 0;
-    
-    void setPriority(int value){m_priority = value;}
-    int getPriority() { return m_priority;}
-    
+
+    void setPriority(int value) {
+        m_priority = value;
+    }
+    int getPriority() {
+        return m_priority;
+    }
+
 };
 #endif // TTASK_H

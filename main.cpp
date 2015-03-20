@@ -17,7 +17,7 @@
 
 DigitalOut myled(LED1);
 //char str [80];
-
+DigitalIn mybutton(USER_BUTTON);
 int main()
 {
     //  int i = 1;
@@ -27,27 +27,29 @@ int main()
     //         string test="allo";
     //    pc.printf(test.c_str());
 
-    TTaskCritique taskCritique(10);
-    TTaskAlerte taskAlerte(20);
-    TTaskGeneral  taskGeneral(40);
+    TTaskCritique taskCritique(1);
+   // TTaskAlerte taskAlerte(20);
+   // TTaskGeneral  taskGeneral(40);
 //////////
 // Boot //
 //////////
 
 
     while(1) {
+
+
         
-        
-        taskCritique.exec();
-        taskAlerte.exec();
-        taskGeneral.exec();
+        //taskAlerte.exec();
+        //taskGeneral.exec();
+        if (mybutton == 0) { // Button is pressed
+            debug("Hello debug world");
+            taskCritique.exec();
 
-
-
-
-        myled = !myled;
+            myled = !myled;
+        }
+        wait(1);
     }
-    
+
     /*if(taskCritt)
         delete taskCritt;
     if(taskAlert)
