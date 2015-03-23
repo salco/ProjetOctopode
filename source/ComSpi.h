@@ -42,7 +42,7 @@ public:
 
 
     virtual int write(int value);
-    bool send(char portID, char adresseModule,string *flag,string *data);
+    bool send(char portID,unsigned char adresseModule,string *flag,string *data);
    /* bool send(char portID, char adresseModule,char *flag,char *data);
     bool send(char portID, char adresseModule,int *flag,char *data);
     bool send(char portID, char adresseModule,char *flag,int *data);

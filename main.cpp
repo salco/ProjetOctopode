@@ -1,5 +1,6 @@
 
 #include "mbed.h"
+//#include "OSNAPprotocoleDefine.h"
 //#include "mouvement.h"
 #include "debug.h"
 //#include "Concience/InstinctPrimaire.h"

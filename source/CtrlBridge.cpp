@@ -37,26 +37,33 @@ bool CtrlBridge::initCom(void)
 {
     //char positionInitial;
     bool portUse;
+    unsigned char adresse;
     string flag;
     string data;
     Module* templateModule ;
     templateModule= new Module;
-    
-     debug(DEBUG_INITMODULE, "\n\rInit::debut");
+
+    debug(DEBUG_INITMODULE, "\n\rInit::debut");
     //flag.clear();
     //flag.append(1,Request_Init_Info);
     //positionInitial = spiLowSpeed.next_demux();
     for(char i=0; i != 15; i++) {
         debug(DEBUG_INITMODULE, "\n\r  -Debut de boucle :%d ", i);
-        flag = Request_Init_Info;
-        portUse = spiLowSpeed.send(i,0,&flag,&data);
+        //flag = Request_Init_Info;
+        //portUse = spiLowSpeed.send(i,0,&flag,&data);
+        //if( portUse ) {
+        //  m_regPortUse|=(1<< i);
 
-        if( portUse ) {
-            m_regPortUse|=(1<< i);
-           
-            do {
-                
-                templateModule->regA = m_Memory.getAdressDispo();
+        do {
+            flag = Request_Init_Info;
+            adresse = m_Memory.getAdressDispo(0x80);
+            data.clear();
+            portUse = spiLowSpeed.send(i,adresse,&flag,&data);
+
+            if( portUse ) {
+                m_regPortUse|=(1<< i);
+
+                templateModule->regA = adresse;
                 templateModule->regB = (spiLowSpeed.get_demux()<<4)+(data[0]&0x0F);
                 templateModule->regC = data[1];
                 templateModule->regD = data[2];
@@ -74,21 +81,128 @@ bool CtrlBridge::initCom(void)
                     case 3://Memoire
                         m_Memory.addMemoire(*templateModule);
                         break;
-                        
-                        default:
+
+                    default:
                         break;
                 }
 
-                if(flag[0] != Contien_AUTRE_MODULE)
+                if(flag[0] != CONTIEN_AUTRE_MODULE)
                     portUse=false;
-            } while(portUse); 
-        }
+
+            }
+        } while(portUse);
         debug(DEBUG_INITMODULE, "\n\r  -Fin de boucle :%d", i);
     }
 
     if(templateModule)
-    delete templateModule;
-    
+        delete templateModule;
+
     debug(DEBUG_INITMODULE, "\n\rInit::Fin");
     return true;
+}
+
+bool CtrlBridge::tryComPort(char portID)
+{
+    if(portID <=  (char)-1)portID=0;
+    if(portID > 15)portID=15;
+    string flag;
+    flag.clear();
+    string data;
+    data.clear();
+    return  spiLowSpeed.send(portID,0,&flag,&data);
+}
+
+bool CtrlBridge::use( const unsigned char &adresse,string &flag, string &data)
+{
+    bool result = false;
+    Module moduleRequested;
+    if(m_Memory.isAdresseValide(adresse,moduleRequested)) {
+
+        if(adresse&0x80)spiLowSpeed.send(moduleRequested.regB>>4,adresse,&flag,&data);
+        else spiHighSpeed.send(moduleRequested.regB>>4,adresse,&flag,&data);
+        result = true;
+    }
+
+    return result;
+}
+
+string CtrlBridge::findModule(const char &peripheriqueID, const char &type, const char &sousType, const char &posSpatial)
+{
+    debug(DEBUF_FINDMODULE, "\n\rFindModule::Debut");
+    string result;
+    int maxSize;
+    Module moduleScan;
+    bool goodModule;
+
+    debug(DEBUF_FINDMODULE, "\n\r -Debut scan Actioneur");
+    maxSize = m_Memory.getSizeActioneur();
+    goodModule = true;
+    moduleScan= m_Memory.firstActioneur();
+
+    for(int i=0; i < maxSize; i++) {
+        if((peripheriqueID != 0) && (peripheriqueID != moduleScan.regB>>4)) goodModule =false;
+        else if((type != 0) && (type != moduleScan.regD>>6)) goodModule =false;
+        else if((sousType != 0) && (sousType != (moduleScan.regD & 0x3F))) goodModule =false;
+        else if((posSpatial != 0) && (sousType != (moduleScan.regC & 0x3F))) goodModule =false;
+
+        if(goodModule)
+            result.append(1,moduleScan.regA);
+        if((goodModule)&&(peripheriqueID != 0) && (peripheriqueID != moduleScan.regB>>4)) goodModule =false;
+
+        moduleScan= m_Memory.nextActioneur();
+    }
+    debug(DEBUF_FINDMODULE, "\n\r -Fin scan Actioneur");
+    debug(DEBUF_FINDMODULE, "\n\r -Result size: %i",result.size());
+    debug(DEBUF_FINDMODULE, "\n\r -Debut scan Capteur");
+
+    maxSize = m_Memory.getSizeCapteur();
+    goodModule = true;
+    moduleScan= m_Memory.firstCapteur();
+
+    for(int i=0; i < maxSize; i++) {
+        if((peripheriqueID != 0) && (peripheriqueID != moduleScan.regB>>4)) goodModule =false;
+        else if((type != 0) && (type != moduleScan.regD>>6)) goodModule =false;
+        else if((sousType != 0) && (sousType != (moduleScan.regD & 0x3F))) goodModule =false;
+        else if((posSpatial != 0) && (sousType != (moduleScan.regC & 0x3F))) goodModule =false;
+
+        if(goodModule)
+            result.append(1,moduleScan.regA);
+        if((goodModule)&&(peripheriqueID != 0) && (peripheriqueID != moduleScan.regB>>4)) goodModule =false;
+
+        moduleScan= m_Memory.nextCapteur();
+    }
+    debug(DEBUF_FINDMODULE, "\n\r -Fin scan Capteur");
+    debug(DEBUF_FINDMODULE, "\n\r -Result size: %i",result.size());
+    debug(DEBUF_FINDMODULE, "\n\r -Debut scan Memoire");
+
+    maxSize = m_Memory.getSizeMemoire();
+    goodModule = true;
+    moduleScan= m_Memory.firstMemoire();
+
+    for(int i=0; i < maxSize; i++) {
+        if((peripheriqueID != 0) && (peripheriqueID != moduleScan.regB>>4)) goodModule =false;
+        else if((type != 0) && (type != moduleScan.regD>>6)) goodModule =false;
+        else if((sousType != 0) && (sousType != (moduleScan.regD & 0x3F))) goodModule =false;
+        else if((posSpatial != 0) && (sousType != (moduleScan.regC & 0x3F))) goodModule =false;
+
+        if(goodModule)
+            result.append(1,moduleScan.regA);
+        if((goodModule)&&(peripheriqueID != 0) && (peripheriqueID != moduleScan.regB>>4)) goodModule =false;
+
+        moduleScan= m_Memory.nextMemoire();
+    }
+    debug(DEBUF_FINDMODULE, "\n\r -Fin scan Memoire");
+    debug(DEBUF_FINDMODULE, "\n\r -Result size: %i",result.size());
+    debug(DEBUF_FINDMODULE, "\n\rFindModule::Fin");
+    return result;
+}
+
+int CtrlBridge::size(const char &peripheriqueID, const char &type, const char &sousType, const char &posSpatial)
+{
+    int result;
+    string templateString;
+
+    templateString = findModule(peripheriqueID,type,sousType,posSpatial);
+    result = templateString.size()-1;//pas sure si on met -1
+    return result;
 }

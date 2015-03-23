@@ -22,5 +22,6 @@ void TTaskCritique::task(void)
         m_CtrlBridge->pc.printf("\n\r Press any key to continue.\n\r");
         m_CtrlBridge->pc.getc();
         m_CtrlBridge->initCom();
+        //m_CtrlBridge->findModule(ACTIONEUR);
         
 }

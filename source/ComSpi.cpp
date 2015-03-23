@@ -83,7 +83,7 @@ char ComSpi::get_demux(void)
     return   result ;
 }
 
-bool ComSpi::send(char portID, char adresseModule,string *flag,string *data)
+bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *data)
 {
     bool result=false;
     string formatedDataSend;

@@ -9,6 +9,8 @@
 #define CTRLBRIDGE_H
 
 #define DEBUG_INITMODULE 1
+#define DEBUF_FINDMODULE 1
+
 #define SPI_HIGH_MISO PB_14
 #define SPI_HIGH_MOSI PB_15
 #define SPI_HIGH_SCK  PB_13
@@ -29,6 +31,8 @@
 
 #include "mbed.h"
 #include <string>
+#include "OSNAPprotocoleDefine.h"
+//#include <algorithm>    // std::for_each
 #include "debug.h"
 #include "ComSpi.h" //utiliser pour comuniquer avec les module
 #include "MemRegistre.h" //enregistrer les info
@@ -41,10 +45,6 @@ class CtrlBridge
     int m_regPortUse; // set in the init
     int m_regPortLost;// flag 1 si lost
     MemRegistre m_Memory;
-
-
-
-
 
     /**
     * @brief Constructeur priver appler par la fonction getInstance()
@@ -59,17 +59,38 @@ private:
 public:
     Serial pc;
 
+    bool use( const unsigned char &adresse, string &flag, string &data);
 
+    /*string findModule(const typeModue &t);
+    string findModule(const sousType_Actionneur &st);
+    string findModule(const sousType_Memoire &st);
+    string findModule(const sousType_Capteur &st);
+    string findModule(const positionSpatial &p);
+    
+    string findModule(const typeModue &t, const sousType_Actionneur &st);
+    string findModule(const typeModue &t, const sousType_Memoire &st);
+    string findModule(const typeModue &t, const sousType_Capteur &st);
+    string findModule(const typeModue &t, const positionSpatial &p);*/ //complex pour le moment on le fera en temps voulue
+    
+    string findModule(const char &peripheriqueID, const char &type, const char &sousType, const char &posSpatial);
+    
+    int size(const char &peripheriqueID, const char &type, const char &sousType, const char &posSpatial);
     /**
     * @brief Methode permetant une seul instance de la classe
     * @return Retourne l'unique instance de la classe
     */
     static CtrlBridge *getInstance();
 
-    bool isValide(char portID);
+    bool initCom(void);
+
+    bool isValide(char portID) {
+        return (m_regPortUse & (1<<portID))?true:false;
+    };
     bool tryComPort(char portID);//just faire le sync et crc pour voire si lautre est la
 
-    bool initCom(void);
+    //fonction quelquonque pour communiquer avec les module
+    //fonction quelquonque pour faire des recherche dans les module dispo
+    //autre fonction pour jouer avec MemRegistre
 
 };
 #endif // CTRLBRIDGE_H

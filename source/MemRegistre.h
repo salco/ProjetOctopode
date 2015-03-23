@@ -31,9 +31,12 @@ public:
 
     MemRegistre();
     virtual ~MemRegistre();
-    unsigned char getAdressDispo();
+    unsigned char getAdressDispo(const unsigned char &startValue);
+    bool isAdresseValide(const char &adresse);
+    bool isAdresseValide(const char &adresse, Module &m );
 
 
+    //actioneur//
     bool remAllActioneur(void) {
         m_moduleActioneur.clear();
         return 1;
@@ -53,7 +56,7 @@ public:
     int getSizeActioneur(void) {
         return m_moduleActioneur.size();
     }
-
+//capteur//
     bool remAllCapteur(void) {
         m_moduleCapteur.clear();
         return 1;
@@ -73,7 +76,7 @@ public:
     int getSizeCapteur(void) {
         return m_moduleCapteur.size();
     }
-
+//memoire//
     bool remAllMemoire(void) {
         m_moduleMemoire.clear();
         return 1;

@@ -9,6 +9,7 @@
 #define TTASK_H
 
 #include "mouvement.h"
+#include "OSNAPprotocoleDefine.h"
 #include "CtrlBridge.h"
 
 class TTask
