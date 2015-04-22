@@ -1,5 +1,6 @@
 
 #include "TTaskAlerte.h"
+// pour etre honete jai aucune inspiration de pourquoi ca pourait etre utile mais je sais que ce l'est //
 
 TTaskAlerte::TTaskAlerte(int priority):TTask(priority)
 {

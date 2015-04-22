@@ -4,6 +4,40 @@
 
 //#define NONE 0
 
+
+struct osnapModule_t{
+    unsigned char addrModule; //osnapRegisterA
+    
+    union{
+        unsigned char getByte;
+        struct
+        {
+            unsigned char typeFormat  : 1;
+            unsigned char linkToReaction : 3;
+            unsigned char addrPeripherique : 4;
+        };
+    }osnapRegisterB;
+    
+    union{
+        unsigned char getByte;
+        struct
+        {
+            unsigned char positionSpatiale : 6;
+            unsigned char typeFormat : 2;
+        };
+    }osnapRegisterC;
+    
+    union{
+        unsigned char getByte;
+        struct
+        {
+            unsigned char sousType  : 6;
+            unsigned char type : 2;
+        };
+    }osnapRegisterD;
+    
+};
+
 typedef enum {
     //NONE =0,
     CAPTEUR = 1,

@@ -19,6 +19,9 @@
 DigitalOut myled(LED1);
 //char str [80];
 DigitalIn mybutton(USER_BUTTON);
+DigitalOut pinA(PA_13);
+DigitalOut pinB(PA_14);
+
 int main()
 {
     //  int i = 1;
@@ -29,8 +32,8 @@ int main()
     //    pc.printf(test.c_str());
 
     TTaskCritique taskCritique(1);
-   // TTaskAlerte taskAlerte(20);
-   // TTaskGeneral  taskGeneral(40);
+    // TTaskAlerte taskAlerte(20);
+    // TTaskGeneral  taskGeneral(40);
 //////////
 // Boot //
 //////////
@@ -39,13 +42,21 @@ int main()
     while(1) {
 
 
-        
+
         //taskAlerte.exec();
         //taskGeneral.exec();
         if (mybutton == 0) { // Button is pressed
-            debug("Hello debug world");
-            taskCritique.exec();
+            //debug("Hello debug world");
+            //taskCritique.exec();
 
+            if(myled) {
+                pinB=0;
+                pinA=1;
+                
+            } else {
+                pinA=0;
+                pinB=1;
+            }
             myled = !myled;
         }
         wait(1);

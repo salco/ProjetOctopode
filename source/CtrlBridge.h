@@ -14,7 +14,7 @@
 #define SPI_HIGH_MISO PB_14
 #define SPI_HIGH_MOSI PB_15
 #define SPI_HIGH_SCK  PB_13
-#define SPI_HIGH_CS PC_15
+#define SPI_HIGH_CS A1
 #define SPI_HIGH_DEMUXA PC_0
 #define SPI_HIGH_DEMUXB PC_1
 #define SPI_HIGH_DEMUXC PC_2
@@ -23,7 +23,7 @@
 #define SPI_LOW_MISO PA_6
 #define SPI_LOW_MOSI PA_7
 #define SPI_LOW_SCK PA_5
-#define SPI_LOW_CS PC_14
+#define SPI_LOW_CS A0
 #define SPI_LOW_DEMUXA PC_4
 #define SPI_LOW_DEMUXB PC_5
 #define SPI_LOW_DEMUXC PC_6
@@ -59,7 +59,7 @@ private:
 public:
     Serial pc;
 
-    bool use( const unsigned char &adresse, string &flag, string &data);
+    bool send( const unsigned char &adresse, string &flag, string &data);
 
     /*string findModule(const typeModue &t);
     string findModule(const sousType_Actionneur &st);

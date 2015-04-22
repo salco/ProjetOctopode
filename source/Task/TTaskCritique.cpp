@@ -3,25 +3,52 @@
 
 TTaskCritique::TTaskCritique(int priority):TTask(priority)
 {
-   // m_userTask= new Directive();
-   m_CtrlBridge = m_CtrlBridge->getInstance();
-   //mybutton(USER_BUTTON);
+    m_CtrlBridge = m_CtrlBridge->getInstance();
+
+    m_CtrlBridge->initCom();
+    m_ListDesModules = m_CtrlBridge->findModule(0,0,0,0); //get all modules
+
+    tymy=true;
 }
 
 TTaskCritique::~TTaskCritique()
 {
-   /* if(m_userTask) {
-        delete m_userTask;
-    }*/
-    return;
+
+//    return;
 }
+
+void TTaskCritique::forceShutDown(bool offON)
+{
+    DigitalOut pinA(PA_13);
+    DigitalOut pinB(PA_14);
+
+    if(offON) {
+        pinA=1;
+        pinB=0;
+    } else {
+        pinA=0;
+        pinB=1;
+    }
+}
+
+void TTaskCritique::criticalTreatment(char adresse)
+{
+    //ici on debug et on traite le problemme//
+        forceShutDown(tymy);
+    tymy = !tymy;
+}
+
 void TTaskCritique::task(void)
 {
-    //m_userTask->start();
+    //pas sur que c'Est tout ce qui doit etre ici mais je vois pas quoi d'autre pour le moment.
+    string flag,data;
 
-        m_CtrlBridge->pc.printf("\n\r Press any key to continue.\n\r");
-        m_CtrlBridge->pc.getc();
-        m_CtrlBridge->initCom();
-        //m_CtrlBridge->findModule(ACTIONEUR);
-        
+    flag.append(1,0x02);
+    for(int i=0; i<m_ListDesModules.length(); ++i)
+    {
+    m_CtrlBridge->send(m_ListDesModules.at(i),flag,data);
+    if(flag[0]== 0x02)
+    criticalTreatment(m_ListDesModules.at(i));
+    }
+
 }

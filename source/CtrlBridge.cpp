@@ -15,6 +15,8 @@ CtrlBridge::CtrlBridge()
     //faire en sorte d'init SPI speed ici
     m_regPortUse=0;
     m_regPortLost=0;
+    spiLowSpeed.format(8,0);
+    spiLowSpeed.frequency(10000);
 }
 
 CtrlBridge::~CtrlBridge()
@@ -56,8 +58,9 @@ bool CtrlBridge::initCom(void)
 
         do {
             flag = Request_Init_Info;
-            adresse = m_Memory.getAdressDispo(0x80);
+            adresse = m_Memory.getAdressDispo(0x80);//80 parce que cest le conecteur droit
             data.clear();
+            data.append(4,1);
             portUse = spiLowSpeed.send(i,adresse,&flag,&data);
 
             if( portUse ) {
@@ -112,7 +115,7 @@ bool CtrlBridge::tryComPort(char portID)
     return  spiLowSpeed.send(portID,0,&flag,&data);
 }
 
-bool CtrlBridge::use( const unsigned char &adresse,string &flag, string &data)
+bool CtrlBridge::send( const unsigned char &adresse,string &flag, string &data)
 {
     bool result = false;
     Module moduleRequested;

@@ -1,5 +1,5 @@
-#ifdef COMSPI_H
-#define COMSPI_H
+#ifndef COMSPIDEFF_H
+#define COMSPIDEFF_H
 
 // faire un debug pour la com spi
 #define SYNC 84 //0b01010100
@@ -29,4 +29,4 @@ typedef enum {
 
 } FLAGName;
 
-#endif // COMSPI_H
+#endif // COMSPIDEFF_H
