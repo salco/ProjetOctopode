@@ -47,9 +47,12 @@ void TTaskCritique::task(void)
     flag.append(1,0);//0x02);
     for(int i=0; i<m_ListDesModules.length(); ++i)
     {
+     flag.clear();
+     flag.append(1,6);  
+     data.clear(); 
     debug("\n\r result: %d",m_CtrlBridge->send(m_ListDesModules.at(i),flag,data));
     if(flag[0]== 0x02)
-    criticalTreatment(m_ListDesModules.at(i));
+     criticalTreatment(m_ListDesModules.at(i));
     }
 
 }

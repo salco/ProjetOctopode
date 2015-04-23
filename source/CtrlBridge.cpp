@@ -60,6 +60,7 @@ bool CtrlBridge::initCom(void)
              debug(" IN");
             flag = Request_Init_Info;
             adresse = m_Memory.getAdressDispo(0x80);//80 parce que cest le conecteur droit
+            debug(DEBUG_INITMODULE, "\n\r    -addresse use :%d", adresse);
             data.clear();
             data.append(4,1);
             portUse = spiLowSpeed.send(i,adresse,&flag,&data);

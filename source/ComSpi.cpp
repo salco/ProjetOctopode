@@ -285,6 +285,7 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
                         //    break;
                 }*/
                 formatedDataSend.append(settingSlave>>6,0);
+                debug(DEBUG_COMPACT, "\n\r        -append %02X time(s)",settingSlave>>6);
             }
 
             int bufferFlag = 0;
@@ -300,22 +301,30 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
             counterTotale = counterTotale+(settingSlave>>6)+abs((settingMaster & 0x0F) - (settingSlave & 0x0F));
             //debug( "\n\r    -size : %02X",counterTotale);
 
+            if(retryLoop == 0) {
+                debug( "\n\r    -size : %02X ,  %02X",formatedDataSend.size(),counterTotale);
+                if(formatedDataSend.size()<counterTotale) {
+                    formatedDataSend.append(counterTotale+1-formatedDataSend.size(),0);
+                }
+            }
+
+
             switch(bufferFlag) { //plus facile pour savoir ce que tu doit tatenre a recevoire
                 case 1://Request Init Info
                     if(retryLoop == 0) {
                         //formatedDataSend.append(1,1<<6); //1 byte flag
                         //formatedDataSend.append(settingSlave & 0x0F,0);
                         //chek pour comment avoir un address
-                        if(formatedDataSend.size()<counterTotale) {
+                        /*if(formatedDataSend.size()<counterTotale) {
                             formatedDataSend.append(counterTotale+1-formatedDataSend.size(),0);
-                        }
+                        }*/
                     }
                     //verifier si la fonction fait ce quil edt suposer
 
-                    for(int i = ((2+(settingMaster>>6))+1); i < formatedDataSend.length()-1; ++i) { //on envoi le reste des data
+                    /*for(int i = ((2+(settingMaster>>6))+1); i < formatedDataSend.length()-1; ++i) { //on envoi le reste des data
                         formatedDataReceive.append(1,write(formatedDataSend[i]));
                         //debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r -C:%i ",i);
-                    }
+                    }*/
 
                     //templatePtr =searchAddr(0);
                     // 1 byte flag + 3 byte de data
@@ -353,14 +362,13 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
                     //    }
                     break;
             }
+            // pas sur si cest une bonne ider mais sa peut peut etre regrouper tout les flags
+            for(int i = ((2+(settingMaster>>6))+1); i < formatedDataSend.length()-1; ++i) { //on envoi le reste des data
+                        formatedDataReceive.append(1,write(formatedDataSend[i]));
+                        //debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r -C:%i ",i);
+                    }
             //counterTotale = 2+(bufferReceive[2]>>6)+1;
             //counterTotale = counterTotale+(bufferSend[counterTotale]>>6)+abs((bufferReceive[2] & 0x5F) - (bufferSend[counterTotale] & 0x5F));
-            if(retryLoop == 0) {
-                debug( "\n\r    -size : %02X ,  %02X",formatedDataSend.size(),counterTotale);
-                if(formatedDataSend.size()<counterTotale) {
-                    formatedDataSend.append(counterTotale+1-formatedDataSend.size(),0);
-                }
-            }
 
 
 
@@ -421,6 +429,8 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
             // (templateValue==0)? result=true:result=false;
         }
         debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r     -Send   : ");
+        for (unsigned i=0; i<formatedDataSend.length(); i++) debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "%02X,",formatedDataSend.at(i));
+        debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r     -real   : ");
         for (unsigned i=0; i<sneekpeek.length(); i++) debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "%02X,",sneekpeek.at(i));
         debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM,         "\n\r     -Reveive: ");
         for (unsigned i=0; i<formatedDataReceive.length(); i++) debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "%02X,",formatedDataReceive.at(i));
@@ -428,7 +438,7 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
         /*for (unsigned i=0; i<sneekpeek.length(); i++)*/
         debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "%04X,",CRC16_BUYPASS(formatedDataReceive.c_str(),formatedDataReceive.size()-2));//sneekpeek.at(i));
         debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r-Sneekpe: %04X,",CRC16_BUYPASS(formatedDataSend.c_str(),formatedDataSend.size()-2));//sneekpeek.at(i));
-        debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r-Sneekpe: %04X,",CRC16_BUYPASS(sneekpeek.c_str(),sneekpeek.size()-2));//sneekpeek.at(i));
+        
 
     }//templateValue = /*templateCRC->*/calculateCRC16(formatedDataSend.c_str(),formatedDataSend.size()-1);sneekpeek
 ///////////////////////

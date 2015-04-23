@@ -25,9 +25,10 @@ MemRegistre::~MemRegistre()
 
 unsigned char MemRegistre::getAdressDispo(const unsigned char &startValue)
 {
+     debug(DEBUG_GETADDR,"\n\rGetAddrDispo::Debut");
     //list<Module>::iterator it1;
     unsigned char addrDispo=(startValue==0)?1:startValue;
-
+    debug(DEBUG_GETADDR,"\n\r addrDispo: %02X",addrDispo);
     //Module templateModule;
     for(bool addrFind=false; (addrDispo!=0)&&(!addrFind); addrDispo++) {
         /* addrFind=true;
@@ -40,20 +41,28 @@ unsigned char MemRegistre::getAdressDispo(const unsigned char &startValue)
          for (std::list<Module>::iterator it=m_moduleMemoire.begin(); it != m_moduleMemoire.end(); ++it)
              if(it->regA == addrDispo) addrFind = false;*/
         addrFind = !isAdresseValide(addrDispo);
-
+        debug(DEBUG_GETADDR,"\n\r   is %02X valide %i",addrDispo,addrFind);
         if((addrDispo==255) && (!addrFind))addrDispo=0; //les 255 adresses son utiliser // bravo le robot doit etre under heavy load.
     }
-
+    if(addrDispo != 0)
+        addrDispo--;//patch vue quil fait un ++ a la fin de la boucle pour rien
+    //else
+      //  addrDispo=0;
+        
+    debug(DEBUG_GETADDR,"\n\rGetAddrDispo::Fin");
     return addrDispo;
 }
 bool MemRegistre::isAdresseValide(const char &adresse, Module &m )
 {
+    debug(DEBUG_ISVALIDE,"\n\risAdresseValide::Debut");
     list<Module>::iterator it1;
     bool addrFind=false;
     //Module templateModule;
     //for(unsigned char addrDispo=1; (addrDispo!=0)&&(!addrFind); addrDispo++) {
 
+    debug(DEBUG_ISVALIDE,"\n\r  -search in: Actioneur");
     for (list<Module>::iterator it=m_moduleActioneur.begin(); it != m_moduleActioneur.end(); ++it) {
+        debug(DEBUG_ISVALIDE,"\n\r  -if( %02X == %02X )",it->regA,adresse);
         if(it->regA == adresse) {
             addrFind = true;
             m.regA=it->regA;
@@ -62,8 +71,9 @@ bool MemRegistre::isAdresseValide(const char &adresse, Module &m )
             m.regD=it->regD;
         }
     }
-
+    debug(DEBUG_ISVALIDE,"\n\r  -search in: Capteur");
     for (std::list<Module>::iterator it=m_moduleCapteur.begin(); it != m_moduleCapteur.end(); ++it) {
+        debug(DEBUG_ISVALIDE,"\n\r  -if( %02X == %02X )",it->regA,adresse);
         if(it->regA == adresse) {
             addrFind = true;
             m.regA=it->regA;
@@ -72,8 +82,9 @@ bool MemRegistre::isAdresseValide(const char &adresse, Module &m )
             m.regD=it->regD;
         }
     }
-
+    debug(DEBUG_ISVALIDE,"\n\r  -search in: Memoire");
     for (std::list<Module>::iterator it=m_moduleMemoire.begin(); it != m_moduleMemoire.end(); ++it) {
+        debug(DEBUG_ISVALIDE,"\n\r  -if( %02X == %02X )",it->regA,adresse);
         if(it->regA == adresse) {
             addrFind = true;
             m.regA=it->regA;
@@ -85,7 +96,7 @@ bool MemRegistre::isAdresseValide(const char &adresse, Module &m )
 
     // if((addrDispo==255) && (!addrFind))addrDispo=0; //les 255 adresses son utiliser // bravo le robot doit etre under heavy load.
     //  }
-
+    debug(DEBUG_ISVALIDE,"\n\risAdresseValide::Fin");
     return addrFind;
 }
 bool MemRegistre::isAdresseValide(const char &adresse)

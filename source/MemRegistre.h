@@ -8,8 +8,12 @@
 #ifndef MEMREG_H
 #define MEMREG_H
 
+#define DEBUG_GETADDR 1
+#define DEBUG_ISVALIDE 1
+
 #include <list>
 #include "Module.h"
+#include "debug.h"
 //#include "ListChainer.h"
 
 using namespace std;// Or using std::list;
