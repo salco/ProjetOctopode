@@ -164,9 +164,12 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
 
     // PFB //
     debug(DEBUG_SEND, "\n\r    -Debut PFB. ");
+   // if(flag != 0)
+   // {
     switch(flag->size()) {
         case 1:
-            formatedDataSend.append(1,1<<6); //1 byte
+            if(flag->at(0) == 0) formatedDataSend.append(1,0<<6); //0 byte
+            else          formatedDataSend.append(1,1<<6); //1 byte
             break;
 
         case 2:
@@ -178,9 +181,10 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
             break;
 
         default:
-            formatedDataSend.append(1,0<<6); //0 byte
+            formatedDataSend.append(1,0<<6); //cas impossible //0 byte
             break;
     }
+    //}
     debug(DEBUG_COMPACT, "\n\r    -PFB ADDED: %02X, %02X, %02X ",formatedDataSend[0],formatedDataSend[1],formatedDataSend[2]);
     debug(DEBUG_SEND, "\n\r    -Fin PFB. ");
 
@@ -294,7 +298,8 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
 
             counterTotale = ((2+(settingMaster>>6))+1);
             counterTotale = counterTotale+(settingSlave>>6)+abs((settingMaster & 0x0F) - (settingSlave & 0x0F));
-
+        debug( "\n\r    -size : %02X",counterTotale);
+        
             switch(bufferFlag) { //plus facile pour savoir ce que tu doit tatenre a recevoire
                 case 1://Request Init Info
                     if(retryLoop == 0) {
@@ -338,14 +343,19 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
                     break;
 
                 default: //Get update (normale)
-
+                    //if(retryLoop == 0) {
+                    //    formatedDataSend.append(abs((settingMaster & 0x0F) - (settingSlave & 0x0F)),0);//je considere que cest fait apres avoire ajouter les data a nous
+                    //    }
                     break;
             }
             //counterTotale = 2+(bufferReceive[2]>>6)+1;
             //counterTotale = counterTotale+(bufferSend[counterTotale]>>6)+abs((bufferReceive[2] & 0x5F) - (bufferSend[counterTotale] & 0x5F));
-
- 
-
+           // if(retryLoop == 0) {
+               debug( "\n\r    -size : %02X ,  %02X",formatedDataSend.size(),counterTotale);
+               // if(formatedDataSend.size()<counterTotale){
+                 //   formatedDataSend.append(counterTotale-formatedDataSend.size(),0);
+                //}
+            //}   
 
 
 
@@ -508,9 +518,17 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
 
         // flag //
         flag->clear();
+        if((settingSlave>>6) != 0)
+        {
+        //string str = formatedDataReceive.substr( ((2+(settingMaster>>6))+1+1),(settingSlave>>6)); 
+        flag->append(formatedDataReceive.substr( ((2+(settingMaster>>6))+1+1),(settingSlave>>6)));// = &str;
+        
+        //debug(DEBUG_SLIM,         "\n\r         -flag get: ");
+        //for (unsigned i=0; i<str.length(); i++) debug(DEBUG_SLIM, "%02X,",str.at(i));
+        }
         //twoBytesArray=formatedDataReceive[2];
         //!!!!! wtf is that cest claire que sa pete la com
-        string::iterator it=formatedDataReceive.begin()+3;
+        /*string::iterator it=formatedDataReceive.begin()+3;
 
         switch(settingSlave>>6) {
             case 1:
@@ -532,20 +550,28 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
                 it++;
                 flag->append(1,*it);
                 it++;
-                break;
+                break;*/
 
                 /*default:
                     formatedDataSend.append(1,0<<6);
                     break;*/
-        }
+       // }
 
         // ACK/NAK
         //
 
         // NDB //
         data->clear();
+        if((settingSlave&0x0F) != 0)
+        {
+        //string str = formatedDataReceive.substr( ((2+(settingMaster>>6))+1+(settingSlave>>6)+1),(settingSlave&0x0F)); 
+        data->append(formatedDataReceive.substr( ((2+(settingMaster>>6))+1+(settingSlave>>6)+1),(settingSlave&0x0F)));
+        
+        //debug(DEBUG_SLIM,         "\n\r         -data get: ");
+        //for (unsigned i=0; i<str.length(); i++) debug(DEBUG_SLIM, "%02X,",str.at(i));
+        }
         //!!!!! same shit faut rebild la chose en bas
-        switch(settingSlave&0xFF) {
+       /* switch(settingSlave&0xFF) {
             case 1:
                 data->append(1,*it);
                 it++;
@@ -565,12 +591,12 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
                 it++;
                 data->append(1,*it);
                 it++;
-                break;
+                break;*/
 
                 /*default:
 
                     break;*/
-        }
+        //}
     }
 
     debug(DEBUG_SEND, "\n\r    -Fin Traitement de l'information. ");

@@ -47,19 +47,20 @@ int main()
         //taskGeneral.exec();
         if (mybutton == 0) { // Button is pressed
             //debug("Hello debug world");
-            //taskCritique.exec();
+            taskCritique.exec();
 
-            if(myled) {
+            /*if(myled) {
                 pinB=0;
                 pinA=1;
                 
             } else {
                 pinA=0;
                 pinB=1;
-            }
+            }*/
             myled = !myled;
+            wait(1);
         }
-        wait(1);
+        //wait(1);
     }
 
     /*if(taskCritt)

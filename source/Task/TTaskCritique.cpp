@@ -40,13 +40,14 @@ void TTaskCritique::criticalTreatment(char adresse)
 
 void TTaskCritique::task(void)
 {
+    //debug("\n\rPeanut");
     //pas sur que c'Est tout ce qui doit etre ici mais je vois pas quoi d'autre pour le moment.
     string flag,data;
 
-    flag.append(1,0x02);
+    flag.append(1,0);//0x02);
     for(int i=0; i<m_ListDesModules.length(); ++i)
     {
-    m_CtrlBridge->send(m_ListDesModules.at(i),flag,data);
+    debug("\n\r result: %d",m_CtrlBridge->send(m_ListDesModules.at(i),flag,data));
     if(flag[0]== 0x02)
     criticalTreatment(m_ListDesModules.at(i));
     }
