@@ -57,6 +57,7 @@ bool CtrlBridge::initCom(void)
         //  m_regPortUse|=(1<< i);
 
         do {
+             debug(" IN");
             flag = Request_Init_Info;
             adresse = m_Memory.getAdressDispo(0x80);//80 parce que cest le conecteur droit
             data.clear();
@@ -64,11 +65,15 @@ bool CtrlBridge::initCom(void)
             portUse = spiLowSpeed.send(i,adresse,&flag,&data);
             debug(DEBUG_INITMODULE, "\n\r    -Port use result :%d", portUse);
             
+            if((flag.empty()) && (data.empty()))// data vide
+                portUse=false;
+            
             if( portUse ) {
                  debug(DEBUG_INITMODULE,         "\n\r         -flag get: ");
                  for (unsigned j=0; j<flag.length(); j++) debug(DEBUG_INITMODULE, "%02X,",flag.at(j));
                  debug(DEBUG_INITMODULE,         "\n\r         -data get: ");
                  for (unsigned j=0; j<data.length(); j++) debug(DEBUG_INITMODULE, "%02X,",data.at(j));
+                
                 
                 m_regPortUse|=(1<< i);
                 debug(DEBUG_INITMODULE, "\n\r      -Port use :%d", m_regPortUse);
@@ -111,6 +116,7 @@ bool CtrlBridge::initCom(void)
                     portUse=false;
 
             }
+             debug(" OUT");
         } while(portUse);
         debug(DEBUG_INITMODULE, "\n\r  -Fin de boucle :%d", i);
     }

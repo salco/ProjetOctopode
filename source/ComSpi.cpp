@@ -68,7 +68,7 @@ void ComSpi::change_demux(void)
         if(m_demuxPos & 8) pinDemuxD=1; //0b1000
         else pinDemuxD=0;
 //wait(1);
-       // pinDemuxEnable=1;
+        // pinDemuxEnable=1;
         //wait(1);
     }
 }
@@ -105,27 +105,27 @@ char ComSpi::get_demux(void)
 unsigned char spiCurrentState;
 int ComSpi::write(int value)
 {
-     DigitalOut pinDemuxEnable(m_demuxEnable);
+    DigitalOut pinDemuxEnable(m_demuxEnable);
     //DigitalOut pinDemuxEnable(m_demuxEnable,0);
     int a;
-     pinDemuxEnable=1;
-     /*   switch(spiCurrentState)
+    pinDemuxEnable=1;
+    /*   switch(spiCurrentState)
     {
-        case 0:
-        a= SPI::write(0x12);
-        spiCurrentState++;
-        break;
-        default:
-        a= SPI::write(0xF5);
-        spiCurrentState =0;
-        break;
+       case 0:
+       a= SPI::write(0x12);
+       spiCurrentState++;
+       break;
+       default:
+       a= SPI::write(0xF5);
+       spiCurrentState =0;
+       break;
     }*/
-     wait_us(5);
+    wait_us(5);
     a= SPI::write(value);
     wait_us(5);
-     pinDemuxEnable=0;
-     sneekpeek.append(1,value);
-     wait_us(1000);
+    pinDemuxEnable=0;
+    sneekpeek.append(1,value);
+    wait_us(1000);
     return a;
 }
 
@@ -164,8 +164,8 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
 
     // PFB //
     debug(DEBUG_SEND, "\n\r    -Debut PFB. ");
-   // if(flag != 0)
-   // {
+    // if(flag != 0)
+    // {
     switch(flag->size()) {
         case 1:
             if(flag->at(0) == 0) formatedDataSend.append(1,0<<6); //0 byte
@@ -217,7 +217,7 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
     debug(DEBUG_SEND, "\n\r    -Fin NDB. ");
 
     settingMaster = formatedDataSend[formatedDataSend.length()-1];
-   
+
     // flag //
     debug(DEBUG_SEND, "\n\r    -Debut flag. ");
     if(flag->size() != 0) {
@@ -229,7 +229,7 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
 //ici tu envoi deja ton premier stuf
 
 
- debug(DEBUG_SLIM, "\n\r    -settingMaster : %X , %i, %X ",settingMaster, (2+(settingMaster>>6)),formatedDataSend[(2+(settingMaster>>6))] );
+//debug(DEBUG_SLIM, "\n\r    -settingMaster : %X , %i, %X ",settingMaster, (2+(settingMaster>>6)),formatedDataSend[(2+(settingMaster>>6))] );
 
 
 
@@ -257,13 +257,13 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
         if(formatedDataReceive[0] == SYNC) {
             debug(DEBUG_COMPACT, "\n\r    -Receve transmission. ");
             //!!!!!!!! Problem ici write dans un mais pas lautre
-             wait_us(3000);
+            wait_us(3000);
             if(retryLoop == 0) {
                 formatedDataSend.append(1,0);//2,0); cest une patch tempo parce que je trouve pas ou il manque la donner
-                }
+            }
             formatedDataReceive.append(1,write(0));
-           // debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r -B: ");
-            
+            // debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r -B: ");
+
             settingSlave = formatedDataReceive[formatedDataReceive.length()-1];
             debug(DEBUG_COMPACT, "\n\r       -settingSlave %02X",settingSlave);
             if(retryLoop == 0) {
@@ -298,20 +298,25 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
 
             counterTotale = ((2+(settingMaster>>6))+1);
             counterTotale = counterTotale+(settingSlave>>6)+abs((settingMaster & 0x0F) - (settingSlave & 0x0F));
-        debug( "\n\r    -size : %02X",counterTotale);
-        
+            //debug( "\n\r    -size : %02X",counterTotale);
+
             switch(bufferFlag) { //plus facile pour savoir ce que tu doit tatenre a recevoire
                 case 1://Request Init Info
                     if(retryLoop == 0) {
-                        
-                        formatedDataSend.append(settingSlave & 0x0F,0);
+                        //formatedDataSend.append(1,1<<6); //1 byte flag
+                        //formatedDataSend.append(settingSlave & 0x0F,0);
                         //chek pour comment avoir un address
+                        if(formatedDataSend.size()<counterTotale) {
+                            formatedDataSend.append(counterTotale+1-formatedDataSend.size(),0);
+                        }
                     }
                     //verifier si la fonction fait ce quil edt suposer
-                    for(int i = ((2+(settingMaster>>6))+1); i < formatedDataSend.length()-1; ++i) {
+
+                    for(int i = ((2+(settingMaster>>6))+1); i < formatedDataSend.length()-1; ++i) { //on envoi le reste des data
                         formatedDataReceive.append(1,write(formatedDataSend[i]));
                         //debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r -C:%i ",i);
                     }
+
                     //templatePtr =searchAddr(0);
                     // 1 byte flag + 3 byte de data
                     //bufferSend[4] = (1<<6) + 3;//[2+(bufferReceive[2]>>6)+1] = (1<<6);
@@ -350,12 +355,12 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
             }
             //counterTotale = 2+(bufferReceive[2]>>6)+1;
             //counterTotale = counterTotale+(bufferSend[counterTotale]>>6)+abs((bufferReceive[2] & 0x5F) - (bufferSend[counterTotale] & 0x5F));
-           // if(retryLoop == 0) {
-               debug( "\n\r    -size : %02X ,  %02X",formatedDataSend.size(),counterTotale);
-               // if(formatedDataSend.size()<counterTotale){
-                 //   formatedDataSend.append(counterTotale-formatedDataSend.size(),0);
-                //}
-            //}   
+            if(retryLoop == 0) {
+                debug( "\n\r    -size : %02X ,  %02X",formatedDataSend.size(),counterTotale);
+                if(formatedDataSend.size()<counterTotale) {
+                    formatedDataSend.append(counterTotale+1-formatedDataSend.size(),0);
+                }
+            }
 
 
 
@@ -363,32 +368,32 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
             // DATA //
             unsigned short templateValue=0;
             if(retryLoop == 0) {
-            // CRC //
-            debug(DEBUG_SEND, "\n\r    -Debut CRC16. ");
-            //CRC16* templateCRC;
-            //templateCRC = new CRC16();
-            //!!!utiliser string cest plus simple
-            
-            
-            //char templateTable[formatedDataSend.length()+1];
-            //for (unsigned i=0; i<formatedDataSend.length()+1; ++i) templateTable[i]=0;
-            //for (unsigned i=0; i<formatedDataSend.length(); ++i) templateTable[i]=formatedDataSend[i];
-            //debug(DEBUG_SEND, "\n\r     - envoi au crc: %02X,%02X,%02X,%02X,%02X,%02X ",templateTable[0],templateTable[1],templateTable[2],templateTable[3],templateTable[4],templateTable[5],templateTable[6]);
+                // CRC //
+                debug(DEBUG_SEND, "\n\r    -Debut CRC16. ");
+                //CRC16* templateCRC;
+                //templateCRC = new CRC16();
+                //!!!utiliser string cest plus simple
 
-           // templateValue = /*templateCRC->*/calculateCRC16(templateTable,formatedDataSend.size()-1); //atention pt un probleme de sortie du range
-            //templateValue = /*templateCRC->calculateCRC16*/CRC16_BUYPASS(formatedDataSend.c_str(),formatedDataSend.size()); //atention pt un probleme de sortie du range
-            templateValue =CRC16_BUYPASS(sneekpeek.c_str(),sneekpeek.size()); //patch
-            
-            formatedDataSend.append(1,templateValue>>8);
-            formatedDataSend.append(1,templateValue & 0xFF);
+
+                //char templateTable[formatedDataSend.length()+1];
+                //for (unsigned i=0; i<formatedDataSend.length()+1; ++i) templateTable[i]=0;
+                //for (unsigned i=0; i<formatedDataSend.length(); ++i) templateTable[i]=formatedDataSend[i];
+                //debug(DEBUG_SEND, "\n\r     - envoi au crc: %02X,%02X,%02X,%02X,%02X,%02X ",templateTable[0],templateTable[1],templateTable[2],templateTable[3],templateTable[4],templateTable[5],templateTable[6]);
+
+                // templateValue = /*templateCRC->*/calculateCRC16(templateTable,formatedDataSend.size()-1); //atention pt un probleme de sortie du range
+                //templateValue = /*templateCRC->calculateCRC16*/CRC16_BUYPASS(formatedDataSend.c_str(),formatedDataSend.size()); //atention pt un probleme de sortie du range
+                templateValue =CRC16_BUYPASS(sneekpeek.c_str(),sneekpeek.size()); //patch
+
+                formatedDataSend.append(1,templateValue>>8);
+                formatedDataSend.append(1,templateValue & 0xFF);
             }
             formatedDataReceive.append(1,write(formatedDataSend[formatedDataSend.size()-2]));//templateValue>>8));
             //debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r -D: ");
             formatedDataReceive.append(1,write(formatedDataSend[formatedDataSend.size()-1]));//(templateValue & 0xFF));
             //debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r -E: ");
-            
-            
-             
+
+
+
             ///////////////////////
 
             //avant faut calculer les dernier byte grace a la version 2.0
@@ -399,34 +404,32 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
             // verification du CRC slave
             // CRC //
             templateValue = CRC16_BUYPASS(formatedDataReceive.c_str(),formatedDataReceive.size()-2);// utiliser les data de setting slave
-            
+
             if(((templateValue>>8)==(formatedDataReceive.at( formatedDataReceive.length()-2))) &&
-                 ((templateValue&0xFF)==(formatedDataReceive.at( formatedDataReceive.length()-1))))
-            {
+                    ((templateValue&0xFF)==(formatedDataReceive.at( formatedDataReceive.length()-1)))) {
                 result=true;
-                }
-                else
-                {
-                    result=false;
-                    }
+            } else {
+                result=false;
+            }
             //templateValue=((formatedDataReceive.at( formatedDataReceive.length()-2)) << 8);
             //templateValue|=formatedDataReceive.at(formatedDataReceive.length()-1);
 
-           // for (unsigned i=0; i<formatedDataReceive.length()-2; ++i) {
-           //     templateValue-=formatedDataReceive[i];
-           // }
-           // debug(DEBUG_SEND, "\n\r    -CRC==0? value: %i. ", templateValue);
-           // (templateValue==0)? result=true:result=false;
+            // for (unsigned i=0; i<formatedDataReceive.length()-2; ++i) {
+            //     templateValue-=formatedDataReceive[i];
+            // }
+            // debug(DEBUG_SEND, "\n\r    -CRC==0? value: %i. ", templateValue);
+            // (templateValue==0)? result=true:result=false;
         }
-                debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r     -Send   : ");
-        for (unsigned i=0; i<formatedDataSend.length(); i++) debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "%02X,",formatedDataSend.at(i));
+        debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r     -Send   : ");
+        for (unsigned i=0; i<sneekpeek.length(); i++) debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "%02X,",sneekpeek.at(i));
         debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM,         "\n\r     -Reveive: ");
         for (unsigned i=0; i<formatedDataReceive.length(); i++) debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "%02X,",formatedDataReceive.at(i));
         debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM,         "\n\r     -Sneekpe: ");
-        /*for (unsigned i=0; i<sneekpeek.length(); i++)*/ debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "%04X,",CRC16_BUYPASS(formatedDataReceive.c_str(),formatedDataReceive.size()-2));//sneekpeek.at(i));
-                                                          debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r-Sneekpe: %04X,",CRC16_BUYPASS(formatedDataSend.c_str(),formatedDataSend.size()-2));//sneekpeek.at(i));
-                                                          debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r-Sneekpe: %04X,",CRC16_BUYPASS(sneekpeek.c_str(),sneekpeek.size()-2));//sneekpeek.at(i));
-                                                          
+        /*for (unsigned i=0; i<sneekpeek.length(); i++)*/
+        debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "%04X,",CRC16_BUYPASS(formatedDataReceive.c_str(),formatedDataReceive.size()-2));//sneekpeek.at(i));
+        debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r-Sneekpe: %04X,",CRC16_BUYPASS(formatedDataSend.c_str(),formatedDataSend.size()-2));//sneekpeek.at(i));
+        debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r-Sneekpe: %04X,",CRC16_BUYPASS(sneekpeek.c_str(),sneekpeek.size()-2));//sneekpeek.at(i));
+
     }//templateValue = /*templateCRC->*/calculateCRC16(formatedDataSend.c_str(),formatedDataSend.size()-1);sneekpeek
 ///////////////////////
 //    // old //
@@ -508,7 +511,7 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
 //
 
 
-        
+
 
     if(result) {
         // Traitement de l'information //
@@ -518,13 +521,12 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
 
         // flag //
         flag->clear();
-        if((settingSlave>>6) != 0)
-        {
-        //string str = formatedDataReceive.substr( ((2+(settingMaster>>6))+1+1),(settingSlave>>6)); 
-        flag->append(formatedDataReceive.substr( ((2+(settingMaster>>6))+1+1),(settingSlave>>6)));// = &str;
-        
-        //debug(DEBUG_SLIM,         "\n\r         -flag get: ");
-        //for (unsigned i=0; i<str.length(); i++) debug(DEBUG_SLIM, "%02X,",str.at(i));
+        if((settingSlave>>6) != 0) {
+            //string str = formatedDataReceive.substr( ((2+(settingMaster>>6))+1+1),(settingSlave>>6));
+            flag->append(formatedDataReceive.substr( ((2+(settingMaster>>6))+1+1),(settingSlave>>6)));// = &str;
+
+            //debug(DEBUG_SLIM,         "\n\r         -flag get: ");
+            //for (unsigned i=0; i<str.length(); i++) debug(DEBUG_SLIM, "%02X,",str.at(i));
         }
         //twoBytesArray=formatedDataReceive[2];
         //!!!!! wtf is that cest claire que sa pete la com
@@ -552,50 +554,49 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
                 it++;
                 break;*/
 
-                /*default:
-                    formatedDataSend.append(1,0<<6);
-                    break;*/
-       // }
+        /*default:
+            formatedDataSend.append(1,0<<6);
+            break;*/
+        // }
 
         // ACK/NAK
         //
 
         // NDB //
         data->clear();
-        if((settingSlave&0x0F) != 0)
-        {
-        //string str = formatedDataReceive.substr( ((2+(settingMaster>>6))+1+(settingSlave>>6)+1),(settingSlave&0x0F)); 
-        data->append(formatedDataReceive.substr( ((2+(settingMaster>>6))+1+(settingSlave>>6)+1),(settingSlave&0x0F)));
-        
-        //debug(DEBUG_SLIM,         "\n\r         -data get: ");
-        //for (unsigned i=0; i<str.length(); i++) debug(DEBUG_SLIM, "%02X,",str.at(i));
+        if((settingSlave&0x0F) != 0) {
+            //string str = formatedDataReceive.substr( ((2+(settingMaster>>6))+1+(settingSlave>>6)+1),(settingSlave&0x0F));
+            data->append(formatedDataReceive.substr( ((2+(settingMaster>>6))+1+(settingSlave>>6)+1),(settingSlave&0x0F)));
+
+            //debug(DEBUG_SLIM,         "\n\r         -data get: ");
+            //for (unsigned i=0; i<str.length(); i++) debug(DEBUG_SLIM, "%02X,",str.at(i));
         }
         //!!!!! same shit faut rebild la chose en bas
-       /* switch(settingSlave&0xFF) {
-            case 1:
-                data->append(1,*it);
-                it++;
-                break;
+        /* switch(settingSlave&0xFF) {
+             case 1:
+                 data->append(1,*it);
+                 it++;
+                 break;
 
-            case 2:
-                data->append(1,*it);
-                it++;
-                data->append(1,*it);
-                it++;
-                break;
+             case 2:
+                 data->append(1,*it);
+                 it++;
+                 data->append(1,*it);
+                 it++;
+                 break;
 
-            case 3:
-                data->append(1,*it);
-                it++;
-                data->append(1,*it);
-                it++;
-                data->append(1,*it);
-                it++;
-                break;*/
+             case 3:
+                 data->append(1,*it);
+                 it++;
+                 data->append(1,*it);
+                 it++;
+                 data->append(1,*it);
+                 it++;
+                 break;*/
 
-                /*default:
+        /*default:
 
-                    break;*/
+            break;*/
         //}
     }
 

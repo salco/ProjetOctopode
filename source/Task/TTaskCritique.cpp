@@ -40,7 +40,7 @@ void TTaskCritique::criticalTreatment(char adresse)
 
 void TTaskCritique::task(void)
 {
-    //debug("\n\rPeanut");
+    debug("\n\rPeanut");
     //pas sur que c'Est tout ce qui doit etre ici mais je vois pas quoi d'autre pour le moment.
     string flag,data;
 

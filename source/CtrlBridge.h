@@ -8,7 +8,7 @@
 #ifndef CTRLBRIDGE_H
 #define CTRLBRIDGE_H
 
-#define DEBUG_INITMODULE 0
+#define DEBUG_INITMODULE 1
 #define DEBUF_FINDMODULE 1
 #define DEBUF_SEND 1
 
