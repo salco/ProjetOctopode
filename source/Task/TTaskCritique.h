@@ -12,13 +12,13 @@
 
 class TTaskCritique : public TTask
 {
-    string m_ListDesModules;
+    //string m_ListDesModules;
     bool tymy;
     
     void forceShutDown(bool offON);
     void criticalTreatment(char adresse);
-    protected:
-    CtrlBridge* m_CtrlBridge;
+    //protected:
+    //CtrlBridge* m_CtrlBridge;
     virtual void task(void);
     
     public:

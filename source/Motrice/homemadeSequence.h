@@ -7,6 +7,13 @@
 
 #ifndef HOMEMADESEQUENCE_H_
 #define HOMEMADESEQUENCE_H_
+
+#define DEBUG_HOMEMADE_GETFRAME 1
+#define DEBUG_HOMEMADE_NEXTFRAME 0
+#define DEBUG_HOMEMADE_PREVFRAME 0
+
+#include "debug.h"
+
 class homemadeSequence
 {
     //////////////////////////////
@@ -26,6 +33,7 @@ class homemadeSequence
     char m_idFrame;
 
     unsigned char m_posLeg[4];
+    
 
     void seqUpDown(bool downUP,char idOperation,char idLeg);
     void seqTurn(bool leftRIGHT,char idOperation,char idLeg);

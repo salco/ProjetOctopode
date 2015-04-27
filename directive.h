@@ -8,14 +8,18 @@
 #ifndef DIRECTIVE_H
 #define DIRECTIVE_H
 
+#define DEBUG_DIRECTIVE_TEST 1
+
 #include "mbed.h"
+#include "debug.h"
 #include "source/Task/TTask.h"
 #include "Motrice/mouvement.h"
 
 class Directive : public TTask
 {
-
+    CtrlBridge* m_CtrlBridge;
     Faculter_motrice *ctrDesPattes;
+    Serial *ssc32;
     char c;
 protected:
     virtual void task(void);

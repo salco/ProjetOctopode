@@ -58,42 +58,40 @@ Faculter_motrice::~Faculter_motrice()
 }
 void Faculter_motrice::exec(void)
 {
-#ifdef DEBUG
-    m_com->printf("Flag in exec [%i  :: %i ] \n\r",m_ForceStop,m_seq->get_Sequence());
-#endif
+    debug(DEBUG_MOUVEMENT,"\n\r In Faculter Mott");
+    debug(DEBUG_MOUVEMENT,"\n\r  Flag in exec [%i  :: %i ] \n\r",m_ForceStop,m_seq->get_Sequence());
     if((!m_ForceStop)&&(m_seq->get_Sequence() != 0)) {
         unsigned char* tempLeg;
 
 
 
         switch(m_seq->get_Sequence()) {
-            case 1:
+            default:
                 tempLeg=m_seq->get_frame(m_arr_D->id());
                 m_arr_D->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
                 //...//
                 if(m_seq->next_frame() == false) {
                     m_ForceStop=true;
-#ifdef DEBUG
-                    m_com->printf("    Flag next impossible \n\r",m_ForceStop,m_seq->get_Sequence());
-#endif
+
+                    debug(DEBUG_EXEC,"    Flag next impossible \n\r",m_ForceStop,m_seq->get_Sequence());
+
                 }
-                #ifdef DEBUG
                 else
-                    m_com->printf("    Flag next possible \n\r",m_ForceStop,m_seq->get_Sequence());
-#endif
+                    debug(DEBUG_EXEC,"    Flag next possible \n\r",m_ForceStop,m_seq->get_Sequence());
+
                 break;
         }
         //char buffer[50];
         //scanf(buffer,"%s T%d\n\r",m_arr_D->toString(),DELAITESTE);
-        m_com->printf("%s T%d\n\r",m_arr_D->toString(),DELAITESTE);
-
+        //m_com->printf("%s T%d\n\r",m_arr_D->toString(),DELAITESTE); //move to sendSequence()
+        
+        debug(DEBUG_MOUVEMENT,"\n\r   %s T%d\n\r",m_arr_D->toString(),DELAITESTE);
+        sendSequence();
         /*
                     tempLeg=m_seq->get_frame(m_arr_D->id());
         m_com->printf("This program is %d .\n", tempLeg[0]);*/
     }
-#ifdef DEBUG
-    m_com->printf("Flag out exec [%i  :: %i ] \n\r",m_ForceStop,m_seq->get_Sequence());
-#endif
+debug(DEBUG_MOUVEMENT,"\n\r Out Faculter Mott");
 }
 /*void Faculter_motrice::moveLeft (void)
 {
@@ -132,4 +130,34 @@ void Faculter_motrice::crit_stop(void)
     m_com->printf("#0L #1L #2L #3L #4L #5L #6L #7L #8L #9L #10L #11L #12L #13L #14L #15L #16L #17L #18L #19L #20L #21L #22L #23L #24L #25L #26L #27L #28L #29L #30L #31L #32L\n\r");
     m_ForceStop=true;
     m_CriticalStop=true;
+}
+
+void Faculter_motrice::sendSequence(void)
+{
+    debug(DEBUG_SENDSEQ,"\n\r   in sendSeq\n\r"); 
+    m_com->printf("%s T%d\n\r",m_arr_D->toString(),DELAITESTE);
+    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_arr_D->toString(),DELAITESTE);
+    
+    m_com->printf("%s T%d\n\r",m_arr_G->toString(),DELAITESTE);
+    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_arr_G->toString(),DELAITESTE);    
+
+    m_com->printf("%s T%d\n\r",m_arr_mil_D->toString(),DELAITESTE);
+    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_arr_mil_D->toString(),DELAITESTE);
+    
+    m_com->printf("%s T%d\n\r",m_arr_mil_G->toString(),DELAITESTE);
+    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_arr_mil_G->toString(),DELAITESTE);
+
+    m_com->printf("%s T%d\n\r",m_avv_mil_D->toString(),DELAITESTE);
+    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_avv_mil_D->toString(),DELAITESTE);
+    
+    m_com->printf("%s T%d\n\r",m_avv_mil_G->toString(),DELAITESTE);
+    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_avv_mil_G->toString(),DELAITESTE);
+
+    m_com->printf("%s T%d\n\r",m_avv_D->toString(),DELAITESTE);
+    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_avv_D->toString(),DELAITESTE);
+
+    m_com->printf("%s T%d\n\r",m_avv_G->toString(),DELAITESTE);
+    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_avv_G->toString(),DELAITESTE);
+    
+    debug(DEBUG_SENDSEQ,"\n\r\n\r   out sendSeq");
 }

@@ -69,7 +69,7 @@ public:
     }
     const char* toString(void){
        
-       sprintf (buffer,"#%d P%d #%d P%d #%d P%d #%d P%d",m_Coxa.iD,m_Coxa.curr,m_Femur.iD,m_Femur.curr,m_Tibia.iD,m_Tibia.curr,m_Tars.iD,m_Tars.curr);
+       sprintf (buffer,"#%d P%d0 #%d P%d0 #%d P%d0 #%d P%d0",m_Coxa.iD,m_Coxa.curr,m_Femur.iD,m_Femur.curr,m_Tibia.iD,m_Tibia.curr,m_Tars.iD,m_Tars.curr);
        return buffer;
         }
     //setting Coxa //
@@ -232,7 +232,7 @@ public:
             m_Tars.curr = value;
     }
     void move(unsigned char coxaValue,unsigned char femurValue,
-              unsigned char tibiaValue,unsigned char tarsValue) {
+              unsigned char tibiaValue,unsigned char tarsValue) {//noob proof
         if((coxaValue >= m_Coxa.min)&&(coxaValue <= m_Coxa.max ))
             m_Coxa.curr = coxaValue;
         if((femurValue >= m_Femur.min)&&(femurValue <= m_Femur.max ))

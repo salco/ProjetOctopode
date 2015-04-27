@@ -24,10 +24,13 @@
 #define MOUVEMENT_H_
 
 #define DELAITESTE 1000
-#define DEBUG
+#define DEBUG_MOUVEMENT 1
+#define DEBUG_EXEC 1
+#define DEBUG_SENDSEQ 1
 
 #include "mbed.h"
 //#include <string>
+#include "debug.h"
 //#include <stdio.h>
 #include "Patte.h"
 #include "homemadeSequence.h"
@@ -64,7 +67,7 @@ class Faculter_motrice
 // char m_SequenceChosen;
 // A enlever au plus vite car sa prend beaucoup d'espace //
 
-
+   void sendSequence(void);
 public:
 #ifdef DEBUG
     char get_idSeq(void){return m_seq->get_Sequence();}
@@ -83,30 +86,39 @@ public:
     void crit_stop(void);
     
     void moveLeft (void) {
+        m_ForceStop=false;
         m_seq->set_Sequence(9);
     }
     void moveRight(void){
+        m_ForceStop=false;
         m_seq->set_Sequence(10);
     }
     void moveUp   (void){
+        m_ForceStop=false;
         m_seq->set_Sequence(2);
     }
     void moveDown (void){
+        m_ForceStop=false;
         m_seq->set_Sequence(3);
     }
     void moveFront(void){
+        m_ForceStop=false;
         m_seq->set_Sequence(6);
     }
     void moveBack (void){
+        m_ForceStop=false;
         m_seq->set_Sequence(7);
     }
     void turnLeft (void){
+        m_ForceStop=false;
         m_seq->set_Sequence(4);
     }
     void trunRight(void){
+        m_ForceStop=false;
         m_seq->set_Sequence(5);
     }
     void calibre  (void){
+        m_ForceStop=false;
         m_seq->set_Sequence(1);
     }
     //void repositioner(char idLeg);

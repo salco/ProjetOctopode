@@ -22,12 +22,15 @@ private:
 
 protected:
     static TTask *ptrThis;
-    //CtrlBridge* m_CtrlBridge;
+    string m_ListDesModules;
+    CtrlBridge* m_CtrlBridge;
 
 public:
     TTask(int priority=0) {
         m_priority=priority;
         m_priorityCount=0;
+        m_CtrlBridge = m_CtrlBridge->getInstance();
+        
     }
     virtual ~TTask() {
     }

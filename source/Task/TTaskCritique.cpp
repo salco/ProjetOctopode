@@ -3,7 +3,7 @@
 
 TTaskCritique::TTaskCritique(int priority):TTask(priority)
 {
-    m_CtrlBridge = m_CtrlBridge->getInstance();
+    //m_CtrlBridge = m_CtrlBridge->getInstance();
 
     m_CtrlBridge->initCom();
     m_ListDesModules = m_CtrlBridge->findModule(0,0,0,0); //get all modules
