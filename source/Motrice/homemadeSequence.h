@@ -28,6 +28,7 @@ class homemadeSequence
     // 08 - Repositioner        //
     // 09 - Crabe  Gauche       //
     // 10 - Crabe  Droite       //
+    // 11 - recalibration legs  //
     //////////////////////////////
     char m_SequenceChosen;
     char m_idFrame;
@@ -53,6 +54,7 @@ public:
     }
     unsigned char* get_frame(/*char idSequence,*/char idOperation,char idLeg);
     unsigned char* get_frame(/*char idSequence,char idOperation,*/char idLeg);
+    void set_frameID(char position) {m_idFrame = position;};
     bool next_frame(void); //return true if you are not at the end
     bool prev_frame(void); //return true if you are not at the begining
 };

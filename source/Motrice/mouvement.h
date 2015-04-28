@@ -74,7 +74,8 @@ public:
 #endif
     Faculter_motrice(Serial* com);
     virtual ~Faculter_motrice();
-
+    
+    
     void exec(void);
     void stop(void) {
         m_ForceStop= true;
