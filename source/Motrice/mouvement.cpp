@@ -68,38 +68,46 @@ void Faculter_motrice::exec(void)
         //switch(m_seq->get_Sequence()) {
         //    default:
                 tempLeg=m_seq->get_frame(m_arr_D->id());
-                m_arr_D->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
+                if((tempLeg[0]!=255) && (tempLeg[1]!=255) && (tempLeg[2]!=255) && (tempLeg[3]!=255))
+                    m_arr_D->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
                 
                 tempLeg=m_seq->get_frame(m_arr_G->id());
-                m_arr_G->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
+                if((tempLeg[0]!=255) && (tempLeg[1]!=255) && (tempLeg[2]!=255) && (tempLeg[3]!=255))
+                    m_arr_G->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
                 
                 tempLeg=m_seq->get_frame(m_arr_mil_D->id());
-                m_arr_mil_D->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
+                if((tempLeg[0]!=255) && (tempLeg[1]!=255) && (tempLeg[2]!=255) && (tempLeg[3]!=255))
+                    m_arr_mil_D->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
                 
                 tempLeg=m_seq->get_frame(m_arr_mil_G->id());
-                m_arr_mil_G->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
+                if((tempLeg[0]!=255) && (tempLeg[1]!=255) && (tempLeg[2]!=255) && (tempLeg[3]!=255))
+                    m_arr_mil_G->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
                 
                 tempLeg=m_seq->get_frame(m_avv_mil_D->id());
-                m_avv_mil_D->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
+                if((tempLeg[0]!=255) && (tempLeg[1]!=255) && (tempLeg[2]!=255) && (tempLeg[3]!=255))
+                    m_avv_mil_D->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
                 
                 tempLeg=m_seq->get_frame(m_avv_mil_G->id());
-                m_avv_mil_G->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
+                if((tempLeg[0]!=255) && (tempLeg[1]!=255) && (tempLeg[2]!=255) && (tempLeg[3]!=255))
+                    m_avv_mil_G->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
                 
                 tempLeg=m_seq->get_frame(m_avv_D->id());
-                m_avv_D->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
+                if((tempLeg[0]!=255) && (tempLeg[1]!=255) && (tempLeg[2]!=255) && (tempLeg[3]!=255))
+                    m_avv_D->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
                 
                 tempLeg=m_seq->get_frame(m_avv_G->id());
-                m_avv_G->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
+                if((tempLeg[0]!=255) && (tempLeg[1]!=255) && (tempLeg[2]!=255) && (tempLeg[3]!=255))
+                    m_avv_G->move(tempLeg[0],tempLeg[1],tempLeg[2],tempLeg[3]);
                 
         //        //...//
                 if(m_seq->next_frame() == false) {
                     m_ForceStop=true;
 
-                    debug(DEBUG_EXEC,"    Flag next impossible \n\r",m_ForceStop,m_seq->get_Sequence());
+                    debug(DEBUG_EXEC,"    Flag next impossible \n\r");
 
                 }
                 else
-                    debug(DEBUG_EXEC,"    Flag next possible \n\r",m_ForceStop,m_seq->get_Sequence());
+                    debug(DEBUG_EXEC,"    Flag next possible \n\r");
 
         //        break;
         //}

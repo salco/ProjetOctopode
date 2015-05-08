@@ -4,10 +4,15 @@
 Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les fois que TTaskGen sexecute.
 {
     c=0;
-    ssc32 = new Serial(PA_9, PA_10);
-    ctrDesPattes = new Faculter_motrice(ssc32/*pc*/);
+    ssc32 = new /*Serial*/RawSerial(PA_9, PA_10);
+    //ctrDesPattes = new Faculter_motrice(ssc32/*pc*/);
     //m_CtrlBridge = m_CtrlBridge->getInstance();
     //a enlever de commentaire//m_ListDesModules = m_CtrlBridge->findModule(0,1,0,0);
+    
+     // Serial pc(USBTX, USBRX);
+ 
+    //ssc32->set_flow_control(0);
+    ssc32->putc('G');//printf("Hello World\n");
 }
 Directive::~Directive()
 {
@@ -87,7 +92,10 @@ debug(DEBUG_DIRECTIVE_TEST,"\n\rResult : %02i",buttonCount);
             ctrDesPattes->exec();
             //ctrDesPattes->resume();
         break;
-                      
+        
+        case 7:
+            ctrDesPattes->moveLeft();
+            ctrDesPattes->exec();           
         default:
         break;
         }

@@ -13,6 +13,7 @@
 #define DEBUG_HOMEMADE_PREVFRAME 0
 
 #include "debug.h"
+#include "mbed.h"
 
 class homemadeSequence
 {
@@ -32,7 +33,9 @@ class homemadeSequence
     //////////////////////////////
     char m_SequenceChosen;
     char m_idFrame;
-
+    
+    Timer delaisNextSeq;
+    int delaisNeed;
     unsigned char m_posLeg[4];
     
 
@@ -48,6 +51,8 @@ public:
     void set_Sequence(char idSequence) {
         m_SequenceChosen = idSequence;
         m_idFrame = 1;
+        delaisNextSeq.reset();
+        delaisNeed=0;
     }
     char get_Sequence(void) {
         return m_SequenceChosen;

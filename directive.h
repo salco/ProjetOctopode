@@ -19,7 +19,7 @@ class Directive : public TTask
 {
     CtrlBridge* m_CtrlBridge;
     Faculter_motrice *ctrDesPattes;
-    Serial *ssc32;
+    /*Serial*/RawSerial *ssc32;
     char c;
 protected:
     virtual void task(void);
