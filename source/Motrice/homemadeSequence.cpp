@@ -248,14 +248,15 @@ unsigned char table_seqRepositionne[6][8][3] = {
         /*16*/{181, 83,166}, /*20*/{187, 78,161}, /*24*/{194, 78,161}, /*28*/{181, 81,167}
     }
 };
-unsigned char table_seqFoward_PAUSE_TIME[41][2] ={
+unsigned char table_seqFoward_PAUSE_TIME[41][2] = {
     { 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 21, 20},{ 61, 50},
     { 21, 20},{ 51, 50},{ 21, 20},{ 21, 20},{ 31, 30},{ 51, 50},{ 16, 15},{ 21, 30},{ 50,100},{ 21, 20},
     { 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 51, 50},{ 21, 20},{ 41, 45},
     { 11, 10},{ 16, 15},{ 15, 15},{ 21, 20},{ 21, 20},{ 51, 50},
     { 15, 15},{ 21, 20},{ 21, 20},{ 51, 50},
-    { 15, 15},{ 21, 20},{ 21, 20},{ 51, 50}};
-unsigned char table_seqFoward[41][8][3] ={
+    { 15, 15},{ 21, 20},{ 21, 20},{ 51, 50}
+};
+unsigned char table_seqFoward[41][8][3] = {
     {   /* 0*/{103,206,176}, /* 4*/{255,255,255}, /* 8*/{255,255,255}, /*12*/{255,255,255},
         /*16*/{255,255,255}, /*20*/{213, 85,118}, /*24*/{255,255,255}, /*28*/{255,255,255}
     },
@@ -380,11 +381,12 @@ unsigned char table_seqFoward[41][8][3] ={
         /*16*/{255,255,255}, /*20*/{255,255,255}, /*24*/{255,255,255}, /*28*/{255,255,255}
     }
 };
-unsigned char table_seqBackward_PAUSE_TIME[33][2] ={
+unsigned char table_seqBackward_PAUSE_TIME[33][2] = {
     { 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 31, 30},{ 61, 50},
     { 21, 20},{ 21, 20},{ 31, 30},{ 51, 50},{ 21, 20},{ 21, 20},{ 31, 30},{ 51, 50},{ 16, 15},{ 21, 30},
     { 50,100},{ 21, 20},{ 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 51, 45},{ 21, 20},{ 41, 45},{ 21, 20},
-    { 21, 20},{ 31, 30},{ 31, 50}};
+    { 21, 20},{ 31, 30},{ 31, 50}
+};
 unsigned char table_seqBackward[33][8][3] = {
     {   /* 0*/{255,255,255}, /* 4*/{255,255,255}, /* 8*/{ 92,211,171}, /*12*/{255,255,255},
         /*16*/{255,255,255}, /*20*/{255,255,255}, /*24*/{255,255,255}, /*28*/{200, 86,124}
@@ -546,12 +548,16 @@ unsigned char* homemadeSequence::get_frame(/*char idSequence,char idOperation,*/
             seqUpDown(false,m_idFrame,idLeg);//seqUpDown(false,idOperation,idLeg);
             break;
         case 4:// 04 - Tourne Gauche       //
+            seqTurn(false,m_idFrame,idLeg);
             break;
         case 5:// 05 - Tourne Droite       //
+            seqTurn(true,m_idFrame,idLeg);
             break;
         case 6:// 06 - Marche              //
+            seqWalk(true,m_idFrame,idLeg);
             break;
         case 7:// 07 - Recule              //
+            seqWalk(false,m_idFrame,idLeg);
             break;
         case 8:// 07 - Repositioner        //
             seqRepositioner(m_idFrame,idLeg);
@@ -808,7 +814,28 @@ void homemadeSequence::seqTurn(bool leftRIGHT,char idOperation,char idLeg)
         for(int i=0; i <= 3; i++) m_posLeg[i]=0;
 }
 void homemadeSequence::seqWalk(bool backFRONT,char idOperation,char idLeg)
-{}
+{
+    if(backFRONT) {
+        if(idOperation<41) {
+            for(int i=1; i <= 3; i++) m_posLeg[i]=table_seqFoward[idOperation-1][idLeg-1][i-1];
+            delaisNeed = (table_seqFoward_PAUSE_TIME[idOperation-1][0])*10;
+            timeSequence[idLeg-1] = table_seqFoward_PAUSE_TIME[idOperation-1][1];
+
+            //manque qqch ici
+        } else
+            for(int i=0; i <= 3; i++) m_posLeg[i]=0;
+
+    } else {
+        if(idOperation<33) {
+            for(int i=1; i <= 3; i++) m_posLeg[i]=table_seqBackward[idOperation-1][idLeg-1][i-1];
+            delaisNeed = (table_seqBackward_PAUSE_TIME[idOperation-1][0])*10;
+            timeSequence[idLeg-1] = table_seqBackward_PAUSE_TIME[idOperation-1][1];
+
+            //manque qqch ici
+        } else
+            for(int i=0; i <= 3; i++) m_posLeg[i]=0;
+    }
+}
 void homemadeSequence::seqRepositioner(char idOperation,char idLeg)
 {
     if(idOperation<6) {
