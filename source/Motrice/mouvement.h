@@ -23,7 +23,7 @@
 #ifndef MOUVEMENT_H_
 #define MOUVEMENT_H_
 
-#define DELAITESTE 1000
+
 #define DEBUG_MOUVEMENT 1
 #define DEBUG_EXEC 1
 #define DEBUG_SENDSEQ 1
@@ -118,9 +118,10 @@ public:
         m_ForceStop=false;
         m_seq->set_Sequence(5);
     }
-    void calibre  (void){
+    void calibre  (char idLeg){
         m_ForceStop=false;
         m_seq->set_Sequence(1);
+        m_seq->set_leg(idLeg);
     }
     //void repositioner(char idLeg);
 

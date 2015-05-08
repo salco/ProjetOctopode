@@ -115,7 +115,7 @@ void Faculter_motrice::exec(void)
         //scanf(buffer,"%s T%d\n\r",m_arr_D->toString(),DELAITESTE);
         //m_com->printf("%s T%d\n\r",m_arr_D->toString(),DELAITESTE); //move to sendSequence()
         
-        //debug(DEBUG_MOUVEMENT,"\n\r   %s T%d\n\r",m_arr_D->toString(),DELAITESTE);
+        //debug(DEBUG_MOUVEMENT,"\n\r   %s T%d\n\r",m_arr_D->toString(),);
         sendSequence();
         /*
                     tempLeg=m_seq->get_frame(m_arr_D->id());
@@ -165,29 +165,29 @@ void Faculter_motrice::crit_stop(void)
 void Faculter_motrice::sendSequence(void)
 {
     debug(DEBUG_SENDSEQ,"\n\r   in sendSeq\n\r"); 
-    m_com->printf("%s T%d\n\r",m_arr_D->toString(),DELAITESTE);
-    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_arr_D->toString(),DELAITESTE);
+    m_com->printf("%s T%d\n\r",m_arr_D->toString(),m_seq->get_Time(m_arr_D->id()));
+    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_arr_D->toString(),m_seq->get_Time(m_arr_D->id()));
     
-    m_com->printf("%s T%d\n\r",m_arr_G->toString(),DELAITESTE);
-    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_arr_G->toString(),DELAITESTE);    
+    m_com->printf("%s T%d\n\r",m_arr_G->toString(),m_seq->get_Time(m_arr_G->id()));
+    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_arr_G->toString(),m_seq->get_Time(m_arr_G->id()));    
 
-    m_com->printf("%s T%d\n\r",m_arr_mil_D->toString(),DELAITESTE);
-    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_arr_mil_D->toString(),DELAITESTE);
+    m_com->printf("%s T%d\n\r",m_arr_mil_D->toString(),m_seq->get_Time(m_arr_mil_D->id()));
+    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_arr_mil_D->toString(),m_seq->get_Time(m_arr_mil_D->id()));
     
-    m_com->printf("%s T%d\n\r",m_arr_mil_G->toString(),DELAITESTE);
-    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_arr_mil_G->toString(),DELAITESTE);
+    m_com->printf("%s T%d\n\r",m_arr_mil_G->toString(),m_seq->get_Time(m_arr_mil_G->id()));
+    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_arr_mil_G->toString(),m_seq->get_Time(m_arr_mil_G->id()));
 
-    m_com->printf("%s T%d\n\r",m_avv_mil_D->toString(),DELAITESTE);
-    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_avv_mil_D->toString(),DELAITESTE);
+    m_com->printf("%s T%d\n\r",m_avv_mil_D->toString(),m_seq->get_Time(m_avv_mil_D->id()));
+    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_avv_mil_D->toString(),m_seq->get_Time(m_avv_mil_D->id()));
     
-    m_com->printf("%s T%d\n\r",m_avv_mil_G->toString(),DELAITESTE);
-    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_avv_mil_G->toString(),DELAITESTE);
+    m_com->printf("%s T%d\n\r",m_avv_mil_G->toString(),m_seq->get_Time(m_avv_mil_G->id()));
+    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_avv_mil_G->toString(),m_seq->get_Time(m_avv_mil_G->id()));
 
-    m_com->printf("%s T%d\n\r",m_avv_D->toString(),DELAITESTE);
-    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_avv_D->toString(),DELAITESTE);
+    m_com->printf("%s T%d\n\r",m_avv_D->toString(),m_seq->get_Time(m_avv_D->id()));
+    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_avv_D->toString(),m_seq->get_Time(m_avv_D->id()));
 
-    m_com->printf("%s T%d\n\r",m_avv_G->toString(),DELAITESTE);
-    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_avv_G->toString(),DELAITESTE);
+    m_com->printf("%s T%d\n\r",m_avv_G->toString(),m_seq->get_Time(m_avv_G->id()));
+    debug(DEBUG_SENDSEQ,"\n\r   %s T%d",m_avv_G->toString(),m_seq->get_Time(m_avv_G->id()));
     
     debug(DEBUG_SENDSEQ,"\n\r\n\r   out sendSeq");
 }
