@@ -62,6 +62,7 @@ debug(DEBUG_DIRECTIVE_TEST,"\n\rResult : %02i",buttonCount);
     switch(buttonCount){
         case 2:
             ctrDesPattes->calibre(1);
+            ctrDesPattes->calibre(2);
             ctrDesPattes->exec();
         break;
         
