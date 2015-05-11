@@ -248,15 +248,15 @@ unsigned char table_seqRepositionne[6][8][3] = {
         /*16*/{181, 83,166}, /*20*/{187, 78,161}, /*24*/{194, 78,161}, /*28*/{181, 81,167}
     }
 };
-unsigned char table_seqFoward_PAUSE_TIME[41][2] = {
-    { 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 21, 20},{ 61, 50},
+unsigned char table_seqFoward_PAUSE_TIME[42][2] = {
+    { 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 21, 20},{  0, 45},{ 61, 50},
     { 21, 20},{ 51, 50},{ 21, 20},{ 21, 20},{ 31, 30},{ 51, 50},{ 16, 15},{ 21, 30},{ 50,100},{ 21, 20},
     { 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 51, 50},{ 21, 20},{ 41, 45},
     { 11, 10},{ 16, 15},{ 15, 15},{ 21, 20},{ 21, 20},{ 51, 50},
     { 15, 15},{ 21, 20},{ 21, 20},{ 51, 50},
     { 15, 15},{ 21, 20},{ 21, 20},{ 51, 50}
 };
-unsigned char table_seqFoward[41][8][3] = {
+unsigned char table_seqFoward[42][8][3] = {
     {   /* 0*/{103,206,176}, /* 4*/{255,255,255}, /* 8*/{255,255,255}, /*12*/{255,255,255},
         /*16*/{255,255,255}, /*20*/{213, 85,118}, /*24*/{255,255,255}, /*28*/{255,255,255}
     },
@@ -286,6 +286,9 @@ unsigned char table_seqFoward[41][8][3] = {
     },
     {   /* 0*/{127,186,156}, /* 4*/{255,255,139}, /* 8*/{115,217,142}, /*12*/{255,255,255},
         /*16*/{255,255,255}, /*20*/{255,255,255}, /*24*/{255,255,255}, /*28*/{179, 81,167}
+    },
+    {   /* 0*/{255,255,255}, /* 4*/{255,255,255}, /* 8*/{255,255,255}, /*12*/{255,255,255},
+        /*16*/{255,255,255}, /*20*/{255,255,255}, /*24*/{255,255,255}, /*28*/{255,255,255}
     },
     {   /* 0*/{255,255,255}, /* 4*/{255,255,255}, /* 8*/{ 88,207,190}, /*12*/{255,255,255},
         /*16*/{255,255,255}, /*20*/{255,255,255}, /*24*/{255,255,255}, /*28*/{255,255,255}
@@ -822,6 +825,73 @@ void homemadeSequence::seqWalk(bool backFRONT,char idOperation,char idLeg)
             timeSequence[idLeg-1] = table_seqFoward_PAUSE_TIME[idOperation-1][1];
 
             //manque qqch ici
+            switch(idOperation)
+            {
+                case 3:
+                if(idLeg == 1) m_posLeg[0] = 150;
+                else if(idLeg == 6) m_posLeg[0] = 123;
+                break;
+                
+                case 5:
+                if((idLeg ==1) || (idLeg==6)) 
+                    timeSequence[idLeg-1] = 30;
+                break;
+                
+                case 7:
+                if(idLeg == 3)m_posLeg[0] = 187;
+                else if(idLeg == 8) m_posLeg[0] = 123;
+                break;
+                
+                case 11:
+                switch(idLeg)
+                {
+                    case 1:
+                        m_posLeg[0] = 130;
+                    break;
+                    case 2:
+                        m_posLeg[0] = 140;
+                    break;
+                    case 3:
+                        m_posLeg[0] = 160;
+                    break;
+                    case 4:
+                        m_posLeg[0] = 117;
+                    break;
+                    case 5:
+                        m_posLeg[0] = 179;
+                    break;
+                    case 6:
+                        m_posLeg[0] = 134;
+                    break;
+                    case 7:
+                        m_posLeg[0] = 183;
+                    break;
+                    case 8:
+                        m_posLeg[0] = 144;
+                    break;
+                }
+                break;
+                
+                case 16:
+                if(idLeg == 1) m_posLeg[0] = 137;
+                break;
+                
+                case 20:
+                if(idLeg == 5) m_posLeg[0] = 176;
+                else if(idLeg == 7) m_posLeg[0] = 160;
+                break;
+                
+                case 22:
+                if((idLeg ==2) || (idLeg==7)) 
+                    timeSequence[idLeg-1] = 30;
+                break;
+                
+                case 24:
+                if(idLeg == 4) m_posLeg[0] = 177;
+                else if(idLeg == 5) m_posLeg[0] = 133;
+                break;
+                    
+            }
         } else
             for(int i=0; i <= 3; i++) m_posLeg[i]=0;
 
