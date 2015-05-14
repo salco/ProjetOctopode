@@ -144,7 +144,7 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
 
     if(portID < 1) portID = 0;
     else if(portID > 16) portID = 16;
-    debug(DEBUG_SEND, "\n\r     -Change PORT. ");
+    debug(DEBUG_SEND| DEBUG_COMPACT, "\n\r     -Change PORT. %02d",portID);
     m_demuxPos = portID;
     change_demux();
 
@@ -234,7 +234,7 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
 
 
     for(int retryLoop=0; (retryLoop<3) && (!result); retryLoop++) {
-
+        wait_us(3000);
         debug(DEBUG_SEND|DEBUG_COMPACT, "\n\r      -Tentative: %d \n\r",retryLoop);
         formatedDataReceive.clear();
         settingSlave =0;
@@ -252,12 +252,13 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
         for(int i = 0; (i < formatedDataSend.length()) && (i<=(2+(settingMaster>>6))); ++i) {
             formatedDataReceive.append(1,write(formatedDataSend[i]));//debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "\n\r -A:%i ",i);
             debug(DEBUG_SEND |DEBUG_COMPACT, " %02X,",formatedDataSend.at(i));
+            wait_us(3000);
         }
 
         if(formatedDataReceive[0] == SYNC) {
             debug(DEBUG_COMPACT, "\n\r    -Receve transmission. ");
             //!!!!!!!! Problem ici write dans un mais pas lautre
-            wait_us(3000);
+            //wait_us(3000);
             if(retryLoop == 0) {
                 formatedDataSend.append(1,0);//2,0); cest une patch tempo parce que je trouve pas ou il manque la donner
             }
@@ -266,6 +267,7 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
 
             settingSlave = formatedDataReceive[formatedDataReceive.length()-1];
             debug(DEBUG_COMPACT, "\n\r       -settingSlave %02X",settingSlave);
+            debug(DEBUG_COMPACT, "\n\r        -append %02X time(s)",settingSlave>>6);
             if(retryLoop == 0) {
                 /*switch(formatedDataReceive[formatedDataSend.length()-1] >> 6) {
                     case 1:
@@ -285,7 +287,6 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
                         //    break;
                 }*/
                 formatedDataSend.append(settingSlave>>6,0);
-                debug(DEBUG_COMPACT, "\n\r        -append %02X time(s)",settingSlave>>6);
             }
 
             int bufferFlag = 0;
@@ -299,16 +300,23 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
 
             counterTotale = ((2+(settingMaster>>6))+1);
             counterTotale = counterTotale+(settingSlave>>6)+abs((settingMaster & 0x0F) - (settingSlave & 0x0F));
+            debug(DEBUG_COMPACT, "\n\r    -Calcule: %02X=((2+(%02X))+1)+(%02X)+abs((%02X)-(%02X))",(((2+(settingMaster>>6))+1)+(settingSlave>>6)+abs((settingMaster & 0x0F) - (settingSlave & 0x0F))),(settingMaster>>6),(settingSlave>>6),(settingMaster & 0x0F),(settingSlave & 0x0F));
             //debug( "\n\r    -size : %02X",counterTotale);
-
+            debug( "\n\r    -size : %02X ,  %02X",formatedDataSend.size(),counterTotale);
             if(retryLoop == 0) {
-                debug( "\n\r    -size : %02X ,  %02X",formatedDataSend.size(),counterTotale);
-                if(formatedDataSend.size()<counterTotale) {
+                
+                if(formatedDataSend.size()<=counterTotale) {
                     formatedDataSend.append(counterTotale+1-formatedDataSend.size(),0);
                 }
+                else{
+                    debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM,         "\n\r     -Probleme de receive: ");
+                    for (unsigned i=0; i<formatedDataReceive.length(); i++) debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "%02X,",formatedDataReceive.at(i));
+                    debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM,         "\n\r     -Probleme de send: ");
+                    for (unsigned i=0; i<formatedDataSend.length(); i++) debug(DEBUG_SEND|DEBUG_COMPACT|DEBUG_SLIM, "%02X,",formatedDataSend.at(i));
+                    }
             }
 
-
+            debug( "\n\r    -size : %02X ,  %02X",formatedDataSend.size(),counterTotale);
             switch(bufferFlag) { //plus facile pour savoir ce que tu doit tatenre a recevoire
                 case 1://Request Init Info
                     if(retryLoop == 0) {

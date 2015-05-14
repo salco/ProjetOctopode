@@ -7,7 +7,6 @@ TTaskCritique::TTaskCritique(int priority):TTask(priority)
 
     m_CtrlBridge->initCom();
     m_ListDesModules = m_CtrlBridge->findModule(0,0,0,0); //get all modules
-
     tymy=true;
 }
 
@@ -47,8 +46,9 @@ void TTaskCritique::task(void)
     flag.append(1,0);//0x02);
     for(int i=0; i<m_ListDesModules.length(); ++i)
     {
+     wait_us(300);
      flag.clear();
-     flag.append(1,6);  
+     flag.append(1,7);  
      data.clear(); 
     debug("\n\r result: %d",m_CtrlBridge->send(m_ListDesModules.at(i),flag,data));
     if(flag[0]== 0x02)

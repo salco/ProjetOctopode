@@ -4,15 +4,21 @@
 Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les fois que TTaskGen sexecute.
 {
     c=0;
-    ssc32 = new /*Serial*/RawSerial(PA_9, PA_10);
-    //ctrDesPattes = new Faculter_motrice(ssc32/*pc*/);
+    ssc32 = new /*Serial*//*Raw*/Serial/*(USBTX, USBRX);*/(PB_6, PB_7);//(PA_9, PA_10);
+    ctrDesPattes = new Faculter_motrice(ssc32/*pc*/);
     //m_CtrlBridge = m_CtrlBridge->getInstance();
     //a enlever de commentaire//m_ListDesModules = m_CtrlBridge->findModule(0,1,0,0);
-    
-     // Serial pc(USBTX, USBRX);
- 
+
+    //Serial pc(USBTX, USBRX);
+
     //ssc32->set_flow_control(0);
-    ssc32->putc('G');//printf("Hello World\n");
+    debug("\n\r directive Init");//printf("Hello World\n");
+    m_ListDesModules = m_CtrlBridge->findModule(0,CAPTEUR,DISTANCE,0);
+    m_ListDesModules.append(m_CtrlBridge->findModule(0,CAPTEUR,PROXIMITEE,0));
+    
+    m_capteurUltrasonic= m_CtrlBridge->findModule(0,CAPTEUR,ULTRASONIQUE,0x27/*0b100111*/);
+    m_capteurIR= m_CtrlBridge->findModule(0,CAPTEUR,DISTANCE,0x27/*0b100111*/);
+    m_capteurProximiter= m_CtrlBridge->findModule(0,CAPTEUR,PROXIMITEE,0x0E/*0b001110*/);
 }
 Directive::~Directive()
 {
@@ -26,94 +32,29 @@ void Directive::task(void)//ALL CODE HERE//
 {
     debug(DEBUG_DIRECTIVE_TEST,"\n\rIn task directive");
     //pas sur que c'Est tout ce qui doit etre ici mais je vois pas quoi d'autre pour le moment.
-    string flag,data,savedData;
-    DigitalOut myled(LED1);
-    DigitalIn mybutton(USER_BUTTON);
+    string flag,data;
 
-    
-    //wait(1);// a enlever plus tard pour gain de vitesse//
     ////////////////
-// Inspection //
-////////////////
-
-    savedData.clear();
-
-   /* for(int i=0; i<m_ListDesModules.length(); ++i) {
-        flag.clear();
-        data.clear();
-        debug("\n\r result: %d",m_CtrlBridge->send(m_ListDesModules.at(i),flag,data));
-        if(data[0]!= 0x00)
-            savedData.append(data);
-    }*/
-    int buttonCount;
-    for(buttonCount =0; mybutton == 0; buttonCount++){
-        debug(DEBUG_DIRECTIVE_TEST,"\n\r %02i",buttonCount+1);
-        wait(1);
-        myled = 1;
-        wait_ms(500);
-        myled = 0;
-        }
-debug(DEBUG_DIRECTIVE_TEST,"\n\rResult : %02i",buttonCount);
-
-//////////////////////////////
-// Traitement du Labyrinthe //
-//////////////////////////////
-
-    switch(buttonCount){
-        case 2:
-            ctrDesPattes->calibre(1);
-            ctrDesPattes->calibre(2);
-            ctrDesPattes->exec();
-        break;
-        
-        case 6:
-            ctrDesPattes->stop();
-            ctrDesPattes->exec();
-            ctrDesPattes->resume();
-        break;
-        
-        case 3:
-            ctrDesPattes->moveUp();
-            ctrDesPattes->exec();
-        break;
-                
-        case 4:
-            ctrDesPattes->moveDown();
-            ctrDesPattes->exec();
-        break;  
-
-        case 5:
-            //ctrDesPattes->stop();
-            //ctrDesPattes->exec();
-            ctrDesPattes->resume();
-        break;
-        
-        case 1:
-            //ctrDesPattes->stop();
-            ctrDesPattes->exec();
-            //ctrDesPattes->resume();
-        break;
-        
-        case 7:
-            ctrDesPattes->moveLeft();
-            ctrDesPattes->exec();           
-        default:
-        break;
-        }
-        
-   /* if(savedData.size() != 0)
+    // Inspection //
+    ////////////////
+    flag.append(1,0);//0x02);
+    for(int i=0; i<m_ListDesModules.length(); ++i)
     {
-          ctrDesPattes->exec();
-    }*/
-    /*    if (c == 'g') {
-            ctrDesPattes->calibre();
-            c=0;
-        }
-        if(c == 'h') {
-            pc->printf(" ID seq: %i \n\r",ctrDesPattes->get_idSeq());
-            c=0;
-        }*/
-///////////////
+     wait_us(300);
+     flag.clear();
+     flag.append(1,7);  
+     data.clear(); 
+    debug("\n\r result: %d",m_CtrlBridge->send(m_ListDesModules.at(i),flag,data));
+    
+    debug("\n\r flag: %d",flag[0]);
+    debug("\n\r data: %x",data[0]);
+    
+    }
+    //////////////////////////////
+    // Traitement du Labyrinthe //
+    //////////////////////////////
+    
+    ///////////////
 // Mouvement //
 ///////////////
     //  ctrDesPattes.exec();
@@ -124,7 +65,5 @@ debug(DEBUG_DIRECTIVE_TEST,"\n\rResult : %02i",buttonCount);
 ////////////
 // Autre? //
 ////////////
-
-debug(DEBUG_DIRECTIVE_TEST,"\n\rOut task directive");
-
+    debug(DEBUG_DIRECTIVE_TEST,"\n\rOut task directive");
 }

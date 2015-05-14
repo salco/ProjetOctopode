@@ -24,9 +24,9 @@
 #define MOUVEMENT_H_
 
 
-#define DEBUG_MOUVEMENT 1
-#define DEBUG_EXEC 1
-#define DEBUG_SENDSEQ 1
+#define DEBUG_MOUVEMENT 0/*1*/
+#define DEBUG_EXEC 0/*1*/
+#define DEBUG_SENDSEQ 0/*1*/
 
 #include "mbed.h"
 //#include <string>
@@ -40,6 +40,7 @@ class Faculter_motrice
 {
     Serial* m_com;
     homemadeSequence* m_seq;
+    Timer delaisNextSeq;
 
     Patte *m_arr_D;
     char m_SequenceID_arr_D;
@@ -57,7 +58,7 @@ class Faculter_motrice
     char m_SequenceID_avv_G;
     Patte *m_avv_mil_G;
     char m_SequenceID_avv_mil_G;
-
+    
 // Flag //
     bool m_ForceStop; // use when you want pause the motion
     bool m_CriticalStop; // use to turn off all legs
@@ -75,7 +76,7 @@ public:
     Faculter_motrice(Serial* com);
     virtual ~Faculter_motrice();
     
-    
+    bool isSeqComplet(void){return m_ForceStop;}
     void exec(void);
     void stop(void) {
         m_ForceStop= true;
@@ -83,47 +84,61 @@ public:
     void resume(void) {
         m_ForceStop=false;
         m_CriticalStop=false;
+        delaisNextSeq.start();
     }
     void crit_stop(void);
     
     void moveLeft (void) {
         m_ForceStop=false;
         m_seq->set_Sequence(9);
+        delaisNextSeq.start();
     }
     void moveRight(void){
         m_ForceStop=false;
         m_seq->set_Sequence(10);
+        delaisNextSeq.start();
     }
     void moveUp   (void){
         m_ForceStop=false;
         m_seq->set_Sequence(2);
+        delaisNextSeq.start();
     }
     void moveDown (void){
         m_ForceStop=false;
         m_seq->set_Sequence(3);
+        delaisNextSeq.start();
     }
     void moveFront(void){
         m_ForceStop=false;
         m_seq->set_Sequence(6);
+        delaisNextSeq.start();
     }
     void moveBack (void){
         m_ForceStop=false;
         m_seq->set_Sequence(7);
+        delaisNextSeq.start();
     }
     void turnLeft (void){
         m_ForceStop=false;
         m_seq->set_Sequence(4);
+        delaisNextSeq.start();
     }
     void trunRight(void){
         m_ForceStop=false;
         m_seq->set_Sequence(5);
+        delaisNextSeq.start();
     }
-    void calibre  (char idLeg){
+    void calibre  (){
         m_ForceStop=false;
-        m_seq->set_Sequence(1);
-        m_seq->set_leg(idLeg);
+        m_seq->set_Sequence(11);
+        delaisNextSeq.start();
     }
-    //void repositioner(char idLeg);
+    void repositioner(char idLeg){
+        m_ForceStop=false;
+        m_seq->set_leg(idLeg);
+        m_seq->set_Sequence(8);
+        delaisNextSeq.start();
+    }
 
 
 

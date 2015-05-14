@@ -16,7 +16,7 @@ CtrlBridge::CtrlBridge()
     m_regPortUse=0;
     m_regPortLost=0;
     spiLowSpeed.format(8,0);
-    spiLowSpeed.frequency(10000);
+    spiLowSpeed.frequency(10000/**/);
 }
 
 CtrlBridge::~CtrlBridge()
@@ -148,7 +148,11 @@ bool CtrlBridge::send( const unsigned char &adresse,string &flag, string &data)
     if(m_Memory.isAdresseValide(adresse,moduleRequested)) {
 
         if(adresse&0x80)
+        {
+            debug(DEBUF_SEND, "\n\rPointeur SPI: %d",&spiLowSpeed);
+            //debug(DEBUF_SEND, "\n\rPointeur SPI: %p",spiLowSpeed);
             result = spiLowSpeed.send(moduleRequested.regB>>4,adresse,&flag,&data);
+            }
         else
             result = spiHighSpeed.send(moduleRequested.regB>>4,adresse,&flag,&data);
         //result = true;
@@ -172,14 +176,27 @@ string CtrlBridge::findModule(const char &peripheriqueID, const char &type, cons
 
     debug(DEBUF_FINDMODULE, "\n\r -Debut scan Actioneur");
     maxSize = m_Memory.getSizeActioneur();
+    debug(DEBUF_FINDMODULE, "\n\r  -MaxSize: %02d",maxSize);
     goodModule = true;
     moduleScan= m_Memory.firstActioneur();
 
     for(int i=0; i < maxSize; i++) {
-        if((peripheriqueID != 0) && (peripheriqueID != moduleScan.regB>>4)) goodModule =false;
-        else if((type != 0) && (type != moduleScan.regD>>6)) goodModule =false;
-        else if((sousType != 0) && (sousType != (moduleScan.regD & 0x3F))) goodModule =false;
-        else if((posSpatial != 0) && (sousType != (moduleScan.regC & 0x3F))) goodModule =false;
+        if((peripheriqueID != 0) && (peripheriqueID != moduleScan.regB>>4)){
+             goodModule =false;
+             debug(DEBUF_FINDMODULE, "\n\r  -peripheriqueID: %02d   == moduleScan.regB>>4: %02d",peripheriqueID,moduleScan.regB>>4);
+             }
+        else if((type != 0) && (type != moduleScan.regD>>6)){
+             goodModule =false;
+             debug(DEBUF_FINDMODULE, "\n\r  -type: %02d   == moduleScan.regD>>6: %02d",type,moduleScan.regD>>6);
+             }
+        else if((sousType != 0) && (sousType != (moduleScan.regD & 0x3F))){
+             goodModule =false;
+             debug(DEBUF_FINDMODULE, "\n\r  -sousType: %02d   == (moduleScan.regD & 0x3F): %02d",sousType,(moduleScan.regD & 0x3F));
+             }
+        else if((posSpatial != 0) && (posSpatial != (moduleScan.regC & 0x3F))){
+             goodModule =false;
+             debug(DEBUF_FINDMODULE, "\n\r  -posSpatial: %02d   == (moduleScan.regC & 0x3F): %02d",posSpatial,(moduleScan.regC & 0x3F));
+             }
 
         if(goodModule){
             result.append(1,moduleScan.regA);
@@ -194,14 +211,34 @@ string CtrlBridge::findModule(const char &peripheriqueID, const char &type, cons
     debug(DEBUF_FINDMODULE, "\n\r -Debut scan Capteur");
 
     maxSize = m_Memory.getSizeCapteur();
-    goodModule = true;
+    debug(DEBUF_FINDMODULE, "\n\r  -MaxSize: %02d",maxSize);
+    
     moduleScan= m_Memory.firstCapteur();
 
     for(int i=0; i < maxSize; i++) {
-        if((peripheriqueID != 0) && (peripheriqueID != moduleScan.regB>>4)) goodModule =false;
-        else if((type != 0) && (type != moduleScan.regD>>6)) goodModule =false;
-        else if((sousType != 0) && (sousType != (moduleScan.regD & 0x3F))) goodModule =false;
-        else if((posSpatial != 0) && (sousType != (moduleScan.regC & 0x3F))) goodModule =false;
+        goodModule = true;
+        debug(DEBUF_FINDMODULE, "\n\r  -adresse: %02x",moduleScan.regA);
+        debug(DEBUF_FINDMODULE, "\n\r  -peripheriqueID: %02d   == moduleScan.regB>>4: %02d",peripheriqueID,moduleScan.regB>>4);
+        debug(DEBUF_FINDMODULE, "\n\r  -type: %02d   == moduleScan.regD>>6: %02d",type,moduleScan.regD>>6);
+        debug(DEBUF_FINDMODULE, "\n\r  -sousType: %02d   == (moduleScan.regD & 0x3F): %02d",sousType,(moduleScan.regD & 0x3F));
+        debug(DEBUF_FINDMODULE, "\n\r  -posSpatial: %02d   == (moduleScan.regC & 0x3F): %02d",posSpatial,(moduleScan.regC & 0x3F));
+        
+        if((peripheriqueID != 0) && (peripheriqueID != moduleScan.regB>>4)){
+             goodModule =false;
+             debug(DEBUF_FINDMODULE, "\n\r  -false");
+             }
+        else if((type != 0) && (type != moduleScan.regD>>6)){
+             goodModule =false;
+             debug(DEBUF_FINDMODULE, "\n\r  -false");
+             }
+        else if((sousType != 0) && (sousType != (moduleScan.regD & 0x3F))){
+             goodModule =false;
+             debug(DEBUF_FINDMODULE, "\n\r  -false");
+             }
+        else if((posSpatial != 0) && (posSpatial != (moduleScan.regC & 0x3F))){
+             goodModule =false;
+             debug(DEBUF_FINDMODULE, "\n\r  -false");
+             }
 
         if(goodModule){
             result.append(1,moduleScan.regA);
@@ -216,14 +253,27 @@ string CtrlBridge::findModule(const char &peripheriqueID, const char &type, cons
     debug(DEBUF_FINDMODULE, "\n\r -Debut scan Memoire");
 
     maxSize = m_Memory.getSizeMemoire();
+    debug(DEBUF_FINDMODULE, "\n\r  -MaxSize: %02d",maxSize);
     goodModule = true;
     moduleScan= m_Memory.firstMemoire();
 
     for(int i=0; i < maxSize; i++) {
-        if((peripheriqueID != 0) && (peripheriqueID != moduleScan.regB>>4)) goodModule =false;
-        else if((type != 0) && (type != moduleScan.regD>>6)) goodModule =false;
-        else if((sousType != 0) && (sousType != (moduleScan.regD & 0x3F))) goodModule =false;
-        else if((posSpatial != 0) && (sousType != (moduleScan.regC & 0x3F))) goodModule =false;
+        if((peripheriqueID != 0) && (peripheriqueID != moduleScan.regB>>4)){
+             goodModule =false;
+             debug(DEBUF_FINDMODULE, "\n\r  -peripheriqueID: %02d   == moduleScan.regB>>4: %02d",peripheriqueID,moduleScan.regB>>4);
+             }
+        else if((type != 0) && (type != moduleScan.regD>>6)){
+             goodModule =false;
+             debug(DEBUF_FINDMODULE, "\n\r  -type: %02d   == moduleScan.regD>>6: %02d",type,moduleScan.regD>>6);
+             }
+        else if((sousType != 0) && (sousType != (moduleScan.regD & 0x3F))){
+             goodModule =false;
+             debug(DEBUF_FINDMODULE, "\n\r  -sousType: %02d   == (moduleScan.regD & 0x3F): %02d",sousType,(moduleScan.regD & 0x3F));
+             }
+        else if((posSpatial != 0) && (posSpatial != (moduleScan.regC & 0x3F))){
+             goodModule =false;
+             debug(DEBUF_FINDMODULE, "\n\r  -posSpatial: %02d   == (moduleScan.regC & 0x3F): %02d",posSpatial,(moduleScan.regC & 0x3F));
+             }
 
         if(goodModule){
             result.append(1,moduleScan.regA);

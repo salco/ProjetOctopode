@@ -5,7 +5,19 @@
  *      Author: salco
  */
 #include "homemadeSequence.h"
-unsigned char table_seqUp[9][2][3] =     { { {80 , 210, 160}, {220, 90 , 114} },
+
+
+unsigned char table_seqDefaultPos[8][4] = {
+    {137,123,217,135},
+    {165,120,222,135},
+    {160,117,217,137},
+    {150,111,213,142},
+    {153,181, 83,166},
+    {133,187, 78,161},
+    {170,192, 78,156},
+    {144,181, 81,165}};
+#define SIZE_SEQUP 9
+unsigned char table_seqUp[SIZE_SEQUP][2][3] =     { { {80 , 210, 160}, {220, 90 , 114} },
     { {80 , 220, 170}, {220, 80 , 130} },
     { {90 , 220, 160}, {200, 80 , 140} },
     { {106, 220, 150}, {194, 80 , 150} },
@@ -16,7 +28,7 @@ unsigned char table_seqUp[9][2][3] =     { { {80 , 210, 160}, {220, 90 , 114} },
     { {194, 166, 118}, {106, 134, 182} }
 };
 
-unsigned char table_seqDown[9][2][3] =   { { {172, 185, 124}, {128, 115, 176} },
+unsigned char table_seqDown[SIZE_SEQUP][2][3] =   { { {172, 185, 124}, {128, 115, 176} },
     { {172, 185, 124}, {128, 115, 176} },
     { {144, 210, 123}, {156, 89 , 177} },
     { {144, 205, 130}, {156, 95 , 170} },
@@ -27,7 +39,8 @@ unsigned char table_seqDown[9][2][3] =   { { {172, 185, 124}, {128, 115, 176} },
     { {80 , 100, 150}, {220, 200, 150} }
 };//fin de la seq il met ses patte sur sa tete**
 
-unsigned char table_seqCrabe[33][8][3] =  {{ /* 0*/{255,255,255}, /* 4*/{125, 184, 156}, /* 8*/{132, 215, 147}, /*12*/{255,255,255},
+#define SIZE_SEQCRABE 33
+unsigned char table_seqCrabe[SIZE_SEQCRABE][8][3] =  {{ /* 0*/{255,255,255}, /* 4*/{125, 184, 156}, /* 8*/{132, 215, 147}, /*12*/{255,255,255},
         /*16*/{203,101,128}, /*20*/{255,255,255}, /*24*/{176,  87, 163}, /*28*/{191, 103,133}
     },
     { /* 0*/{255,255,255}, /* 4*/{111, 185, 156}, /* 8*/{255, 255, 255}, /*12*/{255, 255,255},
@@ -127,13 +140,16 @@ unsigned char table_seqCrabe[33][8][3] =  {{ /* 0*/{255,255,255}, /* 4*/{125, 18
         /*16*/{203, 95,110}, /*20*/{255, 255, 255}, /*24*/{165, 109, 152}, /*28*/{191, 101,120}
     }
 };
-
-unsigned char table_seqTurn_PAUSE_TIME[32][2] = {{ 30, 30},{ 20, 20},{ 25, 25},{ 20, 30},{ 25, 20},{ 21, 30},{ 30, 30},
-    { 30, 30},{ 20, 20},{ 20, 20},{ 20, 30},{ 20, 20},{ 20, 20},{ 30, 30},{ 31, 30},
-    { 20, 20},{ 30, 30},{ 20, 30},{ 30, 30},{ 20, 20},{ 20, 30},{ 30, 30},{ 30, 30}
+#define SIZE_SEQTURN 31
+unsigned char table_seqTurn_PAUSE_TIME[SIZE_SEQTURN][2] = {
+    { 30, 30},{ 20, 20},{ 25, 25},{ 20, 30},{ 20, 20},{ 30, 30},{ 30, 30},{ 30, 30},
+    { 30, 30},{ 20, 20},{ 25, 25},{ 20, 30},{ 25, 20},{ 21, 30},{ 30, 30},{ 30, 30},
+    { 20, 20},{ 20, 20},{ 20, 30},{ 20, 20},{ 20, 20},{ 30, 30},{ 31, 30},
+    { 20, 20},{ 30, 30},{ 20, 30},{ 30, 30},{ 20, 20},{ 20, 30},{ 30, 30},{  0, 30}
 };
 
-unsigned char table_seqTurn[31][8][3] =        {{ /* 0*/{255,255,255}, /* 4*/{255,255,255}, /* 8*/{ 92,211,171}, /*12*/{255,255,255},
+unsigned char table_seqTurn[SIZE_SEQTURN][8][3] =        {
+    { /* 0*/{255,255,255}, /* 4*/{255,255,255}, /* 8*/{ 92,211,171}, /*12*/{255,255,255},
         /*16*/{255,255,255}, /*20*/{213, 85,118}, /*24*/{255,255,255}, /*28*/{255,255,255}
     },
     { /* 0*/{255,255,255}, /* 4*/{255,255,255}, /* 8*/{ 89,193,186}, /*12*/{255,255,255},
@@ -172,10 +188,10 @@ unsigned char table_seqTurn[31][8][3] =        {{ /* 0*/{255,255,255}, /* 4*/{25
     { /* 0*/{ 93,187,203}, /* 4*/{255,255,255}, /* 8*/{255,255,255}, /*12*/{255,255,255},
         /*16*/{255,255,255}, /*20*/{255,255,255}, /*24*/{255,255,255}, /*28*/{203,103,115}
     },
-    { /* 0*/{123,220,139}, /* 4*/{255,255,255}, /* 8*/{255,255,255}, /*12*/{255,255,255},
+    {   /* 0*/{123,220,139}, /* 4*/{255,255,255}, /* 8*/{255,255,255}, /*12*/{255,255,255},
         /*16*/{255,255,255}, /*20*/{255,255,255}, /*24*/{255,255,255}, /*28*/{178, 78,169}
     },
-    { /* 0*/{123,217,215}, /* 4*/{255,255,255}, /* 8*/{255,255,255}, /*12*/{255,255,255},
+    { /* 0*/{123,217,135}, /* 4*/{255,255,255}, /* 8*/{255,255,255}, /*12*/{255,255,255},
         /*16*/{255,255,255}, /*20*/{255,255,255}, /*24*/{255,255,255}, /*28*/{181, 81,167}
     },
     { /* 0*/{255,255,255}, /* 4*/{255,255,255}, /* 8*/{255,255,255}, /*12*/{ 99,211,176},
@@ -227,8 +243,10 @@ unsigned char table_seqTurn[31][8][3] =        {{ /* 0*/{255,255,255}, /* 4*/{25
         /*16*/{255,255,255}, /*20*/{255,255,255}, /*24*/{255,255,255}, /*28*/{255,255,255}
     }
 };
-unsigned char table_seqRepositionne_PAUSE_TIME[6][2] = {{ 11, 10},{ 16, 15},{ 15, 15},{ 21, 20},{ 21, 20},{ 51, 50}};
-unsigned char table_seqRepositionne[6][8][3] = {
+
+#define SIZE_SEQREPOSITIONNE 6
+unsigned char table_seqRepositionne_PAUSE_TIME[SIZE_SEQREPOSITIONNE][2] = {{ 11, 10},{ 16, 15},{ 15, 15},{ 21, 20},{ 21, 20},{ 51, 50}};
+unsigned char table_seqRepositionne[SIZE_SEQREPOSITIONNE][8][3] = {
     {   /* 0*/{103,206,176}, /* 4*/{102,213,176}, /* 8*/{ 92,211,171}, /*12*/{ 99,211,176},
         /*16*/{210, 86,121}, /*20*/{213, 85,118}, /*24*/{217, 83,118}, /*28*/{200, 86,124}
     },
@@ -248,15 +266,16 @@ unsigned char table_seqRepositionne[6][8][3] = {
         /*16*/{181, 83,166}, /*20*/{187, 78,161}, /*24*/{194, 78,161}, /*28*/{181, 81,167}
     }
 };
-unsigned char table_seqFoward_PAUSE_TIME[42][2] = {
+#define SIZE_SEQFOWARD 43
+unsigned char table_seqFoward_PAUSE_TIME[SIZE_SEQFOWARD][2] = {
     { 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 21, 20},{  0, 45},{ 61, 50},
     { 21, 20},{ 51, 50},{ 21, 20},{ 21, 20},{ 31, 30},{ 51, 50},{ 16, 15},{ 21, 30},{ 50,100},{ 21, 20},
-    { 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 51, 50},{ 21, 20},{ 41, 45},
+    { 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 51, 50},{ 0, 50},{ 21, 20},{ 41, 45},
     { 11, 10},{ 16, 15},{ 15, 15},{ 21, 20},{ 21, 20},{ 51, 50},
     { 15, 15},{ 21, 20},{ 21, 20},{ 51, 50},
     { 15, 15},{ 21, 20},{ 21, 20},{ 51, 50}
 };
-unsigned char table_seqFoward[42][8][3] = {
+unsigned char table_seqFoward[SIZE_SEQFOWARD][8][3] = {
     {   /* 0*/{103,206,176}, /* 4*/{255,255,255}, /* 8*/{255,255,255}, /*12*/{255,255,255},
         /*16*/{255,255,255}, /*20*/{213, 85,118}, /*24*/{255,255,255}, /*28*/{255,255,255}
     },
@@ -335,6 +354,9 @@ unsigned char table_seqFoward[42][8][3] = {
     {   /* 0*/{255,255,255}, /* 4*/{255,255,255}, /* 8*/{255,255,255}, /*12*/{145,158,173},
         /*16*/{179, 82,167}, /*20*/{255,255,255}, /*24*/{255,255,255}, /*28*/{255,255,255}
     },
+    {   /* 0*/{255,255,255}, /* 4*/{255,255,255}, /* 8*/{255,255,255}, /*12*/{255,255,255},
+        /*16*/{255,255,255}, /*20*/{255,255,255}, /*24*/{255,255,255}, /*28*/{255,255,255}
+    },
     {   /* 0*/{255,255,255}, /* 4*/{120,222,135}, /* 8*/{255,255,255}, /*12*/{111,213,142},//attention plusieur temps
         /*16*/{181, 83,166}, /*20*/{255,255,255}, /*24*/{182, 78,161}, /*28*/{255,255,255}
     },
@@ -384,13 +406,15 @@ unsigned char table_seqFoward[42][8][3] = {
         /*16*/{255,255,255}, /*20*/{255,255,255}, /*24*/{255,255,255}, /*28*/{255,255,255}
     }
 };
-unsigned char table_seqBackward_PAUSE_TIME[33][2] = {
-    { 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 31, 30},{ 61, 50},
+
+#define SIZE_SEQBACKWARD 35
+unsigned char table_seqBackward_PAUSE_TIME[SIZE_SEQBACKWARD][2] = {
+    { 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 31, 30},{ 0, 45},{ 61, 50},
     { 21, 20},{ 21, 20},{ 31, 30},{ 51, 50},{ 21, 20},{ 21, 20},{ 31, 30},{ 51, 50},{ 16, 15},{ 21, 30},
-    { 50,100},{ 21, 20},{ 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 51, 45},{ 21, 20},{ 41, 45},{ 21, 20},
+    { 50,100},{ 21, 20},{ 16, 15},{ 21, 30},{ 50,100},{ 21, 20},{ 51, 45},{  0, 50},{ 21, 20},{ 41, 45},{ 21, 20},
     { 21, 20},{ 31, 30},{ 31, 50}
 };
-unsigned char table_seqBackward[33][8][3] = {
+unsigned char table_seqBackward[SIZE_SEQBACKWARD][8][3] = {
     {   /* 0*/{255,255,255}, /* 4*/{255,255,255}, /* 8*/{ 92,211,171}, /*12*/{255,255,255},
         /*16*/{255,255,255}, /*20*/{255,255,255}, /*24*/{255,255,255}, /*28*/{200, 86,124}
     },
@@ -420,6 +444,9 @@ unsigned char table_seqBackward[33][8][3] = {
     },
     {   /* 0*/{123,217,135}, /* 4*/{255,255,139}, /* 8*/{115,217,142}, /*12*/{255,255,255},
         /*16*/{255,255,255}, /*20*/{187, 78,161}, /*24*/{255,255,255}, /*28*/{155,137,130}
+    },
+    {   /* 0*/{255,255,255}, /* 4*/{255,255,255}, /* 8*/{255,255,255}, /*12*/{255,255,255},
+        /*16*/{255,255,255}, /*20*/{255,255,255}, /*24*/{255,255,255}, /*28*/{255,255,255}
     },
     {   /* 0*/{255,255,255}, /* 4*/{255,255,255}, /* 8*/{255,255,255}, /*12*/{255,255,255},
         /*16*/{255,255,255}, /*20*/{255,255,255}, /*24*/{255,255,255}, /*28*/{206,108,127}
@@ -472,6 +499,9 @@ unsigned char table_seqBackward[33][8][3] = {
     {   /* 0*/{255,255,255}, /* 4*/{125,225,133}, /* 8*/{255,255,255}, /*12*/{255,255,255},
         /*16*/{255,255,255}, /*20*/{255,255,255}, /*24*/{180, 86,156}, /*28*/{255,255,255}
     },
+    {   /* 0*/{255,255,255}, /* 4*/{255,255,255}, /* 8*/{255,255,255}, /*12*/{255,255,255},
+        /*16*/{255,255,255}, /*20*/{255,255,255}, /*24*/{255,255,255}, /*28*/{255,255,255}
+    },
     {   /* 0*/{255,255,255}, /* 4*/{120,222,135}, /* 8*/{255,255,255}, /*12*/{111,213,142},//attention plusieur temps
         /*16*/{181, 83,166}, /*20*/{255,255,255}, /*24*/{182, 78,161}, /*28*/{255,255,255}
     },
@@ -514,10 +544,48 @@ homemadeSequence::homemadeSequence()
     m_SequenceChosen=0;
     m_idFrame=0;
     m_idLegUse =0;
+    delaisNeed =-1;
+    for(int i=0; i<8; i++)timeSequence[i]=255;
 }
 homemadeSequence::~homemadeSequence()
 {
 
+}
+int homemadeSequence::patchDelais(char idMode)
+{
+    int result=-1;
+    switch(idMode) {
+            /*case 1:
+            break;
+            case 2:
+            break;
+            case 3:
+            break;*/
+        case 4:
+            result = (table_seqTurn_PAUSE_TIME[0][0])*10;
+            break;
+            /*case 5:
+            break;*/
+        case 6:
+            result = (table_seqFoward_PAUSE_TIME[0][0])*10;
+            break;
+        case 7:
+            result = (table_seqBackward_PAUSE_TIME[0][0])*10;
+            break;
+        case 8:
+            result = (table_seqRepositionne_PAUSE_TIME[0][0])*10;
+            break;
+            /*case 9:
+            break;
+            case 10:
+            break;
+            case 11:
+            break;*/
+        default:
+            result = -1;
+            break;
+    }
+    return result;
 }
 unsigned char* homemadeSequence::get_frame(/*char idSequence,char idOperation,*/char idLeg)
 {
@@ -551,9 +619,13 @@ unsigned char* homemadeSequence::get_frame(/*char idSequence,char idOperation,*/
             seqUpDown(false,m_idFrame,idLeg);//seqUpDown(false,idOperation,idLeg);
             break;
         case 4:// 04 - Tourne Gauche       //
+            //delaisNeed = (table_seqTurn_PAUSE_TIME[m_idFrame-1][0])*10;
+            //debug("\n\r asd:%i",delaisNeed);
             seqTurn(false,m_idFrame,idLeg);
             break;
         case 5:// 05 - Tourne Droite       //
+            //delaisNeed = (table_seqTurn_PAUSE_TIME[m_idFrame-1][0])*10;
+            //debug("\n\r seqt:%i",delaisNeed);
             seqTurn(true,m_idFrame,idLeg);
             break;
         case 6:// 06 - Marche              //
@@ -571,14 +643,22 @@ unsigned char* homemadeSequence::get_frame(/*char idSequence,char idOperation,*/
         case 10:// 10 - Crabe  Droite       //
             seqCrabe(true,m_idFrame,idLeg);
             break;
+        case 11:// 11 - Position naturel    //
+            defaultPosition(idLeg);
+            break;
     }
+    debug(DEBUG_HOMEMADE_GETFRAME,"\n\r    delaisNeed: %i",delaisNeed);
+    debug(DEBUG_HOMEMADE_GETFRAME,"\n\r    timeSequence: ");
+    for(int i=0; i<8; i++)debug(DEBUG_HOMEMADE_GETFRAME," [ %i ] ",timeSequence[i]);
     debug(DEBUG_HOMEMADE_GETFRAME,"\n\r    posLeg: [0]:%i, [1]:%i, [2]:%i, [3]:%i,",m_posLeg[0],m_posLeg[1],m_posLeg[2],m_posLeg[3]);
+    //debug("\n\r seqturn:%i",delaisNeed);
     debug(DEBUG_HOMEMADE_GETFRAME,"\n\r    Out Get Frame");
     return m_posLeg;
 }
 
 void homemadeSequence::seqUpDown(bool downUP,char idOperation,char idLeg)
 {
+    delaisNeed = DELAITESTE;//(table_seqRepositionne_PAUSE_TIME[idOperation-1][0])*10;
     if((idOperation<10)&&(idOperation>0)) {
         switch(idLeg) { //moving hips
             case 1://#0
@@ -742,9 +822,11 @@ void homemadeSequence::seqUpDown(bool downUP,char idOperation,char idLeg)
 }
 void homemadeSequence::seqTurn(bool leftRIGHT,char idOperation,char idLeg)
 {
-    if(idOperation<32) {
+    if(idOperation<=SIZE_SEQTURN) {
+        m_posLeg[0]= 255;
         for(int i=1; i <= 3; i++) m_posLeg[i]=table_seqTurn[idOperation-1][idLeg-1][i-1];
         delaisNeed = (table_seqTurn_PAUSE_TIME[idOperation-1][0])*10;
+        //debug("\n\r seqturn:%i",delaisNeed);
         timeSequence[idLeg-1] = table_seqTurn_PAUSE_TIME[idOperation-1][1];
 
         switch(idOperation) {
@@ -764,7 +846,7 @@ void homemadeSequence::seqTurn(bool leftRIGHT,char idOperation,char idLeg)
                     case 1://#0
                         m_posLeg[0]= (leftRIGHT)? 150:110;
                         break;
-                    case 7://28
+                    case 8://28
                         m_posLeg[0]= (leftRIGHT)? 164:104;
                         break;
                 }
@@ -806,9 +888,9 @@ void homemadeSequence::seqTurn(bool leftRIGHT,char idOperation,char idLeg)
                 break;
                 //case :
                 //break;
-            default:
-                m_posLeg[0]= 255;
-                break;
+            //default:
+                //m_posLeg[0]= 255;
+              //  break;
         }
 
 
@@ -819,100 +901,251 @@ void homemadeSequence::seqTurn(bool leftRIGHT,char idOperation,char idLeg)
 void homemadeSequence::seqWalk(bool backFRONT,char idOperation,char idLeg)
 {
     if(backFRONT) {
-        if(idOperation<41) {
+        if(idOperation <= SIZE_SEQFOWARD) {
+            m_posLeg[0]= 255;
             for(int i=1; i <= 3; i++) m_posLeg[i]=table_seqFoward[idOperation-1][idLeg-1][i-1];
             delaisNeed = (table_seqFoward_PAUSE_TIME[idOperation-1][0])*10;
             timeSequence[idLeg-1] = table_seqFoward_PAUSE_TIME[idOperation-1][1];
 
             //manque qqch ici
-            switch(idOperation)
-            {
+            switch(idOperation) {
                 case 3:
-                if(idLeg == 1) m_posLeg[0] = 150;
-                else if(idLeg == 6) m_posLeg[0] = 123;
-                break;
-                
+                    if(idLeg == 1) m_posLeg[0] = 150;
+                    else if(idLeg == 6) m_posLeg[0] = 123;
+                    break;
+
                 case 5:
-                if((idLeg ==1) || (idLeg==6)) 
-                    timeSequence[idLeg-1] = 30;
-                break;
-                
+                    if((idLeg ==1) || (idLeg==6))
+                        timeSequence[idLeg-1] = 30;
+                    break;
+
                 case 7:
-                if(idLeg == 3)m_posLeg[0] = 187;
-                else if(idLeg == 8) m_posLeg[0] = 123;
-                break;
-                
+                    if(idLeg == 3)m_posLeg[0] = 187;
+                    else if(idLeg == 8) m_posLeg[0] = 123;
+                    break;
+
                 case 11:
-                switch(idLeg)
-                {
-                    case 1:
-                        m_posLeg[0] = 130;
+                    switch(idLeg) {
+                        case 1:
+                            m_posLeg[0] = 130;
+                            break;
+                        case 2:
+                            m_posLeg[0] = 140;
+                            break;
+                        case 3:
+                            m_posLeg[0] = 160;
+                            break;
+                        case 4:
+                            m_posLeg[0] = 117;
+                            break;
+                        case 5:
+                            m_posLeg[0] = 179;
+                            break;
+                        case 6:
+                            m_posLeg[0] = 134;
+                            break;
+                        case 7:
+                            m_posLeg[0] = 183;
+                            break;
+                        case 8:
+                            m_posLeg[0] = 144;
+                            break;
+                    }
                     break;
-                    case 2:
-                        m_posLeg[0] = 140;
-                    break;
-                    case 3:
-                        m_posLeg[0] = 160;
-                    break;
-                    case 4:
-                        m_posLeg[0] = 117;
-                    break;
-                    case 5:
-                        m_posLeg[0] = 179;
-                    break;
-                    case 6:
-                        m_posLeg[0] = 134;
-                    break;
-                    case 7:
-                        m_posLeg[0] = 183;
-                    break;
-                    case 8:
-                        m_posLeg[0] = 144;
-                    break;
-                }
-                break;
-                
+
                 case 16:
-                if(idLeg == 1) m_posLeg[0] = 137;
-                break;
-                
+                    if(idLeg == 1) m_posLeg[0] = 137;
+                    break;
+
                 case 20:
-                if(idLeg == 5) m_posLeg[0] = 176;
-                else if(idLeg == 7) m_posLeg[0] = 160;
-                break;
-                
+                    if(idLeg == 2) m_posLeg[0] = 176;
+                    else if(idLeg == 7) m_posLeg[0] = 160;
+                    break;
+
                 case 22:
-                if((idLeg ==2) || (idLeg==7)) 
-                    timeSequence[idLeg-1] = 30;
-                break;
-                
+                    if((idLeg ==2) || (idLeg==7))
+                        timeSequence[idLeg-1] = 30;
+                    break;
+
                 case 24:
-                if(idLeg == 4) m_posLeg[0] = 177;
-                else if(idLeg == 5) m_posLeg[0] = 133;
-                break;
-                    
+                    if(idLeg == 4) m_posLeg[0] = 174;
+                    else if(idLeg == 5) m_posLeg[0] = 133;
+                    break;
+
+                case 27:
+                    switch(idLeg) {
+                        case 1:
+                            m_posLeg[0] = 110;
+                            break;
+                        case 2:
+                            m_posLeg[0] = 160;
+                            break;
+                        case 3:
+                            m_posLeg[0] = 140;
+                            break;
+                        case 4:
+                            m_posLeg[0] = 150;
+                            break;
+                        case 5:
+                            m_posLeg[0] = 153;
+                            break;
+                        case 6:
+                            m_posLeg[0] = 150;
+                            break;
+                        case 7:
+                            m_posLeg[0] = 173;
+                            break;
+                        case 8:
+                            m_posLeg[0] = 170;
+                            break;
+                    }
+                    break;
+
+                case 34:
+                    if(idLeg == 1) m_posLeg[0] = 130;
+                    break;
+
+                case 38:
+                    if(idLeg == 5) m_posLeg[0] = 153;//165;
+                    break;
+
+                case 42:
+                    if(idLeg == 2) m_posLeg[0] = 165;
+                    break;
             }
         } else
             for(int i=0; i <= 3; i++) m_posLeg[i]=0;
 
     } else {
-        if(idOperation<33) {
+        if(idOperation <= SIZE_SEQBACKWARD) {
+            m_posLeg[0]= 255;
             for(int i=1; i <= 3; i++) m_posLeg[i]=table_seqBackward[idOperation-1][idLeg-1][i-1];
             delaisNeed = (table_seqBackward_PAUSE_TIME[idOperation-1][0])*10;
             timeSequence[idLeg-1] = table_seqBackward_PAUSE_TIME[idOperation-1][1];
 
             //manque qqch ici
+            switch(idOperation) {
+                case 3:
+                    if(idLeg == 3) m_posLeg[0] = 140;
+                    else if(idLeg == 8) m_posLeg[0] = 170;
+                    break;
+
+                case 5:
+                    if((idLeg ==3) || (idLeg==8))
+                        timeSequence[idLeg-1] = 30;
+                    break;
+
+                case 7:
+                    if(idLeg == 1)m_posLeg[0] = 110;
+                    else if(idLeg == 6) m_posLeg[0] = 150;
+                    break;
+
+                case 11:
+                    switch(idLeg) {
+                        case 1:
+                            m_posLeg[0] = 130;
+                            break;
+                        case 2:
+                            m_posLeg[0] = 176;
+                            break;
+                        case 3:
+                            m_posLeg[0] = 160;
+                            break;
+                        case 4:
+                            m_posLeg[0] = 174;
+                            break;
+                        case 5:
+                            m_posLeg[0] = 133;
+                            break;
+                        case 6:
+                            m_posLeg[0] = 134;
+                            break;
+                        case 7:
+                            m_posLeg[0] = 160;
+                            break;
+                        case 8:
+                            m_posLeg[0] = 144;
+                            break;
+                    }
+                    break;
+
+                case 13:
+                    if(idLeg == 8) m_posLeg[0] = 144;
+                    break;
+
+                case 17:
+                    if(idLeg == 6) m_posLeg[0] = 133;
+                    break;
+
+                case 22:
+                    if(idLeg == 4) m_posLeg[0] = 117;
+                    else if(idLeg == 5) m_posLeg[0] = 179;
+                    break;
+
+                case 24:
+                    if((idLeg ==4) || (idLeg==5))
+                        timeSequence[idLeg-1] = 45;
+                    break;
+
+                case 26:
+                    if(idLeg == 2) m_posLeg[0] = 140;
+                    else if(idLeg == 7) m_posLeg[0] = 190;
+                    break;
+
+                case 29:
+                    switch(idLeg) {
+                        case 1:
+                            m_posLeg[0] = 150;
+                            break;
+                        case 2:
+                            m_posLeg[0] = 160;
+                            break;
+                        case 3:
+                            m_posLeg[0] = 187;
+                            break;
+                        case 4:
+                            m_posLeg[0] = 150;
+                            break;
+                        case 5:
+                            m_posLeg[0] = 153;
+                            break;
+                        case 6:
+                            m_posLeg[0] = 123;
+                            break;
+                        case 7:
+                            m_posLeg[0] = 173;
+                            break;
+                        case 8:
+                            m_posLeg[0] = 123;
+                            break;
+                    }
+                    break;
+
+                case 33:
+                    if(idLeg == 4) m_posLeg[0] = 150;
+                    break;
+
+                    /*case 38:
+                    if(idLeg == 5) m_posLeg[0] = 165;
+                    break;
+
+                    case 42:
+                    if(idLeg == 1) m_posLeg[0] = 165;
+                    break;*/
+            }
         } else
             for(int i=0; i <= 3; i++) m_posLeg[i]=0;
     }
 }
 void homemadeSequence::seqRepositioner(char idOperation,char idLeg)
 {
-    if(idOperation<6) {
+    if(idOperation <= SIZE_SEQREPOSITIONNE) {
+        m_posLeg[0]= 255;
+        delaisNeed = (table_seqRepositionne_PAUSE_TIME[idOperation-1][0])*10;
         if(m_idLegUse == idLeg) {
             for(int i=1; i <= 3; i++) m_posLeg[i]=table_seqRepositionne[idOperation-1][idLeg-1][i-1];
 
-            timeSequence[idLeg-1] = table_seqTurn_PAUSE_TIME[idOperation-1][1];
+            timeSequence[idLeg-1] = table_seqRepositionne_PAUSE_TIME[idOperation-1][1];
 
             if(idOperation == 5) {
                 switch(idLeg) {
@@ -944,16 +1177,19 @@ void homemadeSequence::seqRepositioner(char idOperation,char idLeg)
             }
 
         } else
-            for(int i=0; i <= 3; i++)m_posLeg[i]=255;
-        delaisNeed = (table_seqRepositionne_PAUSE_TIME[idOperation-1][0])*10;
+            for(int i=0; i < 4; i++)m_posLeg[i]=255;
+
     } else
-        for(int i=0; i <= 3; i++) m_posLeg[i]=0;
+        for(int i=0; i < 4; i++) m_posLeg[i]=0;
 }
 void homemadeSequence::seqCrabe(bool leftRIGHT,char idOperation,char idLeg)
 {
-    if(idOperation<33) {
+    if(idOperation<=SIZE_SEQCRABE) {
+        m_posLeg[0]= 255;
+        delaisNeed = 300;//DELAITESTE;//(table_seqRepositionne_PAUSE_TIME[idOperation-1][0])*10;
+        timeSequence[idLeg-1] = 30;
         if(leftRIGHT)
-            idOperation=33-idOperation;
+            idOperation=SIZE_SEQCRABE-idOperation;
 
         switch(idLeg) { //moving hips
             case 1:
@@ -985,41 +1221,55 @@ void homemadeSequence::seqCrabe(bool leftRIGHT,char idOperation,char idLeg)
 
 
 }
+void homemadeSequence::defaultPosition(char idLeg)
+{
+    if(m_idFrame == 1) {
+    timeSequence[idLeg-1] = 50;
+    for(int i=0;i<4;i++) m_posLeg[i]=table_seqDefaultPos[idLeg-1][i];
+    }
+    else
+    for(int i=0;i<4;i++) m_posLeg[i]= 0;
+}
 bool homemadeSequence::next_frame(void)
 {
     debug(DEBUG_HOMEMADE_NEXTFRAME,"\n\r    in Next Frame");
-    bool temp=false;
+    bool result=false;
     debug(DEBUG_HOMEMADE_NEXTFRAME,"\n\r    m_idframe == %d",m_idFrame);
-
+    int tmpDelais=delaisNeed;
 
     //if(m_idFrame > 1){
     m_idFrame++;
     unsigned char* tmpTable = get_frame(1);
 
+    debug(DEBUG_HOMEMADE_NEXTFRAME,"\n\r     Leg1:");
+    for(int i=0; i<4; i++)debug(DEBUG_HOMEMADE_NEXTFRAME,"[%i]",tmpTable[i]);
+
     if((tmpTable[0]!=0) && (tmpTable[1]!=0) && (tmpTable[2]!=0) && (tmpTable[3]!=0)) {
-        temp=true;
+        result=true;
         //m_idFrame++;//get_frame(m_idFrame);
-        if((delaisNextSeq.read_ms() >= delaisNeed) || (delaisNeed == -1)) {
+        /*if((delaisNextSeq.read_ms() >= delaisNeed) || (delaisNeed == -1)) {
             delaisNextSeq.reset();
-            delaisNeed=-1;
-            for(int i=0; i<8; i++)timeSequence[i]=0;
-        } else
-            m_idFrame--;
+            delaisNeed=-1;*/
+        for(int i=0; i<8; i++)timeSequence[i]=255;
+        //} else
+        //  m_idFrame--;
     } else
         m_idFrame--;
 
     //}
     //}
+    delaisNeed=tmpDelais;
+
     debug(DEBUG_HOMEMADE_NEXTFRAME,"\n\r    m_idframe == %d",m_idFrame);
     debug(DEBUG_HOMEMADE_NEXTFRAME,"\n\r    out Next Frame");
 
-    return temp;
+    return result;
 }
 bool homemadeSequence::prev_frame(void)   //true == prev is ok
 {
     //false == impossible
     debug(DEBUG_HOMEMADE_PREVFRAME,"\n\r    in Prev Frame");
-    bool temp=false;
+    bool result=false;
     debug(DEBUG_HOMEMADE_PREVFRAME,"\n\r    m_idframe == %d",m_idFrame);
 
 
@@ -1028,14 +1278,14 @@ bool homemadeSequence::prev_frame(void)   //true == prev is ok
         unsigned char* tmpTable = get_frame(1);
 
         if((tmpTable[0]!=0) && (tmpTable[1]!=0) && (tmpTable[2]!=0) && (tmpTable[3]!=0)) {
-            temp=true;
+            result=true;
             //m_idFrame++;//get_frame(m_idFrame);
-            if((delaisNextSeq.read_ms() >= delaisNeed) || (delaisNeed == -1)) {
-                delaisNextSeq.reset();
-                delaisNeed=-1;
-                for(int i=0; i<8; i++)timeSequence[i]=0;
-            } else
-                m_idFrame++;
+            /*if((delaisNextSeq.read_ms() >= delaisNeed) || (delaisNeed == -1)) {
+                delaisNextSeq.reset();*/
+            delaisNeed=-1;
+            for(int i=0; i<8; i++)timeSequence[i]=255;
+            //} else
+            //    m_idFrame++;
         } else
             m_idFrame++;
 
@@ -1044,5 +1294,5 @@ bool homemadeSequence::prev_frame(void)   //true == prev is ok
     debug(DEBUG_HOMEMADE_PREVFRAME,"\n\r    m_idframe == %d",m_idFrame);
     debug(DEBUG_HOMEMADE_PREVFRAME,"\n\r    out Prev Frame");
 
-    return temp;
+    return result;
 }

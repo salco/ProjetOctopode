@@ -9,7 +9,7 @@
 #define MEMREG_H
 
 #define DEBUG_GETADDR 1
-#define DEBUG_ISVALIDE 1
+#define DEBUG_ISVALIDE 0
 
 #include <list>
 #include "Module.h"

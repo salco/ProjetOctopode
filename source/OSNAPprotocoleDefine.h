@@ -37,6 +37,11 @@ struct osnapModule_t{
     }osnapRegisterD;
     
 };
+typedef enum {
+    NON_DETERMINER = 0,
+    DIGITALE = 1,
+    ANALOGIQUE=2
+} TypeDeFormat;
 
 typedef enum {
     //NONE =0,
