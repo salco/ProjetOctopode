@@ -8,13 +8,19 @@
 #ifndef TTASKCRITIQUE_H
 #define TTASKCRITIQUE_H
 
+#define DEBUG_INIT_TASKCRITT 1
+#define DEBUG_TASKCRITT 1
+
 #include "Task/TTask.h"
+#include "debug.h"
 
 class TTaskCritique : public TTask
 {
     //string m_ListDesModules;
     bool tymy;
-    
+    /*
+    * Fonction permetant de fermer et ouvrire l'alimentation du robot
+    */
     void forceShutDown(bool offON);
     void criticalTreatment(char adresse);
     //protected:
@@ -22,7 +28,13 @@ class TTaskCritique : public TTask
     virtual void task(void);
     
     public:
+    /*
+    * Constructeur de la class
+    */
     TTaskCritique(int priority=0);
+    /*
+    * Destructeur de la class
+    */
     virtual ~TTaskCritique();
 };
 #endif // TTASKCRITIQUE_H

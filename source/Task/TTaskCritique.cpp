@@ -3,11 +3,22 @@
 
 TTaskCritique::TTaskCritique(int priority):TTask(priority)
 {
+    debug(DEBUG_INIT_TASKCRITT, "\n\r Debut init");
     //m_CtrlBridge = m_CtrlBridge->getInstance();
-
+    do{
     m_CtrlBridge->initCom();
     m_ListDesModules = m_CtrlBridge->findModule(0,0,0,0); //get all modules
+    if(m_ListDesModules.size() != 11)
+    {
+        debug(DEBUG_INIT_TASKCRITT, "\n\r Init Fail");
+        forceShutDown(false);
+        wait(1);
+        m_CtrlBridge->clearALL();
+        forceShutDown(true);
+        }
+    }while(m_ListDesModules.size() != 11);
     tymy=true;
+    debug(DEBUG_INIT_TASKCRITT, "\n\r Init Reussi");
 }
 
 TTaskCritique::~TTaskCritique()
@@ -18,14 +29,16 @@ TTaskCritique::~TTaskCritique()
 
 void TTaskCritique::forceShutDown(bool offON)
 {
-    DigitalOut pinA(PA_13);
-    DigitalOut pinB(PA_14);
+    DigitalOut pinA(PB_8);
+    DigitalOut pinB(PB_9);
 
     if(offON) {
         pinA=1;
+        wait(1);
         pinB=0;
     } else {
         pinA=0;
+        wait(1);
         pinB=1;
     }
 }
@@ -39,7 +52,7 @@ void TTaskCritique::criticalTreatment(char adresse)
 
 void TTaskCritique::task(void)
 {
-    debug("\n\rPeanut");
+    //debug("\n\rPeanut");
     //pas sur que c'Est tout ce qui doit etre ici mais je vois pas quoi d'autre pour le moment.
     string flag,data;
 
@@ -50,7 +63,7 @@ void TTaskCritique::task(void)
      flag.clear();
      flag.append(1,7);  
      data.clear(); 
-    debug("\n\r result: %d",m_CtrlBridge->send(m_ListDesModules.at(i),flag,data));
+    debug(DEBUG_TASKCRITT,"\n\r result: %d",m_CtrlBridge->send(m_ListDesModules.at(i),flag,data));
     if(flag[0]== 0x02)
      criticalTreatment(m_ListDesModules.at(i));
     }

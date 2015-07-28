@@ -33,11 +33,11 @@ int main()
     //pc.scanf ("%79s",str);
     //         string test="allo";
     //    pc.printf(test.c_str());
-
+wait(3);
      TTaskCritique taskCritique(40);
     // TTaskAlerte taskAlerte(20);
-     TTaskGeneral  taskGeneral(1);//40);
-wait(1);
+     TTaskGeneral  taskGeneral(20);//40);
+
 //////////
 // Boot //
 //////////
@@ -45,16 +45,13 @@ wait(1);
     while(1) {
 
 
-
+        taskGeneral.exec();
         //taskAlerte.exec();
         //taskGeneral.exec();
         if (mybutton == 0) { // Button is pressed
             //debug("Hello debug world");
-            taskCritique.exec();
-            wait(2);
-            taskGeneral.exec();
-            
-            
+            //taskCritique.exec();
+            //wait(2);
             
             /*if(myled) {
                 pinB=0;

@@ -16,7 +16,13 @@ class TTaskAlerte : public TTask
     virtual void task(void);
     
     public:
+    /*
+    * Constructeur de la class
+    */
     TTaskAlerte(int priority=0);
+    /*
+    * Desstructeur de la class
+    */
     virtual ~TTaskAlerte();
 };
 #endif // TTASKALERTE_H

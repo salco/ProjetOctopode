@@ -57,7 +57,7 @@ bool CtrlBridge::initCom(void)
         //  m_regPortUse|=(1<< i);
 
         do {
-             debug(" IN");
+             debug(DEBUG_INITMODULE," IN");
             flag = Request_Init_Info;
             adresse = m_Memory.getAdressDispo(0x80);//80 parce que cest le conecteur droit
             debug(DEBUG_INITMODULE, "\n\r    -addresse use :%d", adresse);
@@ -117,7 +117,7 @@ bool CtrlBridge::initCom(void)
                     portUse=false;
 
             }
-             debug(" OUT");
+             debug(DEBUG_INITMODULE," OUT");
         } while(portUse);
         debug(DEBUG_INITMODULE, "\n\r  -Fin de boucle :%d", i);
     }

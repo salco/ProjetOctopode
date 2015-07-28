@@ -42,18 +42,48 @@ class homemadeSequence
     unsigned char timeSequence[8];
     char m_idLegUse; // pour seqRepositioner
 
+    /*
+    * Fonction contenant les sequences pour faire monter et decendre le robot
+    */
     void seqUpDown(bool downUP,char idOperation,char idLeg);
+     /*
+    * Fonction contenant les sequences pour faire tourner le robot
+    */
     void seqTurn(bool leftRIGHT,char idOperation,char idLeg);
+     /*
+    * Fonction contenant les sequences pour faire marcher et reculer le robot
+    */
     void seqWalk(bool backFRONT,char idOperation,char idLeg);
+     /*
+    * Fonction contenant les sequences pour faire Repositioner le robot
+    */
     void seqRepositioner(char idOperation,char idLeg);
+    /*
+    * Fonction contenant les sequences pour faire marcher en crabe le robot
+    */
     void seqCrabe(bool leftRIGHT,char idOperation,char idLeg);
+    /*
+    * Fonction contenant les sequences pour positioner en default le robot
+    */
     void defaultPosition(char idLeg);
     
+    /*
+    * Fonction remise a la valeur par defaut le Délais entre les sequences
+    */
     int patchDelais(char idMode);
     
 public:
+/*
+    * Constructeur de la class
+    */
     homemadeSequence();
+    /*
+    * Destructeur de la class
+    */
     ~homemadeSequence();
+    /*
+    * set_Sequence
+    */
     void set_Sequence(char idSequence) {
         m_SequenceChosen = idSequence;
         m_idFrame = 1;
@@ -73,6 +103,7 @@ public:
     int get_delaisNeed_Ms(){return delaisNeed;}
     unsigned char* get_frame(/*char idSequence,*/char idOperation,char idLeg);
     unsigned char* get_frame(/*char idSequence,char idOperation,*/char idLeg);
+    unsigned char get_frame(){return m_idFrame;}
     void set_frameID(char position) {m_idFrame = position;};
     bool next_frame(void); //return true if you are not at the end
     bool prev_frame(void); //return true if you are not at the begining

@@ -27,6 +27,7 @@
 #define DEBUG_MOUVEMENT 0/*1*/
 #define DEBUG_EXEC 0/*1*/
 #define DEBUG_SENDSEQ 0/*1*/
+#define DEBUG
 
 #include "mbed.h"
 //#include <string>
@@ -71,8 +72,13 @@ class Faculter_motrice
    void sendSequence(void);
 public:
 #ifdef DEBUG
-    char get_idSeq(void){return m_seq->get_Sequence();}
+
 #endif
+    char get_idSeq(void){return m_seq->get_Sequence();}
+    char get_idFrame(void){return m_seq->get_frame();}
+    void set_idSeq(char value){m_seq->set_frameID(value);}
+    
+    
     Faculter_motrice(Serial* com);
     virtual ~Faculter_motrice();
     

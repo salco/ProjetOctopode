@@ -8,9 +8,9 @@
 #ifndef CTRLBRIDGE_H
 #define CTRLBRIDGE_H
 
-#define DEBUG_INITMODULE 1
-#define DEBUF_FINDMODULE 1
-#define DEBUF_SEND 1
+#define DEBUG_INITMODULE /*1*/0
+#define DEBUF_FINDMODULE 0
+#define DEBUF_SEND /*1*/0
 
 #define SPI_HIGH_MISO PB_14
 #define SPI_HIGH_MOSI PB_15
@@ -59,7 +59,22 @@ private:
 
 public:
     Serial pc;
-
+    inline string getFlagUpdate(const unsigned char &adresse) {
+        string flag,data;
+        flag.clear();
+        data.clear();
+        flag.append(1,7);
+        send(adresse,flag,data);
+        return flag;
+    }
+    inline string getDataUpdate(const unsigned char &adresse) {
+        string flag,data;
+        flag.clear();
+        data.clear();
+        flag.append(1,7);
+        send(adresse,flag,data);
+        return data;
+    }
     bool send( const unsigned char &adresse, string &flag, string &data);
 
     /*string findModule(const typeModue &t);
@@ -67,14 +82,14 @@ public:
     string findModule(const sousType_Memoire &st);
     string findModule(const sousType_Capteur &st);
     string findModule(const positionSpatial &p);
-    
+
     string findModule(const typeModue &t, const sousType_Actionneur &st);
     string findModule(const typeModue &t, const sousType_Memoire &st);
     string findModule(const typeModue &t, const sousType_Capteur &st);
     string findModule(const typeModue &t, const positionSpatial &p);*/ //complex pour le moment on le fera en temps voulue
-    
+
     string findModule(const char &peripheriqueID, const char &type, const char &sousType, const char &posSpatial);
-    
+
     int size(const char &peripheriqueID, const char &type, const char &sousType, const char &posSpatial);
     /**
     * @brief Methode permetant une seul instance de la classe
@@ -88,6 +103,12 @@ public:
         return (m_regPortUse & (1<<portID))?true:false;
     };
     bool tryComPort(char portID);//just faire le sync et crc pour voire si lautre est la
+
+    void clearALL (void) {
+        m_Memory.remAllActioneur();
+        m_Memory.remAllCapteur();
+        m_Memory.remAllMemoire();
+    };
 
     //fonction quelquonque pour communiquer avec les module
     //fonction quelquonque pour faire des recherche dans les module dispo

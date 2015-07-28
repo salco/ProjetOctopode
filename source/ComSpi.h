@@ -9,8 +9,8 @@
 #define COMSPI_H
 
 #define DEBUG_SEND 0
-#define DEBUG_COMPACT 1
-#define DEBUG_SLIM 1
+#define DEBUG_COMPACT /*1*/0
+#define DEBUG_SLIM /*1*/0
 #define MAXTABLE 20 
 
 #include "mbed.h"

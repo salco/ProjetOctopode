@@ -8,7 +8,7 @@
 #ifndef MEMREG_H
 #define MEMREG_H
 
-#define DEBUG_GETADDR 1
+#define DEBUG_GETADDR /*1*/0
 #define DEBUG_ISVALIDE 0
 
 #include <list>
