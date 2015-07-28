@@ -8,11 +8,9 @@
 #ifndef TTASKCRITIQUE_H
 #define TTASKCRITIQUE_H
 
-#define DEBUG_INIT_TASKCRITT 1
-#define DEBUG_TASKCRITT 1
-
 #include "Task/TTask.h"
 #include "debug.h"
+#include "settingDebug.h"
 
 class TTaskCritique : public TTask
 {

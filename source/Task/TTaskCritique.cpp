@@ -5,18 +5,23 @@ TTaskCritique::TTaskCritique(int priority):TTask(priority)
 {
     debug(DEBUG_INIT_TASKCRITT, "\n\r Debut init");
     //m_CtrlBridge = m_CtrlBridge->getInstance();
+    #ifdef DGB_FORCE_INIT
+    m_CtrlBridge->initCom();
+    #else
     do{
     m_CtrlBridge->initCom();
     m_ListDesModules = m_CtrlBridge->findModule(0,0,0,0); //get all modules
-    if(m_ListDesModules.size() != 11)
-    {
-        debug(DEBUG_INIT_TASKCRITT, "\n\r Init Fail");
-        forceShutDown(false);
-        wait(1);
-        m_CtrlBridge->clearALL();
-        forceShutDown(true);
+    
+        if(m_ListDesModules.size() != 11) //its a patch we need to delete it.
+        {
+            debug(DEBUG_INIT_TASKCRITT, "\n\r Init Fail");
+            forceShutDown(false);
+            wait(1);
+            m_CtrlBridge->clearALL();
+            forceShutDown(true);
         }
     }while(m_ListDesModules.size() != 11);
+    #endif
     tymy=true;
     debug(DEBUG_INIT_TASKCRITT, "\n\r Init Reussi");
 }
@@ -52,7 +57,6 @@ void TTaskCritique::criticalTreatment(char adresse)
 
 void TTaskCritique::task(void)
 {
-    //debug("\n\rPeanut");
     //pas sur que c'Est tout ce qui doit etre ici mais je vois pas quoi d'autre pour le moment.
     string flag,data;
 
