@@ -8,10 +8,17 @@
 //#include "mouvement.h"
 #include "debug.h"
 #include "settingDebug.h"
+#include "AnsiGraphicalConsole.h"
 
 #include "source/Task/TTaskCritique.h"
 #include "source/Task/TTaskAlerte.h"
 #include "source/Task/TTaskGeneral.h"
+
+
+//#include <fcntl.h>
+//#include <io.h>
+//#include <stdio.h>
+//#include <iostream>
 
 DigitalOut myled(LED1, 0);
 DigitalIn mybutton(USER_BUTTON);
@@ -47,6 +54,19 @@ wait(3);
      TTaskCritique taskGeneral(20);
     #ifdef DBG_MAIN_INIT 
     debug(" end");
+    #endif
+    
+    #ifdef DEBUG_BOOT_GRAPHICAL_INTERFACE
+    wait(2);
+    debug("\x1B[2J"); //clear screen
+    debug("\x1B[25l");//hide cursor
+    debug("\x1B[;H"); //cursor default position
+    
+    //createSLbox(0,0,5,15,"Mode");
+    createDLbox(0,0,5,15,"Mode");//(1,12,10,20,"test2");
+    createDLbox(16,0,5,15,"Stage");
+    //debug("\u00BF \u00BF \u00BF");
+    //debug("╔═══╦════╗");
     #endif
 
     while(1) {

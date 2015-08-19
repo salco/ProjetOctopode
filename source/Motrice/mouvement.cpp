@@ -179,39 +179,56 @@ void Faculter_motrice::crit_stop(void)
 }
 
 void Faculter_motrice::sendSequence(void)
-{
+{   
+    
     debug(DEBUG_SENDSEQ,"\n\r   in sendSeq\n\r");
     debug(DEBUG_SENDSEQ,"\n\r tarzan: %i",m_seq->get_msTime(m_arr_mil_D->id()));
     if(m_arr_D->haveChange()) {
+        #ifndef DEBUG_MOUVEMENT_COMM_OFF
         m_com->printf("%s T%d\n\r",m_arr_D->toString(),m_seq->get_msTime(m_arr_D->id()));
+        #endif
         debug(DEBUG_SENDSEQ,"\n\r   %s T%d\n\r",m_arr_D->toString(),m_seq->get_msTime(m_arr_D->id()));
     }
     if(m_arr_G->haveChange()) {
+        #ifndef DEBUG_MOUVEMENT_COMM_OFF
         m_com->printf("%s T%d\n\r",m_arr_G->toString(),m_seq->get_msTime(m_arr_G->id()));
+        #endif
         debug(DEBUG_SENDSEQ,"\n\r   %s T%d\n\r",m_arr_G->toString(),m_seq->get_msTime(m_arr_G->id()));
     }
     if(m_arr_mil_D->haveChange()) {
+        #ifndef DEBUG_MOUVEMENT_COMM_OFF
         m_com->printf("%s T%d\n\r",m_arr_mil_D->toString(),m_seq->get_msTime(m_arr_mil_D->id()));
+        #endif
         debug(DEBUG_SENDSEQ,"\n\r   %s T%d\n\r",m_arr_mil_D->toString(),m_seq->get_msTime(m_arr_mil_D->id()));
     }
     if(m_arr_mil_G->haveChange()) {
+        #ifndef DEBUG_MOUVEMENT_COMM_OFF
         m_com->printf("%s T%d\n\r",m_arr_mil_G->toString(),m_seq->get_msTime(m_arr_mil_G->id()));
+        #endif
         debug(DEBUG_SENDSEQ,"\n\r   %s T%d\n\r",m_arr_mil_G->toString(),m_seq->get_msTime(m_arr_mil_G->id()));
     }
     if(m_avv_mil_D->haveChange()) {
+        #ifndef DEBUG_MOUVEMENT_COMM_OFF
         m_com->printf("%s T%d\n\r",m_avv_mil_D->toString(),m_seq->get_msTime(m_avv_mil_D->id()));
+        #endif
         debug(DEBUG_SENDSEQ,"\n\r   %s T%d\n\r",m_avv_mil_D->toString(),m_seq->get_msTime(m_avv_mil_D->id()));
     }
     if(m_avv_mil_G->haveChange()) {
+        #ifndef DEBUG_MOUVEMENT_COMM_OFF
         m_com->printf("%s T%d\n\r",m_avv_mil_G->toString(),m_seq->get_msTime(m_avv_mil_G->id()));
+        #endif
         debug(DEBUG_SENDSEQ,"\n\r   %s T%d\n\r",m_avv_mil_G->toString(),m_seq->get_msTime(m_avv_mil_G->id()));
     }
     if(m_avv_D->haveChange()) {
+        #ifndef DEBUG_MOUVEMENT_COMM_OFF
         m_com->printf("%s T%d\n\r",m_avv_D->toString(),m_seq->get_msTime(m_avv_D->id()));
+        #endif
         debug(DEBUG_SENDSEQ,"\n\r   %s T%d\n\r",m_avv_D->toString(),m_seq->get_msTime(m_avv_D->id()));
     }
     if(m_avv_G->haveChange()) {
+        #ifndef DEBUG_MOUVEMENT_COMM_OFF
         m_com->printf("%s T%d\n\r",m_avv_G->toString(),m_seq->get_msTime(m_avv_G->id()));
+        #endif
         debug(DEBUG_SENDSEQ,"\n\r   %s T%d\n\r",m_avv_G->toString(),m_seq->get_msTime(m_avv_G->id()));
     }
     debug(DEBUG_SENDSEQ,"\n\r   out sendSeq\n\r");
