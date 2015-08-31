@@ -1,5 +1,6 @@
 
 #include "directive.h"
+Serial pc(SERIAL_TX, SERIAL_RX);
 int tabIR[12][2]= {
     {80, 400},{50, 600},{40, 700},{30, 900},{25,1100},
     {20,1300},{15,1600},{10,2400},{ 8,2700},{ 7,3000},
@@ -14,8 +15,8 @@ int tabIR[12][2]= {
 Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les fois que TTaskGen sexecute.
 {
     /* initialize random seed: */
-  srand (time(NULL));
-    
+    srand (time(NULL));
+
     myMaze->setDirection(UP);
     //c=0;
     ssc32 = new /*Serial*//*Raw*/Serial/*(USBTX, USBRX);*/(PB_6, PB_7);//(PA_9, PA_10);
@@ -32,7 +33,7 @@ Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les foi
     //Serial pc(USBTX, USBRX);
 
     //ssc32->set_flow_control(0);
-    
+
     myMaze = new Labyrinthe();
     debug("\n\r directive Init");//printf("Hello World\n");
     m_ListDesModules = m_CtrlBridge->findModule(0,CAPTEUR,DISTANCE,0);
@@ -58,7 +59,22 @@ Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les foi
             getUp = false;
 
     }
+    
     ctrDesPattes->calibre();
+    
+    #ifdef DEBUG_BOOT_GRAPHICAL_INTERFACE
+    wait(2);
+    debug("\x1B[2J"); //clear screen
+    debug("\x1B[25l");//hide cursor
+    debug("\x1B[;H"); //cursor default position
+    
+    //createSLbox(0,0,5,15,"Mode");
+    createDLbox(0,0,10,20,"Menu");//(1,12,10,20,"test2");
+    setText(1,3,"1) BrainControle");
+    setText(1,4,"2) Show Maze");
+    //createDLbox(16,0,5,15,"Stage");
+    
+    #endif
 }
 Directive::~Directive()
 {
@@ -67,11 +83,39 @@ Directive::~Directive()
         delete ctrDesPattes;
     if(ssc32)
         delete ssc32;
-         if(myMaze)
+    if(myMaze)
         delete myMaze;
 }
 void Directive::task(void)//ALL CODE HERE//
 {
+       
+       #ifdef DEBUG_BOOT_GRAPHICAL_INTERFACE
+    if(pc.readable()){
+        
+    debug("\x1B[2J"); //clear screen
+    debug("\x1B[25l");//hide cursor
+    debug("\x1B[;H"); //cursor default position
+    
+    
+    int idCommand;
+    
+    idCommand = fgetc(pc) - '0';
+    switch(idCommand)
+    {
+        case 1:
+            createDLbox(0,0,10,25,"BrainControle");    
+            setText(1,3,"1) Move Up");
+            setText(1,4,"2) Move Down");
+            setText(1,5,"2) Move Left");
+            setText(1,6,"2) Move Right");
+        break;
+        
+        case 2:
+            createDLbox(0,0,10,20,"Show Maze");    
+        break;
+    }
+    }
+    #endif
     //debug(DEBUG_DIRECTIVE_TEST,"\n\rIn task directive");
     if(ctrDesPattes->isSeqComplet()) {
         if((tableauDeCommange[0] == 6) && (size_tableauDeCommange == 1)) {
@@ -102,7 +146,7 @@ void Directive::task(void)//ALL CODE HERE//
                 debug("\n\r flag: %d",flag[0]);
                 debug("\n\r data: %x",data[0]);
             }*/
-            #ifndef BACKUP
+#ifndef BACKUP
             updateModuleValue();
 
             //////////////////////////////
@@ -111,86 +155,80 @@ void Directive::task(void)//ALL CODE HERE//
             debug(DEBUG_DIRECTIVE_TEST,"\n\r        -IRToCm(%02f): %02f",ADCTomv(m_valueCapteurIR),IRToCm(ADCTomv(m_valueCapteurIR)));
             debug(DEBUG_DIRECTIVE_TEST,"\n\r        -ultrasonicToInch: %02f",ultrasonicToInch(m_valueCapteurUltrasonic));
             debug(DEBUG_DIRECTIVE_TEST,"\n\r        -m_valueCapteurProximiter: %02d",m_valueCapteurProximiter);
-            
+
             analiseMaze();
             char nextCase=0;
-            switch(myMaze->getDirection())
-            {
-            case UP:
-            nextCase = myMaze->getC(myMaze->getX(),myMaze->getY()+1);
-            break;
-            
-            case DOWN:
-            nextCase = myMaze->getC(myMaze->getX(),myMaze->getY()-1);
-            break;
-            
-            case LEFT:
-            nextCase = myMaze->getC(myMaze->getX()-1,myMaze->getY());
-            break;
-            
-            case RIGHT:
-            nextCase = myMaze->getC(myMaze->getX()+1,myMaze->getY());
-            break;    
+            switch(myMaze->getDirection()) {
+                case UP:
+                    nextCase = myMaze->getC(myMaze->getX(),myMaze->getY()+1);
+                    break;
+
+                case DOWN:
+                    nextCase = myMaze->getC(myMaze->getX(),myMaze->getY()-1);
+                    break;
+
+                case LEFT:
+                    nextCase = myMaze->getC(myMaze->getX()-1,myMaze->getY());
+                    break;
+
+                case RIGHT:
+                    nextCase = myMaze->getC(myMaze->getX()+1,myMaze->getY());
+                    break;
             }
-            
-            switch(nextCase )
-            {
+
+            switch(nextCase ) {
                 case VIDE:
-                debug(DEBUG_DIRECTIVE_TEST," Javance");
+                    debug(DEBUG_DIRECTIVE_TEST," Javance");
                     addTableauDeCommande(6);
-              break;
-              
-              case EXPLORER:// ici pt amiliorer
-              debug(DEBUG_DIRECTIVE_TEST," Javance");
+                    break;
+
+                case EXPLORER:// ici pt amiliorer
+                    debug(DEBUG_DIRECTIVE_TEST," Javance");
                     addTableauDeCommande(6);
-              break;
-              
-              case MUR:
-              
-              switch(myMaze->getDirection())
-            {
-            case UP:
-            if(rand()%1){
-            nextCase = myMaze->getC(myMaze->getX()-1,myMaze->getY());
-            if(nextCase != MUR)
-            {
-                
-                }
-            nextCase = myMaze->getC(myMaze->getX()+1,myMaze->getY());
-            }
-            else{
-            nextCase = myMaze->getC(myMaze->getX()+1,myMaze->getY()+1);
-            }
-            break;
-            
-            case DOWN:
-            nextCase = myMaze->getC(myMaze->getX(),myMaze->getY()-1);
-            break;
-            
-            case LEFT:
-            nextCase = myMaze->getC(myMaze->getX()-1,myMaze->getY());
-            break;
-            
-            case RIGHT:
-            nextCase = myMaze->getC(myMaze->getX()+1,myMaze->getY());
-            break;    
-            }
-              
-              break;
-              
-              case PAS_EXPLORER:
-              debug(DEBUG_DIRECTIVE_TEST," Javance");
+                    break;
+
+                case MUR:
+
+                    switch(myMaze->getDirection()) {
+                        case UP:
+                            if(rand()%1) {
+                                nextCase = myMaze->getC(myMaze->getX()-1,myMaze->getY());
+                                if(nextCase != MUR) {
+                                }
+                                nextCase = myMaze->getC(myMaze->getX()+1,myMaze->getY());
+                            } else {
+                                nextCase = myMaze->getC(myMaze->getX()+1,myMaze->getY()+1);
+                            }
+                            break;
+
+                        case DOWN:
+                            nextCase = myMaze->getC(myMaze->getX(),myMaze->getY()-1);
+                            break;
+
+                        case LEFT:
+                            nextCase = myMaze->getC(myMaze->getX()-1,myMaze->getY());
+                            break;
+
+                        case RIGHT:
+                            nextCase = myMaze->getC(myMaze->getX()+1,myMaze->getY());
+                            break;
+                    }
+
+                    break;
+
+                case PAS_EXPLORER:
+                    debug(DEBUG_DIRECTIVE_TEST," Javance");
                     addTableauDeCommande(6);
-              break;
-                } 
-                
-            #endif 
-            #if BACKUP
+                    break;
+            }
+
+#endif
+#if BACKUP
             /*if((ultrasonicToInch(m_valueCapteurUltrasonic)< 1) && (IRToCm(ADCTomv(m_valueCapteurIR)) <= 80)) //capteur ultrasson embrouiller/imprecis
             {
                 debug(DEBUG_DIRECTIVE_TEST,"\n\r        -Capteur Ultrasson brouiller");
                 addTableauDeCommande(6);
-                }     
+                }
             else if(ultrasonicToInch(m_valueCapteurUltrasonic) < 10) { //plus proche que 10pouce
                 debug(DEBUG_DIRECTIVE_TEST,"\n\r        -Objet proche");
                 if(IRToCm(ADCTomv(m_valueCapteurIR)) <= 10) {
@@ -207,8 +245,8 @@ void Directive::task(void)//ALL CODE HERE//
             } else {
                 debug(DEBUG_DIRECTIVE_TEST,"\n\r        -Nothing:");
                 addTableauDeCommande(6);
-                
-                
+
+
                 int randomNbr = rand() % 4;
                 switch(randomNbr)
                 {
@@ -228,11 +266,11 @@ void Directive::task(void)//ALL CODE HERE//
                     debug(DEBUG_DIRECTIVE_TEST," Jattend");
                     break;
                     }
-                    
-                
+
+
                 //addTableauDeCommande(6);
             }*/
-            #endif
+#endif
             ///////////////
             // Mouvement //
             ///////////////
@@ -379,268 +417,244 @@ void Directive::analiseMaze(void)
     char areaVert =0;
     string mymap = myMaze->showMap();
     debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r  Labyrinthe map: X:%02x Y:%02x \n\r",myMaze->getX(),myMaze->getY());
-    for(int i=0;i<3;i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i]);
+    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i]);
     debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
-    for(int i=0;i<3;i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i+3]);
+    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i+3]);
     debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
-    for(int i=0;i<3;i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i+6]);
+    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i+6]);
     debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
-    
-    
-    
-    if((ultrasonicToInch(m_valueCapteurUltrasonic)< 1) && (IRToCm(ADCTomv(m_valueCapteurIR)) <= 80)) //capteur ultrasson embrouiller/imprecis
-            {
-                debug(DEBUG_DIRECTIVE_TEST,"\n\r        -Capteur Ultrasson brouiller");
-                //addTableauDeCommande(6);
-                }     
-            else if(ultrasonicToInch(m_valueCapteurUltrasonic) >=24) { //plus proche que 10pouce
-                debug(DEBUG_DIRECTIVE_TEST,"\n\r        -Objet proche 2pi");
-                areaLatt =2;
-                areaVert =2;
-                }
-            else if(ultrasonicToInch(m_valueCapteurUltrasonic) >=12) { //plus proche que 10pouce
-                debug(DEBUG_DIRECTIVE_TEST,"\n\r        -Objet proche 2pi");
-                areaLatt =1;
-                areaVert =1;
-                }
-                if(IRToCm(ADCTomv(m_valueCapteurIR)) <= 60) {
-                    debug(DEBUG_DIRECTIVE_TEST,"\n\r          -Confirmation IR");
-                    areaVert =2;
-                    }
-                    else if(IRToCm(ADCTomv(m_valueCapteurIR)) <= 30) {
-                    debug(DEBUG_DIRECTIVE_TEST,"\n\r          -Confirmation IR");
-                    areaVert =1;
-                    }
-            
-    
-    switch(myMaze->getDirection()){
+
+
+
+    if((ultrasonicToInch(m_valueCapteurUltrasonic)< 1) && (IRToCm(ADCTomv(m_valueCapteurIR)) <= 80)) { //capteur ultrasson embrouiller/imprecis
+        debug(DEBUG_DIRECTIVE_TEST,"\n\r        -Capteur Ultrasson brouiller");
+        //addTableauDeCommande(6);
+    } else if(ultrasonicToInch(m_valueCapteurUltrasonic) >=24) { //plus proche que 10pouce
+        debug(DEBUG_DIRECTIVE_TEST,"\n\r        -Objet proche 2pi");
+        areaLatt =2;
+        areaVert =2;
+    } else if(ultrasonicToInch(m_valueCapteurUltrasonic) >=12) { //plus proche que 10pouce
+        debug(DEBUG_DIRECTIVE_TEST,"\n\r        -Objet proche 2pi");
+        areaLatt =1;
+        areaVert =1;
+    }
+    if(IRToCm(ADCTomv(m_valueCapteurIR)) <= 60) {
+        debug(DEBUG_DIRECTIVE_TEST,"\n\r          -Confirmation IR");
+        areaVert =2;
+    } else if(IRToCm(ADCTomv(m_valueCapteurIR)) <= 30) {
+        debug(DEBUG_DIRECTIVE_TEST,"\n\r          -Confirmation IR");
+        areaVert =1;
+    }
+
+
+    switch(myMaze->getDirection()) {
         case UP:
-        switch(areaVert)
-        {
-            case 0:
-            myMaze->setC_Up(MUR);
-            break;
-            
-            case 1:
-            if(areaLatt == 0){
-                myMaze->setC_Up(MUR);
-                }
-              else if(areaLatt == 1){
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()+1);
-                myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()+1);
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()+1);
-                
-                myMaze->setC(MUR,myMaze->getX(),myMaze->getY()+2);
-                }
-                else if(areaLatt == 2){
-                
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()+1);
-                myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()+1);
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()+1);
-                
-                myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()+2);
-                myMaze->setC(MUR,myMaze->getX(),myMaze->getY()+2);
-                myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()+2);
-                }
-            break;
-            
-            case 2:
-            if(areaLatt == 0){
-                myMaze->setC_Up(MUR);
-                }
-              else if(areaLatt == 1){
-                myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()+1);//mur?
-                myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()+1);
-                myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()+1);//mur?
-                
-                //myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()+1);//mur?
-                myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()+2);
-                //myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()+1);//mur?
-                }
-                else if(areaLatt == 2){
-                
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()+1);
-                myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()+1);
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()+1);
-                
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()+2);
-                myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()+2);
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()+2);
-                }
-            break;
+            switch(areaVert) {
+                case 0:
+                    myMaze->setC_Up(MUR);
+                    break;
+
+                case 1:
+                    if(areaLatt == 0) {
+                        myMaze->setC_Up(MUR);
+                    } else if(areaLatt == 1) {
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()+1);
+                        myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()+1);
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()+1);
+
+                        myMaze->setC(MUR,myMaze->getX(),myMaze->getY()+2);
+                    } else if(areaLatt == 2) {
+
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()+1);
+                        myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()+1);
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()+1);
+
+                        myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()+2);
+                        myMaze->setC(MUR,myMaze->getX(),myMaze->getY()+2);
+                        myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()+2);
+                    }
+                    break;
+
+                case 2:
+                    if(areaLatt == 0) {
+                        myMaze->setC_Up(MUR);
+                    } else if(areaLatt == 1) {
+                        myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()+1);//mur?
+                        myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()+1);
+                        myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()+1);//mur?
+
+                        //myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()+1);//mur?
+                        myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()+2);
+                        //myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()+1);//mur?
+                    } else if(areaLatt == 2) {
+
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()+1);
+                        myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()+1);
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()+1);
+
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()+2);
+                        myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()+2);
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()+2);
+                    }
+                    break;
             }
-        
-        break;
-        
+
+            break;
+
         case DOWN:
-        switch(areaVert)
-        {
-            case 0:
-            myMaze->setC_Down(MUR);
-            break;
-            
-            case 1:
-            if(areaLatt == 0){
-                myMaze->setC_Down(MUR);
-                }
-              else if(areaLatt == 1){
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()-1);
-                myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()-1);
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()-1);
-                
-                myMaze->setC(MUR,myMaze->getX(),myMaze->getY()-2);
-                }
-                else if(areaLatt == 2){
-                
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()-1);
-                myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()-1);
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()-1);
-                
-                myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()-2);
-                myMaze->setC(MUR,myMaze->getX(),myMaze->getY()-2);
-                myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()-2);
-                }
-            break;
-            
-            case 2:
-            if(areaLatt == 0){
-                myMaze->setC_Down(MUR);
-                }
-              else if(areaLatt == 1){
-                myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()-1);//mur?
-                myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()-1);
-                myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()-1);//mur?
-                
-                //myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()+1);//mur?
-                myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()-2);
-                //myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()+1);//mur?
-                }
-                else if(areaLatt == 2){
-                
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()-1);
-                myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()-1);
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()-1);
-                
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()-2);
-                myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()-2);
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()-2);
-                }
-            break;
+            switch(areaVert) {
+                case 0:
+                    myMaze->setC_Down(MUR);
+                    break;
+
+                case 1:
+                    if(areaLatt == 0) {
+                        myMaze->setC_Down(MUR);
+                    } else if(areaLatt == 1) {
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()-1);
+                        myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()-1);
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()-1);
+
+                        myMaze->setC(MUR,myMaze->getX(),myMaze->getY()-2);
+                    } else if(areaLatt == 2) {
+
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()-1);
+                        myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()-1);
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()-1);
+
+                        myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()-2);
+                        myMaze->setC(MUR,myMaze->getX(),myMaze->getY()-2);
+                        myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()-2);
+                    }
+                    break;
+
+                case 2:
+                    if(areaLatt == 0) {
+                        myMaze->setC_Down(MUR);
+                    } else if(areaLatt == 1) {
+                        myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()-1);//mur?
+                        myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()-1);
+                        myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()-1);//mur?
+
+                        //myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()+1);//mur?
+                        myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()-2);
+                        //myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()+1);//mur?
+                    } else if(areaLatt == 2) {
+
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()-1);
+                        myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()-1);
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()-1);
+
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()-2);
+                        myMaze->setC(VIDE,myMaze->getX(),myMaze->getY()-2);
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()-2);
+                    }
+                    break;
             }
-        break;
-        
+            break;
+
         case LEFT:
-        switch(areaVert)
-        {
-            case 0:
-            myMaze->setC_Left(MUR);
-            break;
-            
-            case 1:
-            if(areaLatt == 0){
-                myMaze->setC_Left(MUR);
-                }
-              else if(areaLatt == 1){
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()-1);
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY());
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()+1);
-                
-                myMaze->setC(MUR,myMaze->getX()-2,myMaze->getY());
-                }
-                else if(areaLatt == 2){
-                
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()-1);
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY());
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()+1);
-                
-                myMaze->setC(PAS_EXPLORER,myMaze->getX()-2,myMaze->getY()-1);
-                myMaze->setC(MUR,myMaze->getX()-2,myMaze->getY());
-                myMaze->setC(PAS_EXPLORER,myMaze->getX()-2,myMaze->getY()+1);
-                }
-            break;
-            
-            case 2:
-            if(areaLatt == 0){
-                myMaze->setC_Left(MUR);
-                }
-              else if(areaLatt == 1){
-                myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()-1);//mur?
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY());
-                myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()+1);//mur?
-                
-                //myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()+1);//mur?
-                myMaze->setC(VIDE,myMaze->getX()-2,myMaze->getY());
-                //myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()+1);//mur?
-                }
-                else if(areaLatt == 2){
-                
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()-1);
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY());
-                myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()+1);
-                
-                myMaze->setC(VIDE,myMaze->getX()-2,myMaze->getY()+1);
-                myMaze->setC(VIDE,myMaze->getX()-2,myMaze->getY());
-                myMaze->setC(VIDE,myMaze->getX()-2,myMaze->getY()+1);
-                }
-            break;
+            switch(areaVert) {
+                case 0:
+                    myMaze->setC_Left(MUR);
+                    break;
+
+                case 1:
+                    if(areaLatt == 0) {
+                        myMaze->setC_Left(MUR);
+                    } else if(areaLatt == 1) {
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()-1);
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY());
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()+1);
+
+                        myMaze->setC(MUR,myMaze->getX()-2,myMaze->getY());
+                    } else if(areaLatt == 2) {
+
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()-1);
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY());
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()+1);
+
+                        myMaze->setC(PAS_EXPLORER,myMaze->getX()-2,myMaze->getY()-1);
+                        myMaze->setC(MUR,myMaze->getX()-2,myMaze->getY());
+                        myMaze->setC(PAS_EXPLORER,myMaze->getX()-2,myMaze->getY()+1);
+                    }
+                    break;
+
+                case 2:
+                    if(areaLatt == 0) {
+                        myMaze->setC_Left(MUR);
+                    } else if(areaLatt == 1) {
+                        myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()-1);//mur?
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY());
+                        myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()+1);//mur?
+
+                        //myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()+1);//mur?
+                        myMaze->setC(VIDE,myMaze->getX()-2,myMaze->getY());
+                        //myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()+1);//mur?
+                    } else if(areaLatt == 2) {
+
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()-1);
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY());
+                        myMaze->setC(VIDE,myMaze->getX()-1,myMaze->getY()+1);
+
+                        myMaze->setC(VIDE,myMaze->getX()-2,myMaze->getY()+1);
+                        myMaze->setC(VIDE,myMaze->getX()-2,myMaze->getY());
+                        myMaze->setC(VIDE,myMaze->getX()-2,myMaze->getY()+1);
+                    }
+                    break;
             }
-        break;
-        
+            break;
+
         case RIGHT:
-        switch(areaVert)
-        {
-            case 0:
-            myMaze->setC_Right(MUR);
-            break;
-            
-            case 1:
-            if(areaLatt == 0){
-                myMaze->setC_Right(MUR);
-                }
-              else if(areaLatt == 1){
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()-1);
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY());
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()+1);
-                
-                myMaze->setC(MUR,myMaze->getX()+2,myMaze->getY());
-                }
-                else if(areaLatt == 2){
-                
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()-1);
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY());
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()+1);
-                
-                myMaze->setC(PAS_EXPLORER,myMaze->getX()+2,myMaze->getY()-1);
-                myMaze->setC(MUR,myMaze->getX()+2,myMaze->getY());
-                myMaze->setC(PAS_EXPLORER,myMaze->getX()+2,myMaze->getY()+1);
-                }
-            break;
-            
-            case 2:
-            if(areaLatt == 0){
-                myMaze->setC_Right(MUR);
-                }
-              else if(areaLatt == 1){
-                myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()-1);//mur?
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY());
-                myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()+1);//mur?
-                
-                //myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()+1);//mur?
-                myMaze->setC(VIDE,myMaze->getX()+2,myMaze->getY());
-                //myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()+1);//mur?
-                }
-                else if(areaLatt == 2){
-                
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()-1);
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY());
-                myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()+1);
-            
-                myMaze->setC(VIDE,myMaze->getX()+2,myMaze->getY()+1);
-                myMaze->setC(VIDE,myMaze->getX()+2,myMaze->getY());
-                myMaze->setC(VIDE,myMaze->getX()+2,myMaze->getY()+1);
-                }
-            break;
+            switch(areaVert) {
+                case 0:
+                    myMaze->setC_Right(MUR);
+                    break;
+
+                case 1:
+                    if(areaLatt == 0) {
+                        myMaze->setC_Right(MUR);
+                    } else if(areaLatt == 1) {
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()-1);
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY());
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()+1);
+
+                        myMaze->setC(MUR,myMaze->getX()+2,myMaze->getY());
+                    } else if(areaLatt == 2) {
+
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()-1);
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY());
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()+1);
+
+                        myMaze->setC(PAS_EXPLORER,myMaze->getX()+2,myMaze->getY()-1);
+                        myMaze->setC(MUR,myMaze->getX()+2,myMaze->getY());
+                        myMaze->setC(PAS_EXPLORER,myMaze->getX()+2,myMaze->getY()+1);
+                    }
+                    break;
+
+                case 2:
+                    if(areaLatt == 0) {
+                        myMaze->setC_Right(MUR);
+                    } else if(areaLatt == 1) {
+                        myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()-1);//mur?
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY());
+                        myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()+1);//mur?
+
+                        //myMaze->setC(PAS_EXPLORER,myMaze->getX()-1,myMaze->getY()+1);//mur?
+                        myMaze->setC(VIDE,myMaze->getX()+2,myMaze->getY());
+                        //myMaze->setC(PAS_EXPLORER,myMaze->getX()+1,myMaze->getY()+1);//mur?
+                    } else if(areaLatt == 2) {
+
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()-1);
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY());
+                        myMaze->setC(VIDE,myMaze->getX()+1,myMaze->getY()+1);
+
+                        myMaze->setC(VIDE,myMaze->getX()+2,myMaze->getY()+1);
+                        myMaze->setC(VIDE,myMaze->getX()+2,myMaze->getY());
+                        myMaze->setC(VIDE,myMaze->getX()+2,myMaze->getY()+1);
+                    }
+                    break;
             }
-        break;
-        }
+            break;
+    }
 }

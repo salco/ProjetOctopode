@@ -1,4 +1,4 @@
-
+#include "settingDebug.h"
 #include "TTaskGeneral.h"
 
 TTaskGeneral::TTaskGeneral(int priority):TTask(priority)
@@ -15,5 +15,7 @@ TTaskGeneral::~TTaskGeneral()
 }
 void TTaskGeneral::task(void)
 {
+    
+    
     m_userTask->exec();
 }

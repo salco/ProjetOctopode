@@ -8,6 +8,9 @@
 #ifndef TTASK_H
 #define TTASK_H
 
+#include "AnsiGraphicalConsole.h"//pt une bonne ider
+#include "settingDebug.h"
+
 #include "mouvement.h"
 #include "OSNAPprotocoleDefine.h"
 #include "CtrlBridge.h"

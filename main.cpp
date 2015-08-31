@@ -20,6 +20,7 @@
 //#include <stdio.h>
 //#include <iostream>
 
+
 DigitalOut myled(LED1, 0);
 DigitalIn mybutton(USER_BUTTON);
 DigitalOut pinA(PA_13);
@@ -56,20 +57,11 @@ wait(3);
     debug(" end");
     #endif
     
-    #ifdef DEBUG_BOOT_GRAPHICAL_INTERFACE
-    wait(2);
-    debug("\x1B[2J"); //clear screen
-    debug("\x1B[25l");//hide cursor
-    debug("\x1B[;H"); //cursor default position
     
-    //createSLbox(0,0,5,15,"Mode");
-    createDLbox(0,0,5,15,"Mode");//(1,12,10,20,"test2");
-    createDLbox(16,0,5,15,"Stage");
-    //debug("\u00BF \u00BF \u00BF");
-    //debug("╔═══╦════╗");
-    #endif
 
     while(1) {
+     
+    
 
         #if taskCritique
         taskCritique.exec();
@@ -81,6 +73,7 @@ wait(3);
         
         #if taskGeneral
         taskGeneral.exec();
+        
         #endif
         
         /*if (mybutton == 0) { // Button is pressed

@@ -5,11 +5,14 @@ TTaskCritique::TTaskCritique(int priority):TTask(priority)
 {
     debug(DEBUG_INIT_TASKCRITT, "\n\r Debut init");
     //m_CtrlBridge = m_CtrlBridge->getInstance();
-    #ifdef DGB_FORCE_INIT
+    
+    
     m_CtrlBridge->initCom();
-    #else
+    /*#ifdef*/#ifndef DGB_FORCE_INIT
+    //m_CtrlBridge->initCom();
+    //#else
     do{
-    m_CtrlBridge->initCom();
+    //m_CtrlBridge->initCom();
     m_ListDesModules = m_CtrlBridge->findModule(0,0,0,0); //get all modules
     
         if(m_ListDesModules.size() != 11) //its a patch we need to delete it.
@@ -50,6 +53,7 @@ void TTaskCritique::forceShutDown(bool offON)
 
 void TTaskCritique::criticalTreatment(char adresse)
 {
+    debug("jello");
     //ici on debug et on traite le problemme//
         forceShutDown(tymy);
     tymy = !tymy;
@@ -57,6 +61,8 @@ void TTaskCritique::criticalTreatment(char adresse)
 
 void TTaskCritique::task(void)
 {
+    
+    
     //pas sur que c'Est tout ce qui doit etre ici mais je vois pas quoi d'autre pour le moment.
     string flag,data;
 
