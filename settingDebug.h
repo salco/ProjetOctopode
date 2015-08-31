@@ -6,6 +6,8 @@
 
 #define DEBUG_BOOT_GRAPHICAL_INTERFACE // enable ANSI interface to view all process 
 
+#define DBG_MAIN_FLAG //Show Flag trought each process
+
 #define DEBUG_TASKCRITT 1
     #define DGB_FORCE_INIT // use to brute force all patche to avoid bad reset.
     

@@ -44,7 +44,7 @@ wait(3);
     //#ifdef DBG_MAIN_INIT
     //debug("\n\rInit taskAlerte ...");
     //#endif
-    // TTaskCritique taskAlerte(20);// un-use because i dont know what to do with.
+    // TTaskAlerte taskAlerte(20);// un-use because i dont know what to do with.
     //#ifdef DBG_MAIN_INIT 
     //debug(" end");
     //#endif
@@ -52,7 +52,7 @@ wait(3);
     #ifdef DBG_MAIN_INIT
     debug("\n\rInit taskGeneral ...");
     #endif
-     TTaskCritique taskGeneral(20);
+     TTaskGeneral taskGeneral(20);
     #ifdef DBG_MAIN_INIT 
     debug(" end");
     #endif
@@ -61,19 +61,41 @@ wait(3);
 
     while(1) {
      
-    
 
         #if taskCritique
+            #ifdef DBG_MAIN_FLAG
+            debug("/n/r IN taskCritique");
+            #endif
+        
         taskCritique.exec();
+        
+            #ifdef DBG_MAIN_FLAG
+            debug("  Out taskCritique");
+            #endif
         #endif
         
         #if taskAlerte
+            #ifdef DBG_MAIN_FLAG
+            debug("/n/r IN taskAlerte");
+            #endif
+            
         taskAlerte.exec();
+        
+            #ifdef DBG_MAIN_FLAG
+            debug("  Out taskAlerte");
+            #endif        
         #endif
         
         #if taskGeneral
+            #ifdef DBG_MAIN_FLAG
+            debug("/n/r IN taskGeneral");
+            #endif
+            
         taskGeneral.exec();
-        
+
+            #ifdef DBG_MAIN_FLAG
+            debug("  Out taskGeneral");
+            #endif          
         #endif
         
         /*if (mybutton == 0) { // Button is pressed
