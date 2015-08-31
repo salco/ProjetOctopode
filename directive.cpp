@@ -41,14 +41,14 @@ Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les foi
     m_ListDesModules.append(m_CtrlBridge->findModule(0,CAPTEUR,PROXIMITEE,0));
 
     m_capteurUltrasonic= m_CtrlBridge->findModule(0,CAPTEUR,ULTRASONIQUE,0x27/*0b100111*/);
-    if(!(m_capteurUltrasonic.empty()))debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurUltrasonic found");
-    else debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurUltrasonic not found");
+        if(!(m_capteurUltrasonic.empty()))debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurUltrasonic found");
+        else debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurUltrasonic not found");
     m_capteurIR= m_CtrlBridge->findModule(0,CAPTEUR,DISTANCE,0x27/*0b100111*/);
-    if(!(m_capteurIR.empty()))debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurIR found");
-    else debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurIR not found");
+        if(!(m_capteurIR.empty()))debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurIR found");
+        else debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurIR not found");
     m_capteurProximiter= m_CtrlBridge->findModule(0,CAPTEUR,PROXIMITEE,0x0E/*0b001110*/);
-    if(!(m_capteurProximiter.empty()))debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurProximiter found");
-    else debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurProximiter not found");
+        if(!(m_capteurProximiter.empty()))debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurProximiter found");
+        else debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurProximiter not found");
 
     ctrDesPattes->moveUp();
 

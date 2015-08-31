@@ -38,7 +38,7 @@ wait(3);
     #endif
      TTaskCritique taskCritique(40);
     #ifdef DBG_MAIN_INIT 
-    debug(" end");
+    debug(" end taskCritique");
     #endif
     
     //#ifdef DBG_MAIN_INIT
@@ -46,7 +46,7 @@ wait(3);
     //#endif
     // TTaskAlerte taskAlerte(20);// un-use because i dont know what to do with.
     //#ifdef DBG_MAIN_INIT 
-    //debug(" end");
+    //debug(" end taskAlerte");
     //#endif
     
     #ifdef DBG_MAIN_INIT
@@ -54,17 +54,17 @@ wait(3);
     #endif
      TTaskGeneral taskGeneral(20);
     #ifdef DBG_MAIN_INIT 
-    debug(" end");
+    debug(" end taskGeneral");
     #endif
     
     
 
     while(1) {
      
-
+        
         #if taskCritique
             #ifdef DBG_MAIN_FLAG
-            debug("/n/r IN taskCritique");
+            debug("\n\r IN taskCritique");
             #endif
         
         taskCritique.exec();
@@ -76,7 +76,7 @@ wait(3);
         
         #if taskAlerte
             #ifdef DBG_MAIN_FLAG
-            debug("/n/r IN taskAlerte");
+            debug("\n\r IN taskAlerte");
             #endif
             
         taskAlerte.exec();
@@ -88,13 +88,14 @@ wait(3);
         
         #if taskGeneral
             #ifdef DBG_MAIN_FLAG
-            debug("/n/r IN taskGeneral");
+            debug("\n\r IN taskGeneral");
             #endif
             
         taskGeneral.exec();
 
             #ifdef DBG_MAIN_FLAG
             debug("  Out taskGeneral");
+            wait(1);
             #endif          
         #endif
         
