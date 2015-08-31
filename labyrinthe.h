@@ -27,6 +27,10 @@
 #define PAS_EXPLORER 0
 
 enum coordonerr{
+/* C7,C8,C9 */
+/* C4,C5,C6 */
+/* C1,C2,C3 */
+
     C1 = 1,
     C2 = 2,
     C3 = 3,

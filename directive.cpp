@@ -16,7 +16,8 @@ Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les foi
 {
     /* initialize random seed: */
     srand (time(NULL));
-
+    myMaze = new Labyrinthe();
+    
     myMaze->setDirection(UP);
     //c=0;
     ssc32 = new /*Serial*//*Raw*/Serial/*(USBTX, USBRX);*/(PB_6, PB_7);//(PA_9, PA_10);
