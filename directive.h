@@ -1,5 +1,5 @@
 /**
-  * @file       TTask.h
+  * @file       directive.h
   * @brief      Cette classe est le modele des 3 taches de controle.
   * @author     Salco
   * @version    2.00
@@ -27,6 +27,7 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 #include "labyrinthe.h"
+#include "settingDebug.h"
 
     //////////////////////////////
     // 00 - Nothing             //

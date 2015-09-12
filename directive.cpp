@@ -20,14 +20,16 @@ Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les foi
     
     myMaze->setDirection(UP);
     //c=0;
-    ssc32 = new /*Serial*//*Raw*/Serial/*(USBTX, USBRX);*/(PB_6, PB_7);//(PA_9, PA_10);
+    ssc32 = new Serial(PB_6, PB_7);
     ctrDesPattes = new Faculter_motrice(ssc32/*pc*/);
     m_valueCapteurUltrasonic = 0;
     m_valueCapteurIR = 0;
     m_valueCapteurProximiter = 0;
     for(int i =0; i<10; i++)tableauDeCommange[i]= 0;
     size_tableauDeCommange=0;
-    myMaze->setC(EXPLORER,C5);
+    
+    myMaze->setMyPos(EXPLORER);
+    //myMaze->setC(EXPLORER,C5);
     //m_CtrlBridge = m_CtrlBridge->getInstance();
     //a enlever de commentaire//m_ListDesModules = m_CtrlBridge->findModule(0,1,0,0);
 
@@ -35,16 +37,16 @@ Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les foi
 
     //ssc32->set_flow_control(0);
 
-    myMaze = new Labyrinthe();
-    debug("\n\r directive Init");//printf("Hello World\n");
+    
+    //debug("\n\r directive Init");
     m_ListDesModules = m_CtrlBridge->findModule(0,CAPTEUR,DISTANCE,0);
     m_ListDesModules.append(m_CtrlBridge->findModule(0,CAPTEUR,PROXIMITEE,0));
 
     m_capteurUltrasonic= m_CtrlBridge->findModule(0,CAPTEUR,ULTRASONIQUE,0x27/*0b100111*/);
-        if(!(m_capteurUltrasonic.empty()))debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurUltrasonic found");
-        else debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurUltrasonic not found");
+        if(!(m_capteurUltrasonic.empty())) debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurUltrasonic found");
+        else                               debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurUltrasonic not found");
     m_capteurIR= m_CtrlBridge->findModule(0,CAPTEUR,DISTANCE,0x27/*0b100111*/);
-        if(!(m_capteurIR.empty()))debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurIR found");
+        if(!(m_capteurIR.empty()))         debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurIR found");
         else debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurIR not found");
     m_capteurProximiter= m_CtrlBridge->findModule(0,CAPTEUR,PROXIMITEE,0x0E/*0b001110*/);
         if(!(m_capteurProximiter.empty()))debug(DEBUG_DIRECTIVE_TEST,"\n\r m_capteurProximiter found");
@@ -63,17 +65,19 @@ Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les foi
     
     ctrDesPattes->calibre();
     
-    #ifdef DEBUG_BOOT_GRAPHICAL_INTERFACE
+    #ifdef DEBUG_DIRECTIVE_GRAPHICAL_INTERFACE
+    analiseMaze();
     wait(2);
     debug("\x1B[2J"); //clear screen
-    debug("\x1B[25l");//hide cursor
-    debug("\x1B[;H"); //cursor default position
+    /*debug("\x1B[25l");//hide cursor
+    debug("\x1B[;H");*/ //cursor default position
     
-    //createSLbox(0,0,5,15,"Mode");
-    createDLbox(0,0,10,20,"Menu");//(1,12,10,20,"test2");
+        //createSLbox(0,0,5,15,"Mode");
+    /*createDLbox(0,0,10,20,"Menu");//(1,12,10,20,"test2");
     setText(1,3,"1) BrainControle");
-    setText(1,4,"2) Show Maze");
+    setText(1,4,"2) Show Maze");*/
     //createDLbox(16,0,5,15,"Stage");
+    
     
     #endif
 }

@@ -1,3 +1,10 @@
+/**
+  * @file       labyrinthe.cpp
+  * @brief      Regroupement de fonction pour enregistrer le millieu en 2D.
+  * @author     Salco
+  * @version    2.00
+  * @date       11 mars 2015
+  */
 #include "labyrinthe.h"
 
 
@@ -41,7 +48,7 @@ char Labyrinthe::getCoordoner(char &x, char &y)
     }
 
     debug(DEBUGLABCOORD,"\n\r result: X: %02d   Y:%02d",newPosX,newPosY);
-    debug(DEBUGLABCOORD,"\n\r result: :%02d",result);
+    debug(DEBUGLABCOORD,"\n\r result: :%02d \n\r",result);
 
     return result;
 }
@@ -73,12 +80,12 @@ char Labyrinthe::getCoordoner(void)
     }
 
     debug(DEBUGLABCOORD,"\n\r result: X: %02d   Y:%02d",newPosX,newPosY);
-    debug(DEBUGLABCOORD,"\n\r result: :%02d",result);
+    debug(DEBUGLABCOORD,"\n\r result: :%02d \n\r",result);
 
     return result;
 }
 
-string Labyrinthe::showMap(void)
+string Labyrinthe::showMap(void) 
 {
     return showMap(m_posX,m_posY);
 }
@@ -118,6 +125,27 @@ string Labyrinthe::showMap(char x, char y)
         theMap.append(1,((mapDuLabyrinthe[(stringPosition)+3]>>2)& 3));
         theMap.append(1,((mapDuLabyrinthe[(stringPosition)+3]>>0)& 3));
     }
+    
+    #ifdef DEBUG_BOOT_GRAPHICAL_INTERFACE
+    debug("\n\r----------showmap------\n\r");
+    debug(" map size: %i \n\r",mapDuLabyrinthe.size());
+    debug("  stringPosition: %i \n\r",stringPosition); 
+    if(stringPosition != -1) {
+        debug("  (mapDuLabyrinthe[(stringPosition)+1]>>0): %i &3== %i  \n\r",(mapDuLabyrinthe[(stringPosition)+1]>>0),((mapDuLabyrinthe[(stringPosition)+1]>>0)& 3));
+        debug("  (mapDuLabyrinthe[(stringPosition)+2]>>6): %i &3== %i  \n\r",(mapDuLabyrinthe[(stringPosition)+2]>>6),((mapDuLabyrinthe[(stringPosition)+2]>>6)& 3));
+        debug("  (mapDuLabyrinthe[(stringPosition)+2]>>4): %i &3== %i  \n\r",(mapDuLabyrinthe[(stringPosition)+2]>>4),((mapDuLabyrinthe[(stringPosition)+2]>>4)& 3));
+        debug("  \n\r");
+        debug("  (mapDuLabyrinthe[(stringPosition)+2]>>2): %i &3== %i  \n\r",(mapDuLabyrinthe[(stringPosition)+2]>>2),((mapDuLabyrinthe[(stringPosition)+2]>>2)& 3));
+        debug("  (mapDuLabyrinthe[(stringPosition)+2]>>0): %i &3== %i  \n\r",(mapDuLabyrinthe[(stringPosition)+2]>>0),((mapDuLabyrinthe[(stringPosition)+2]>>0)& 3));
+        debug("  (mapDuLabyrinthe[(stringPosition)+3]>>6): %i &3== %i  \n\r",(mapDuLabyrinthe[(stringPosition)+3]>>6),((mapDuLabyrinthe[(stringPosition)+3]>>6)& 3));
+        debug("  \n\r");
+        debug("  (mapDuLabyrinthe[(stringPosition)+3]>>4): %i &3== %i  \n\r",(mapDuLabyrinthe[(stringPosition)+3]>>4),((mapDuLabyrinthe[(stringPosition)+3]>>4)& 3));
+        debug("  (mapDuLabyrinthe[(stringPosition)+3]>>2): %i &3== %i  \n\r",(mapDuLabyrinthe[(stringPosition)+3]>>2),((mapDuLabyrinthe[(stringPosition)+3]>>2)& 3));
+        debug("  (mapDuLabyrinthe[(stringPosition)+3]>>0): %i &3== %i  \n\r",(mapDuLabyrinthe[(stringPosition)+3]>>0),((mapDuLabyrinthe[(stringPosition)+3]>>0)& 3));
+        debug("  \n\r");
+    }
+    debug("\n\r----------------------\n\r");
+    #endif
     return theMap;
 }
 
@@ -153,11 +181,19 @@ bool Labyrinthe::addMap(char x, char y)
 {
     bool result = true;
     x &= 0x7F; // on coupe le 8eme bit
-    y &= 0x7F;
+    y &= 0x7F; //
 
-    mapDuLabyrinthe.append(1,((x<<1) | (y>>6)) );
-    mapDuLabyrinthe.append(1,y<<1);
-    mapDuLabyrinthe.append(2,0); // add C2-C9 vide
+    mapDuLabyrinthe.append(1,((x<<1) | (y>>6)) );//x7,x6,x5,x4,x3,x2,x1,y7
+    mapDuLabyrinthe.append(1,y<<1);              //y6,y5,y4,y3,y2,y1,[C1],[C1]
+    mapDuLabyrinthe.append(2,0);                 //add C2-C9 vide
+    
+    #ifdef DEBUG_LABYRINTHE_ADD_MAP
+    debug("----addMap----\n\r");
+    debug("x = %i \n\r",x);
+    debug("y = %i \n\r",y);
+    debug("((x<<1) | (y>>6)) = %i \n\r",((x<<1) | (y>>6)));
+    debug("-------------\n\r");
+    #endif
 
     return result;
 }
@@ -167,13 +203,19 @@ int Labyrinthe::searchCoord(char posX,char posY)
     bool result=false;
     //string theMap;
     //theMap.clear();
+    debug(DEBUGLABSEARCHCOORD,"------Search coord------");
+    debug(DEBUGLABSEARCHCOORD," posX: %i posY: %i \n\r",posX,posY);
+    
     char newPosX = posX;
     char newPosY = posY;
 
     getCoordoner(newPosX,newPosY);
+    debug(DEBUGLABSEARCHCOORD," new posX: %i new posY: %i \n\r",newPosX,newPosY);
     unsigned char templateX,templateY;
     int i=0;
-    for( ; ((i*DEFAULTLABLEIGHT)<mapDuLabyrinthe.size()) && (!result); i++) {
+    debug(DEBUGLABSEARCHCOORD," map size: %i \n\r",mapDuLabyrinthe.size());
+    for( ; ((i*DEFAULTLABLEIGHT) < mapDuLabyrinthe.size()) && (!result); i++) {
+       
         templateX = (mapDuLabyrinthe[(i*DEFAULTLABLEIGHT)])>>1;
         templateY = ((mapDuLabyrinthe[(i*DEFAULTLABLEIGHT)])&1)<<7;
         templateY += ((mapDuLabyrinthe[(i*DEFAULTLABLEIGHT)+1])>>2);
@@ -183,6 +225,9 @@ int Labyrinthe::searchCoord(char posX,char posY)
             //theMap.append(1,((mapDuLabyrinthe[(i*DEFAULTLABLEIGHT)+1])& 3));
         }
     }
+    debug(DEBUGLABSEARCHCOORD," templateX: %i \n\r",templateX);
+    debug(DEBUGLABSEARCHCOORD," templateY: %i \n\r",templateY);
+    debug(DEBUGLABSEARCHCOORD,"--------------------");
     return (i==0? -1:i*DEFAULTLABLEIGHT);
 }
 
@@ -244,4 +289,8 @@ void Labyrinthe::setC_Left(char value)
 void Labyrinthe::setC_Right(char value)
 {
     setC(value,m_posX+1, m_posY);
+}
+void Labyrinthe::setMyPos(char value)
+{
+    setC(value, m_posX, m_posY);
 }

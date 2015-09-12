@@ -1,18 +1,21 @@
 /**
-  * @file       TTask.h
-  * @brief      Cette classe est le modele des 3 taches de controle.
+  * @file       labyrinthe.h
+  * @brief      Regroupement de fonction pour enregistrer le millieu en 2D.
   * @author     Salco
   * @version    2.00
   * @date       11 mars 2015
   */
+  
 #ifndef LABYRINTHE_H
 #define LABYRINTHE_H
-
+  
 #define DEFAULTLABLEIGHT 4
-#define DEBUGLABCOORD 1
+#define DEBUGLABCOORD 0
+#define DEBUGLABSEARCHCOORD 0
 
 #include "mbed.h"
 #include "debug.h"
+#include "settingDebug.h"
 #include <string>
 
 #define UP 1
@@ -25,6 +28,8 @@
 #define EXPLORER 1
 #define MUR 2
 #define PAS_EXPLORER 0
+
+// 1 tuile == 4 byte
 
 enum coordonerr{
 /* C7,C8,C9 */
@@ -82,9 +87,21 @@ void setC_Up(char value);
 void setC_Down(char value);
 void setC_Left(char value);
 void setC_Right(char value);
+void setMyPos(char value);
 
-string showMap(void);
-string showMap(char x, char y);
+      /**
+       * Surcharge de showMap(void)
+       * @return The formated map 3x3 result
+       */
+        string showMap(void);
+        
+      /**
+       * Fonction permetant de sortire la map de la position x et y
+       * @param x position X.
+       * @param y position Y.
+       * @return The formated map 3x3 result
+       */
+        string showMap(char x, char y);
 
 bool updateMap(string mapUpdated);
 bool updateMap(string mapUpdated,char x, char y);

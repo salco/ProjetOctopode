@@ -32,29 +32,35 @@ wait(3);
 //////////
 // Boot //
 //////////
-
-    #ifdef DBG_MAIN_INIT
-    debug("\n\rInit taskCritique ...");
-    #endif
-     TTaskCritique taskCritique(40);
-    #ifdef DBG_MAIN_INIT 
-    debug(" end taskCritique");
+    
+    #ifdef ENABLE_TASK_CRIT
+        #ifdef DBG_MAIN_INIT
+        debug("\n\rInit taskCritique ...");
+        #endif
+            TTaskCritique taskCritique(40);
+        #ifdef DBG_MAIN_INIT 
+        debug(" end taskCritique");
+        #endif
     #endif
     
-    //#ifdef DBG_MAIN_INIT
-    //debug("\n\rInit taskAlerte ...");
-    //#endif
-    // TTaskAlerte taskAlerte(20);// un-use because i dont know what to do with.
-    //#ifdef DBG_MAIN_INIT 
-    //debug(" end taskAlerte");
-    //#endif
-    
-    #ifdef DBG_MAIN_INIT
-    debug("\n\rInit taskGeneral ...");
+    #ifdef ENABLE_TASK_ALERT
+        #ifdef DBG_MAIN_INIT
+        debug("\n\rInit taskAlerte ...");
+        #endif
+            TTaskAlerte taskAlerte(20);// un-use because i dont know what to do with.
+        #ifdef DBG_MAIN_INIT 
+        debug(" end taskAlerte");
+        #endif
     #endif
-     TTaskGeneral taskGeneral(20);
-    #ifdef DBG_MAIN_INIT 
-    debug(" end taskGeneral");
+    
+    #ifdef ENABLE_TASK_GEN
+        #ifdef DBG_MAIN_INIT
+        debug("\n\rInit taskGeneral ...");
+        #endif
+            TTaskGeneral taskGeneral(20);
+        #ifdef DBG_MAIN_INIT 
+        debug(" end taskGeneral");
+        #endif
     #endif
     
     
@@ -62,40 +68,44 @@ wait(3);
     while(1) {
      
         
-        #if taskCritique
+        #ifdef ENABLE_TASK_CRIT
             #ifdef DBG_MAIN_FLAG
             debug("\n\r IN taskCritique");
             #endif
         
-        taskCritique.exec();
+            taskCritique.exec();
         
             #ifdef DBG_MAIN_FLAG
             debug("  Out taskCritique");
             #endif
         #endif
         
-        #if taskAlerte
+        #ifdef ENABLE_TASK_ALERT
             #ifdef DBG_MAIN_FLAG
             debug("\n\r IN taskAlerte");
             #endif
             
-        taskAlerte.exec();
+            taskAlerte.exec();
         
             #ifdef DBG_MAIN_FLAG
             debug("  Out taskAlerte");
             #endif        
         #endif
         
-        #if taskGeneral
+        #ifdef ENABLE_TASK_GEN
             #ifdef DBG_MAIN_FLAG
             debug("\n\r IN taskGeneral");
             #endif
             
-        taskGeneral.exec();
+            taskGeneral.exec();
 
             #ifdef DBG_MAIN_FLAG
             debug("  Out taskGeneral");
-            wait(1);
+            
+            #endif
+            
+            #ifdef DBG_MAIN_DELAY_SEC
+            wait(DBG_MAIN_DELAY_SEC);
             #endif          
         #endif
         
