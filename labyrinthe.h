@@ -5,13 +5,12 @@
   * @version    2.00
   * @date       11 mars 2015
   */
-  
 #ifndef LABYRINTHE_H
 #define LABYRINTHE_H
   
 #define DEFAULTLABLEIGHT 4
 #define DEBUGLABCOORD 0
-#define DEBUGLABSEARCHCOORD 0
+#define DEBUGLABSEARCHCOORD 1
 
 #include "mbed.h"
 #include "debug.h"
@@ -31,11 +30,22 @@
 
 // 1 tuile == 4 byte
 
-enum coordonerr{
+
+    
+class Labyrinthe
+{
+char m_posX,m_posY;
+char direction;
+string mapDuLabyrinthe;
+
+int searchCoord(char posX,char posY);
+
+public:
+enum coordoner_t{
 /* C7,C8,C9 */
 /* C4,C5,C6 */
 /* C1,C2,C3 */
-
+    unset = -1,
     C1 = 1,
     C2 = 2,
     C3 = 3,
@@ -47,15 +57,13 @@ enum coordonerr{
     C9 = 9
     };
     
-class Labyrinthe
-{
-char m_posX,m_posY;
-char direction;
-string mapDuLabyrinthe;
-
-int searchCoord(char posX,char posY);
-
-public:
+    enum case_t{
+        pasExplorer = 0,
+        explorer    = 1,
+        mur         = 2,
+        vide        = 3
+    };
+    
 Labyrinthe();
 ~Labyrinthe();
 
@@ -73,21 +81,21 @@ void goDown(void){m_posY--;}
 void goLeft(void){m_posX--;}
 void posRight(void){m_posX++;}
 
-char getCoordoner(char &x, char &y);
-char getCoordoner(void);
+coordoner_t getCoordoner(char &x, char &y);
+coordoner_t getCoordoner(void);
 
-char getC(char cX);
-char getC(char x, char y, char cX);
-char getC(char x, char y);
-void setC(char value, char x, char y, char cX);
-void setC(char value, char cX);
-void setC(char value, char x, char y);
+case_t getC(coordoner_t cX);
+case_t getC(char x, char y, coordoner_t cX);
+case_t getC(char x, char y);
+void setC(case_t value, char x, char y, coordoner_t cX);
+void setC(case_t value, coordoner_t cX);
+void setC(case_t value, char x, char y);
 
-void setC_Up(char value);
-void setC_Down(char value);
-void setC_Left(char value);
-void setC_Right(char value);
-void setMyPos(char value);
+void setC_Up(case_t value);
+void setC_Down(case_t value);
+void setC_Left(case_t value);
+void setC_Right(case_t value);
+void setMyPos(case_t value);
 
       /**
        * Surcharge de showMap(void)

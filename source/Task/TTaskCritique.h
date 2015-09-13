@@ -1,5 +1,5 @@
 /**
-  * @file       TTaskCritiqueiquet.h
+  * @file       TTaskCritique.h
   * @brief      Cette classe controle tout ce qui ce relie au Flag Critique et a la gestion prioritaire.
   * @author     Salco
   * @version    2.00

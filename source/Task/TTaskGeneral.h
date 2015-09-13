@@ -9,6 +9,7 @@
 #define TTASKGENERAL_H
 
 #include "Task/TTask.h"
+#include "settingDebug.h"
 #include "././directive.h"
 
 class TTaskGeneral : public TTask

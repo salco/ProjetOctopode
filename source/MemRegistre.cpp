@@ -1,16 +1,12 @@
-/*
- * memoireRegistre.cpp
- *
+/**
+ * MemRegistre.cpp
+ * @author Alexandre Salconi-Denis
+ * @version 3.01
+ * @date 06 mars 2014
  *  Created on: Mar 10, 2015
  *      Author: salco
  */
-/**
-* @file llistcontact.cpp
-* @brief Formulaire de la class LList et node_t
-* @author Alexandre Salconi-Denis
-* @version 3.01
-* @date 06 mars 2014
-*/
+
 #include "MemRegistre.h"
 
 MemRegistre::MemRegistre()

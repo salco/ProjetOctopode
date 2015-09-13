@@ -1,4 +1,4 @@
-/*
+/**
  * mouvement.cpp
  *
  *  Created on: Mar 02, 2015

@@ -1,4 +1,4 @@
-/*
+/**
  * homemadeSequence.h
  *
  *  Created on: Mar 03, 2015

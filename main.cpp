@@ -1,3 +1,21 @@
+/**
+* @file main.cpp
+* @brief Formulaire principal du programme contact
+* @author Alexandre Salconi-Denis
+* @version 3.01
+* @date 06 mars 2014
+*
+* @mainpage
+* <b>Programme de sauvgarde de contact<br></b>
+* <em>Modifier par l'utilisation de Classe et d'operateur</em>
+* @author Alexandre Salconi-Denis
+* @section MainSection1 Description
+*
+*
+*
+* - <b>Version</b> : 3.01
+*/
+  
 //------------------------------------
 // Hyperterminal configuration
 // 9600 bauds, 8-bit data, no parity

@@ -1,5 +1,6 @@
 #ifndef MODULE_H
 #define MODULE_H
+/** @file Module.h */
 /**
  * Structure des registe de memoire des modules
  *  @note 

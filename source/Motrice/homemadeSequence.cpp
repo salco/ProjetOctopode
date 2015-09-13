@@ -1,4 +1,4 @@
-/*
+/**
  * homemadeSequence.cpp
  *
  *  Created on: Mar 03, 2015

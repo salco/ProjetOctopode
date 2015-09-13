@@ -1,3 +1,4 @@
+/** @file main.cpp */
 #ifndef SETTDEBUG_H
 #define SETTDEBUG_H
 
@@ -21,4 +22,5 @@
 //#define DEBUG_LABYRINTHE_ADD_MAP //show process "addmap(char x, char y)"
 
 #define DEGUG_LABIRINTH_GET_COORDONER
+#define DEGUG_LABIRINTH_SET_COORDONER
 #endif

@@ -1,4 +1,4 @@
-/*
+/**
  * mouvement.h
  *
  *  Created on: Mar 02, 2015

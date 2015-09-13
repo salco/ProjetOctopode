@@ -1,4 +1,4 @@
-#include "settingDebug.h"
+
 #include "TTaskGeneral.h"
 
 TTaskGeneral::TTaskGeneral(int priority):TTask(priority)
