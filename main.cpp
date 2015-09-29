@@ -75,7 +75,7 @@ wait(3);
         #ifdef DBG_MAIN_INIT
         debug("\n\rInit taskGeneral ...");
         #endif
-            TTaskGeneral taskGeneral(20);
+            TTaskGeneral taskGeneral(2/*0*/);
         #ifdef DBG_MAIN_INIT 
         debug(" end taskGeneral");
         #endif
@@ -123,6 +123,7 @@ wait(3);
             #endif
             
             #ifdef DBG_MAIN_DELAY_SEC
+            debug("\n\r\n TICK \n\r\n");
             wait(DBG_MAIN_DELAY_SEC);
             #endif          
         #endif

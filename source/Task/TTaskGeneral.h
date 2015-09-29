@@ -3,7 +3,7 @@
   * @brief      Cette classe controle tout ce qui ce relie au Flag Critique et a la gestion prioritaire.
   * @author     Salco
   * @version    2.00
-  * @date       11 mars 2015
+  * @date       11 june 2015
   */
 #ifndef TTASKGENERAL_H
 #define TTASKGENERAL_H

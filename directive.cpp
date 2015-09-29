@@ -96,34 +96,66 @@ void Directive::task(void)//ALL CODE HERE//
 {
        
        #ifdef DEBUG_BOOT_GRAPHICAL_INTERFACE
-    if(pc.readable()){
-        
-    debug("\x1B[2J"); //clear screen
-    debug("\x1B[25l");//hide cursor
-    debug("\x1B[;H"); //cursor default position
-    
-    int idCommand;
-    
-    idCommand = fgetc(pc) - '0';
-    switch(idCommand)
-    {
-        case 1:
-            createDLbox(0,0,10,25,"BrainControle");    
-            setText(1,3,"1) Move Up");
-            setText(1,4,"2) Move Down");
-            setText(1,5,"2) Move Left");
-            setText(1,6,"2) Move Right");
-        break;
-        
-        case 2:
-            createDLbox(0,0,10,20,"Show Maze");    
-        break;
-    }
-    }
+       debug("\x1B[2J"); //clear screen
+       debug("\x1B[25l");//hide cursor
+       debug("\x1B[;H"); //cursor default position
+       /*
+       createDLbox(0,0,10,25,"BrainControle");    
+        setText(1,3,"1) Move Up");
+        setText(1,4,"2) Move Down");
+        setText(1,5,"3) Move Left");
+        setText(1,6,"4) Move Right");
+                 
+       int idCommand;
+       do{
+            if(pc.readable()){
+                idCommand = fgetc(pc) - '0';
+                switch(idCommand)
+                {
+                case 1:
+                    myMaze->goUp();
+                    break;
+                case 2:
+                    myMaze->goDown();    
+                    break;
+                case 3:
+                    myMaze->goLeft();    
+                    break;
+                case 4:
+                    myMaze->goRight();    
+                    break;
+                }
+                myMaze->setMyPos(Labyrinthe::explorer);
+                
+                string mymap = myMaze->showMap();
+                debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r  Labyrinthe map: X:%02x Y:%02x \n\r",myMaze->getX(),myMaze->getY());
+                for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i+6]);
+                debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
+                for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i+3]);
+                debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
+                for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i]);
+                debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
+                
+                #ifdef DBG_MAIN_DELAY_SEC
+                debug("\n\r\n wait \n\r\n");
+                wait(DBG_MAIN_DELAY_SEC);
+                #endif   
+                
+                debug("\x1B[2J"); //clear screen
+                debug("\x1B[;H"); //cursor default position
+                createDLbox(0,0,10,25,"BrainControle");    
+                setText(1,3,"1) Move Up");
+                setText(1,4,"2) Move Down");
+                setText(1,5,"3) Move Left");
+                setText(1,6,"4) Move Right");
+            }
+        }while(1);   */
     #endif
     
     //debug(DEBUG_DIRECTIVE_TEST,"\n\rIn task directive");
+    #ifndef DEBUG_DIRECTIVE_LEG_DISABLE
     if(ctrDesPattes->isSeqComplet()) {
+        
         if((tableauDeCommange[0] == 6) && (size_tableauDeCommange == 1)) {
             //addTableauDeCommande(0x81);
             //addTableauDeCommande(0x82);
@@ -135,6 +167,8 @@ void Directive::task(void)//ALL CODE HERE//
             addTableauDeCommande(0x87);
             addTableauDeCommande(0x88);
         }
+     
+
         if(tableauDeCommange[0] == 0) {
             //pas sur que c'Est tout ce qui doit etre ici mais je vois pas quoi d'autre pour le moment.
 
@@ -152,7 +186,7 @@ void Directive::task(void)//ALL CODE HERE//
                 debug("\n\r flag: %d",flag[0]);
                 debug("\n\r data: %x",data[0]);
             }*/
-#ifndef BACKUP
+
             updateModuleValue();
 
             //////////////////////////////
@@ -161,7 +195,7 @@ void Directive::task(void)//ALL CODE HERE//
             debug(DEBUG_DIRECTIVE_TEST,"\n\r        -IRToCm(%02f): %02f",ADCTomv(m_valueCapteurIR),IRToCm(ADCTomv(m_valueCapteurIR)));
             debug(DEBUG_DIRECTIVE_TEST,"\n\r        -ultrasonicToInch: %02f",ultrasonicToInch(m_valueCapteurUltrasonic));
             debug(DEBUG_DIRECTIVE_TEST,"\n\r        -m_valueCapteurProximiter: %02d",m_valueCapteurProximiter);
-
+#endif //DEBUG_DIRECTIVE_LEG_DISABLE
             analiseMaze();
             char nextCase=0;
             switch(myMaze->getDirection()) {
@@ -183,14 +217,21 @@ void Directive::task(void)//ALL CODE HERE//
             }
 
             switch(nextCase ) {
-                case Labyrinthe::vide:
+                case Labyrinthe::vide :
+                    #ifdef DEBUG_DIRECTIVE_LEG_DISABLE
+                    debug("nextCase Vide\n\r");
+                    #endif
                     debug(DEBUG_DIRECTIVE_TEST," Javance");
+                    #ifndef DEBUG_DIRECTIVE_LEG_DISABLE
                     addTableauDeCommande(6);
+                    #endif
                     break;
 
-                case EXPLORER:// ici pt amiliorer
+                case Labyrinthe::explorer :// ici pt amiliorer
                     debug(DEBUG_DIRECTIVE_TEST," Javance");
+                    #ifndef DEBUG_DIRECTIVE_LEG_DISABLE
                     addTableauDeCommande(6);
+                    #endif
                     break;
 
                 case Labyrinthe::mur:
@@ -222,14 +263,15 @@ void Directive::task(void)//ALL CODE HERE//
 
                     break;
 
-                case Labyrinthe::pasExplorer:
+                case Labyrinthe::pasExplorer :
                     debug(DEBUG_DIRECTIVE_TEST," Javance");
+                    #ifndef DEBUG_DIRECTIVE_LEG_DISABLE
                     addTableauDeCommande(6);
+                    #endif
                     break;
             }
 
-#endif
-#if BACKUP
+#ifndef DEBUG_DIRECTIVE_LEG_DISABLE
             /*if((ultrasonicToInch(m_valueCapteurUltrasonic)< 1) && (IRToCm(ADCTomv(m_valueCapteurIR)) <= 80)) //capteur ultrasson embrouiller/imprecis
             {
                 debug(DEBUG_DIRECTIVE_TEST,"\n\r        -Capteur Ultrasson brouiller");
@@ -276,11 +318,13 @@ void Directive::task(void)//ALL CODE HERE//
 
                 //addTableauDeCommande(6);
             }*/
-#endif
+
             ///////////////
             // Mouvement //
             ///////////////
-        } else {
+        }
+        else {
+            
             switch(tableauDeCommange[0]) {
                 case 11:
                     debug(DEBUG_DIRECTIVE_TEST,"\n\r        -set_calibre");
@@ -352,9 +396,11 @@ void Directive::task(void)//ALL CODE HERE//
             tableauDeCommange[9]=0;
             if(size_tableauDeCommange != 0) size_tableauDeCommange--;
         }
-    } else {
+        
+    } else { 
         ctrDesPattes->exec();
     }
+    #endif //DEBUG_DIRECTIVE_LEG_DISABLE
     ////////////////////
     // Update memoire //
     ////////////////////
@@ -365,6 +411,12 @@ void Directive::task(void)//ALL CODE HERE//
 
 
     //debug(DEBUG_DIRECTIVE_TEST,"\n\rOut task directive");
+   #ifdef DEBUG_BOOT_GRAPHICAL_INTERFACE
+                #ifdef DBG_MAIN_DELAY_SEC
+                debug("\n\r\n wait \n\r\n");
+                wait(DBG_MAIN_DELAY_SEC);
+                #endif   
+    #endif
 }
 double Directive::IRToCm (double miliVolt)
 {
@@ -423,6 +475,23 @@ void Directive::analiseMaze(void)
     char areaVert =0;
     string mymap = myMaze->showMap();
     debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r  Labyrinthe map: X:%02x Y:%02x \n\r",myMaze->getX(),myMaze->getY());
+    
+    debug("Direction: ");
+    switch(myMaze->getDirection()) {
+        case UP:
+            debug(DEBUG_DIRECTIVE_LABYRINTH,"Up \n\r");
+            break;
+        case DOWN:
+            debug(DEBUG_DIRECTIVE_LABYRINTH,"Down \n\r");
+            break;
+        case LEFT:
+            debug(DEBUG_DIRECTIVE_LABYRINTH,"Left \n\r");
+            break;
+        case RIGHT:
+            debug(DEBUG_DIRECTIVE_LABYRINTH,"Right \n\r");
+            break;
+        }
+    
     for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i+6]);
     debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
     for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i+3]);
@@ -431,7 +500,7 @@ void Directive::analiseMaze(void)
     debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
 
 
-
+#ifndef DEBUG_DIRECTIVE_LABYRINTH_USER_CTRL 
     if((ultrasonicToInch(m_valueCapteurUltrasonic)< 1) && (IRToCm(ADCTomv(m_valueCapteurIR)) <= 80)) { //capteur ultrasson embrouiller/imprecis
         debug(DEBUG_DIRECTIVE_TEST,"\n\r        -Capteur Ultrasson brouiller");
         //addTableauDeCommande(6);
@@ -444,6 +513,8 @@ void Directive::analiseMaze(void)
         areaLatt =1;
         areaVert =1;
     }
+    debug(DEBUG_DIRECTIVE_TEST,": %i",ultrasonicToInch(m_valueCapteurUltrasonic));
+    
     if(IRToCm(ADCTomv(m_valueCapteurIR)) <= 60) {
         debug(DEBUG_DIRECTIVE_TEST,"\n\r          -Confirmation IR");
         areaVert =2;
@@ -451,216 +522,241 @@ void Directive::analiseMaze(void)
         debug(DEBUG_DIRECTIVE_TEST,"\n\r          -Confirmation IR");
         areaVert =1;
     }
+    debug(DEBUG_DIRECTIVE_TEST,": %i",IRToCm(ADCTomv(m_valueCapteurIR));
+#endif
 
+#ifdef DEBUG_DIRECTIVE_LABYRINTH_USER_CTRL
+    debug("\n\r---analise maze(manualy CTRL)---\n\r");
+    int idCommand = -1;
+    do{
+    debug("\n\r Enter areaVert [0,1,2]: "); idCommand = fgetc(pc) - '0';
+    debug(" %i",idCommand);
+    }while((idCommand < 0) && (idCommand > 2));
+    areaVert = idCommand;
+    
+    do{
+    debug("\n\r Enter areaLatt [0,1,2]: "); idCommand = fgetc(pc) - '0';
+    debug(" %i",idCommand);
+    }while((idCommand < 0) && (idCommand > 2));
+    areaLatt = idCommand;
 
-    switch(myMaze->getDirection()) {
-        case UP:
-            switch(areaVert) {
-                case 0:
-                    myMaze->setC_Up(Labyrinthe::mur);
-                    break;
+    debug("\n\r");
+#endif
+//changer lalgoritme ici
 
-                case 1:
-                    if(areaLatt == 0) {
-                        myMaze->setC_Up(Labyrinthe::mur);
-                    } else if(areaLatt == 1) {
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY()+1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX(),myMaze->getY()+1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY()+1);
+/*
+/---\
+|?M?| //vert 0
+|.X.| //latt 0
+|...|
+\---/
 
-                        myMaze->setC(Labyrinthe::mur,myMaze->getX(),myMaze->getY()+2);
-                    } else if(areaLatt == 2) {
+/-M-\
+|?V?| //vert 1
+|.X.| //latt 0
+|...|
+\---/   
+        
+/?M?\
+|VVV| //vert 1
+|.X.| //latt 1
+|...| // objet possiblement a proximiter 
+\---/
 
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY()+1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX(),myMaze->getY()+1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY()+1);
+/?M?\
+|VVV| //vert 1
+|.X.| //latt 2
+|...| // cas impossible
+\---/
 
-                        myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()-1,myMaze->getY()+2);
-                        myMaze->setC(Labyrinthe::mur,myMaze->getX(),myMaze->getY()+2);
-                        myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()+1,myMaze->getY()+2);
-                    }
-                    break;
+/?V?\
+|?V?| //vert 2
+|.X.| //latt 0
+|...| // objet possiblement a proximiter
+\---/
 
-                case 2:
-                    if(areaLatt == 0) {
-                        myMaze->setC_Up(Labyrinthe::mur);
-                    } else if(areaLatt == 1) {
-                        myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()-1,myMaze->getY()+1);//mur?
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX(),myMaze->getY()+1);
-                        myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()+1,myMaze->getY()+1);//mur?
+/?V?\
+|VVV| //vert 2
+|.X.| //latt 1
+|...| // objet possiblement a proximiter
+\---/
 
-                        //myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()-1,myMaze->getY()+1);//mur?
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX(),myMaze->getY()+2);
-                        //myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()+1,myMaze->getY()+1);//mur?
-                    } else if(areaLatt == 2) {
+/VVV\
+|VVV| //vert 2
+|.X.| //latt 2
+|...|
+\---/
+*/
+//vertical==0 latt==0 //mur devant
+//vertical==1 latt==1
+////////////////////////////////////
+//345  415
+//012  203| numerotation des case
+///////////////////////////////////
+signed char fieldX[6]={0,0,0,0,0,0};
+signed char fieldY[6]={0,0,0,0,0,0};
+bool fieldSet = false;
 
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY()+1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX(),myMaze->getY()+1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY()+1);
-
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY()+2);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX(),myMaze->getY()+2);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY()+2);
-                    }
-                    break;
-            }
-
+switch(myMaze->getDirection()) 
+{
+    case UP:
+        fieldX[0] = myMaze->getX()-1;
+        fieldY[0] = myMaze->getY()+1;
+        fieldX[1] = myMaze->getX();
+        fieldY[1] = myMaze->getY()+1;
+        fieldX[2] = myMaze->getX()+1;
+        fieldY[2] = myMaze->getY()+1;
+        fieldX[3] = myMaze->getX()-1;
+        fieldY[3] = myMaze->getY()+2;
+        fieldX[4] = myMaze->getX();
+        fieldY[4] = myMaze->getY()+2;
+        fieldX[5] = myMaze->getX()+1;
+        fieldY[5] = myMaze->getY()+2;
+        break;
+        
+    case DOWN:
+        fieldX[0] = myMaze->getX()-1;
+        fieldY[0] = myMaze->getY()-1;
+        fieldX[1] = myMaze->getX();
+        fieldY[1] = myMaze->getY()-1;
+        fieldX[2] = myMaze->getX()+1;
+        fieldY[2] = myMaze->getY()-1;
+        fieldX[3] = myMaze->getX()-1;
+        fieldY[3] = myMaze->getY()-2;
+        fieldX[4] = myMaze->getX();
+        fieldY[4] = myMaze->getY()-2;
+        fieldX[5] = myMaze->getX()+1;
+        fieldY[5] = myMaze->getY()-2;
+        break;
+        
+    case LEFT:
+        fieldX[0] = myMaze->getX()-1;
+        fieldY[0] = myMaze->getY()-1;
+        fieldX[1] = myMaze->getX()-1;
+        fieldY[1] = myMaze->getY();
+        fieldX[2] = myMaze->getX()-1;
+        fieldY[2] = myMaze->getY()+1;
+        fieldX[3] = myMaze->getX()-2;
+        fieldY[3] = myMaze->getY()-1;
+        fieldX[4] = myMaze->getX()-2;
+        fieldY[4] = myMaze->getY();
+        fieldX[5] = myMaze->getX()-2;
+        fieldY[5] = myMaze->getY()+1;
+        break;
+        
+    case RIGHT:
+        fieldX[0] = myMaze->getX()+1;
+        fieldY[0] = myMaze->getY()-1;
+        fieldX[1] = myMaze->getX()+1;
+        fieldY[1] = myMaze->getY();
+        fieldX[2] = myMaze->getX()+1;
+        fieldY[2] = myMaze->getY()+1;
+        fieldX[3] = myMaze->getX()+2;
+        fieldY[3] = myMaze->getY()-1;
+        fieldX[4] = myMaze->getX()+2;
+        fieldY[4] = myMaze->getY();
+        fieldX[5] = myMaze->getX()+2;
+        fieldY[5] = myMaze->getY()+1;
+        break;
+}  
+    if(areaVert >= areaLatt)
+    {
+        switch(areaVert)
+        {
+         case 0:
+             /*
+                /---\
+                |?M?| //vert 0
+                |.X.| //latt 0
+                |...|
+                \---/
+             */
+            myMaze->setC(Labyrinthe::mur,fieldX[1],fieldY[1]);
+            fieldSet = true;
             break;
-
-        case DOWN:
-            switch(areaVert) {
-                case 0:
-                    myMaze->setC_Down(Labyrinthe::mur);
-                    break;
-
-                case 1:
-                    if(areaLatt == 0) {
-                        myMaze->setC_Down(Labyrinthe::mur);
-                    } else if(areaLatt == 1) {
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY()-1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX(),myMaze->getY()-1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY()-1);
-
-                        myMaze->setC(Labyrinthe::mur,myMaze->getX(),myMaze->getY()-2);
-                    } else if(areaLatt == 2) {
-
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY()-1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX(),myMaze->getY()-1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY()-1);
-
-                        myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()-1,myMaze->getY()-2);
-                        myMaze->setC(Labyrinthe::mur,myMaze->getX(),myMaze->getY()-2);
-                        myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()+1,myMaze->getY()-2);
-                    }
-                    break;
-
-                case 2:
-                    if(areaLatt == 0) {
-                        myMaze->setC_Down(Labyrinthe::mur);
-                    } else if(areaLatt == 1) {
-                        myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()-1,myMaze->getY()-1);//mur?
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX(),myMaze->getY()-1);
-                        myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()+1,myMaze->getY()-1);//mur?
-
-                        //myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()-1,myMaze->getY()+1);//mur?
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX(),myMaze->getY()-2);
-                        //myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()+1,myMaze->getY()+1);//mur?
-                    } else if(areaLatt == 2) {
-
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY()-1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX(),myMaze->getY()-1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY()-1);
-
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY()-2);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX(),myMaze->getY()-2);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY()-2);
-                    }
-                    break;
-            }
-            break;
-
-        case LEFT:
-            switch(areaVert) {
-                case 0:
-                    myMaze->setC_Left(Labyrinthe::mur);
-                    break;
-
-                case 1:
-                    if(areaLatt == 0) {
-                        myMaze->setC_Left(Labyrinthe::mur);
-                    } else if(areaLatt == 1) {
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY()-1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY());
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY()+1);
-
-                        myMaze->setC(Labyrinthe::mur,myMaze->getX()-2,myMaze->getY());
-                    } else if(areaLatt == 2) {
-
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY()-1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY());
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY()+1);
-
-                        myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()-2,myMaze->getY()-1);
-                        myMaze->setC(Labyrinthe::mur,myMaze->getX()-2,myMaze->getY());
-                        myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()-2,myMaze->getY()+1);
-                    }
-                    break;
-
-                case 2:
-                    if(areaLatt == 0) {
-                        myMaze->setC_Left(Labyrinthe::mur);
-                    } else if(areaLatt == 1) {
-                        myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()-1,myMaze->getY()-1);//mur?
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY());
-                        myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()-1,myMaze->getY()+1);//mur?
-
-                        //myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()-1,myMaze->getY()+1);//mur?
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-2,myMaze->getY());
-                        //myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()+1,myMaze->getY()+1);//mur?
-                    } else if(areaLatt == 2) {
-
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY()-1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY());
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-1,myMaze->getY()+1);
-
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-2,myMaze->getY()+1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-2,myMaze->getY());
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()-2,myMaze->getY()+1);
-                    }
-                    break;
-            }
-            break;
-
-        case RIGHT:
-            switch(areaVert) {
-                case 0:
-                    myMaze->setC_Right(Labyrinthe::mur);
-                    break;
-
-                case 1:
-                    if(areaLatt == 0) {
-                        myMaze->setC_Right(Labyrinthe::mur);
-                    } else if(areaLatt == 1) {
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY()-1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY());
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY()+1);
-
-                        myMaze->setC(Labyrinthe::mur,myMaze->getX()+2,myMaze->getY());
-                    } else if(areaLatt == 2) {
-
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY()-1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY());
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY()+1);
-
-                        myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()+2,myMaze->getY()-1);
-                        myMaze->setC(Labyrinthe::mur,myMaze->getX()+2,myMaze->getY());
-                        myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()+2,myMaze->getY()+1);
-                    }
-                    break;
-
-                case 2:
-                    if(areaLatt == 0) {
-                        myMaze->setC_Right(Labyrinthe::mur);
-                    } else if(areaLatt == 1) {
-                        myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()+1,myMaze->getY()-1);//mur?
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY());
-                        myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()+1,myMaze->getY()+1);//mur?
-
-                        //myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()-1,myMaze->getY()+1);//mur?
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+2,myMaze->getY());
-                        //myMaze->setC(Labyrinthe::pasExplorer,myMaze->getX()+1,myMaze->getY()+1);//mur?
-                    } else if(areaLatt == 2) {
-
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY()-1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY());
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+1,myMaze->getY()+1);
-
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+2,myMaze->getY()+1);
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+2,myMaze->getY());
-                        myMaze->setC(Labyrinthe::vide,myMaze->getX()+2,myMaze->getY()+1);
-                    }
-                    break;
+         case 1:
+            /*
+                /-M-\
+                |?V?| //vert 1
+                |.X.| //latt 0
+                |...|
+                \---/ 
+            */
+            myMaze->setC(Labyrinthe::vide,fieldX[1],fieldY[1]);
+            myMaze->setC(Labyrinthe::mur,fieldX[4],fieldY[4]);
+            fieldSet = true;
+            
+            if(areaLatt == 1)
+            {
+                 /*
+                    /?M?\
+                    |VVV| //vert 1
+                    |.X.| //latt 1
+                    |...| // objet possiblement a proximiter 
+                    \---/
+                 */
+                 myMaze->setC(Labyrinthe::vide,fieldX[0],fieldY[0]);
+                 myMaze->setC(Labyrinthe::vide,fieldX[2],fieldY[2]);
             }
             break;
+         case 2:
+             fieldSet = true;
+             switch(areaLatt)
+             {
+              case 0:
+               /*
+                    /?V?\
+                    |?V?| //vert 2
+                    |.X.| //latt 0
+                    |...| // objet possiblement a proximiter
+                    \---/
+                */
+                myMaze->setC(Labyrinthe::vide,fieldX[1],fieldY[1]);
+                myMaze->setC(Labyrinthe::vide,fieldX[4],fieldY[4]);
+                break; 
+              case 1:
+                /*
+                    /?V?\
+                    |VVV| //vert 2
+                    |.X.| //latt 1
+                    |...| // objet possiblement a proximiter
+                    \---/
+                */
+                for(int i = 0;i<3;i++)myMaze->setC(Labyrinthe::vide,fieldX[i],fieldY[i]);
+                myMaze->setC(Labyrinthe::vide,fieldX[4],fieldY[4]);
+                break; 
+              case 2:
+                /*
+                    /VVV\
+                    |VVV| //vert 2
+                    |.X.| //latt 2
+                    |...|
+                    \---/
+                */
+                for(int i = 0;i<6;i++)myMaze->setC( Labyrinthe::vide,fieldX[i],fieldY[i]);
+                break; 
+             }
+            break;
+        }   
     }
+    
+    if(fieldSet == false)// on a un cas impossible
+    {
+      myMaze->setC(Labyrinthe::error,fieldX[1],fieldY[1]);  
+    }
+
+////////////////////////////////////
+
+
+    #ifdef DEBUG_DIRECTIVE_LABYRINTH_USER_CTRL
+    mymap = myMaze->showMap();
+    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i+6]);
+    debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
+    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i+3]);
+    debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
+    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i]);
+    debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
+    
+    debug("\n\r-------------------\n\r");
+    #endif
 }

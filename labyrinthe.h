@@ -10,7 +10,7 @@
   
 #define DEFAULTLABLEIGHT 4
 #define DEBUGLABCOORD 0
-#define DEBUGLABSEARCHCOORD 1
+#define DEBUGLABSEARCHCOORD 0
 
 #include "mbed.h"
 #include "debug.h"
@@ -23,10 +23,10 @@
 #define RIGHT 4
 
 
-#define VIDE 3
+/*#define VIDE 3
 #define EXPLORER 1
 #define MUR 2
-#define PAS_EXPLORER 0
+#define PAS_EXPLORER 0*/
 
 // 1 tuile == 4 byte
 
@@ -34,11 +34,11 @@
     
 class Labyrinthe
 {
-char m_posX,m_posY;
+signed char m_posX,m_posY;
 char direction;
 string mapDuLabyrinthe;
 
-int searchCoord(char posX,char posY);
+
 
 public:
 enum coordoner_t{
@@ -58,6 +58,7 @@ enum coordoner_t{
     };
     
     enum case_t{
+        error       =-1,
         pasExplorer = 0,
         explorer    = 1,
         mur         = 2,
@@ -70,26 +71,25 @@ Labyrinthe();
 char getDirection(){return direction;}
 void setDirection(char dir){direction= dir;}
 
-char getX(void){return m_posX;}
-void setX(char x){m_posX = x;}
+signed char getX(void){return m_posX;}
+void setX(signed char x){m_posX = x;}
 
-char getY(void){return m_posY;}
-void getY(char y){m_posY = y;}
+signed char getY(void){return m_posY;}
+void getY(signed char y){m_posY = y;}
 
 void goUp(void){m_posY++;}
 void goDown(void){m_posY--;}
 void goLeft(void){m_posX--;}
-void posRight(void){m_posX++;}
+void goRight(void){m_posX++;}
 
-coordoner_t getCoordoner(char &x, char &y);
-coordoner_t getCoordoner(void);
+
 
 case_t getC(coordoner_t cX);
-case_t getC(char x, char y, coordoner_t cX);
-case_t getC(char x, char y);
-void setC(case_t value, char x, char y, coordoner_t cX);
+case_t getC(signed char x, signed char y, coordoner_t cX);
+case_t getC(signed char x, signed char y);
+void setC(case_t value, signed char x, signed char y, coordoner_t cX);
 void setC(case_t value, coordoner_t cX);
-void setC(case_t value, char x, char y);
+void setC(case_t value, signed char x, signed char y);
 
 void setC_Up(case_t value);
 void setC_Down(case_t value);
@@ -109,12 +109,20 @@ void setMyPos(case_t value);
        * @param y position Y.
        * @return The formated map 3x3 result
        */
-        string showMap(char x, char y);
+        string showMap(signed char x, signed char y);
 
-bool updateMap(string mapUpdated);
-bool updateMap(string mapUpdated,char x, char y);
-bool addMap(char x, char y);
 
+
+
+    private:
+    int searchCoord(signed char posX,signed char posY);
+
+    coordoner_t getCoordoner(signed char &x, signed char &y);
+    coordoner_t getCoordoner(void);
+    
+    bool updateMap(string mapUpdated);
+    bool updateMap(string mapUpdated,signed char x, signed char y);
+    bool addMap(signed char x, signed char y);
 
 };
 #endif //LABYRINTHE_H//
