@@ -335,7 +335,7 @@ case_t Labyrinthe::getC(signed char x, signed char y)
     signed char newPosY = y;
     coordonerr maCoordoner;
     maCoordoner=getCoordoner(newPosX,newPosY);
-    
+    debug("\n\rcoordonerr: %i",maCoordoner);
  return  getC(x, y, maCoordoner);
 }
 
@@ -344,7 +344,7 @@ case_t Labyrinthe::getC(signed char x, signed char y, coordonerr cX)
     case_t myCoordoner = error;
     string result = showMap(x,y);
     if(result.size() != 0) {
-        myCoordoner = case_t(result[cX]);
+        myCoordoner = case_t(result[cX-1]);
     }
     return myCoordoner;
 }
@@ -420,4 +420,259 @@ void Labyrinthe::setC_Right(case_t value)
 void Labyrinthe::setMyPos(case_t value)
 {
     setC(value, m_posX, m_posY);
+}
+char Labyrinthe::caseToChar(case_t value)
+{
+    char result = 0;
+    
+    switch(value)
+    {
+     case error:
+        result = 'X';
+        break;   
+     case pasExplorer:
+        result = '*';
+        break; 
+     case explorer:
+        result = 'E';
+        break;
+     case mur:
+        result = 'M';
+        break;
+     case vide:
+        result = 'V';
+        break;       
+    }
+    return result;
+}
+void Labyrinthe::moveFoward(char dir)
+{
+    switch(dir)
+    {
+        case UP:
+            //m_posX+=0;
+            m_posY++;
+            break;
+        case DOWN:
+            //m_posX+=0;
+            m_posY--;
+            break;
+        case LEFT:
+            m_posX--;
+            //m_posY+=0;
+            break;
+        case RIGHT:
+            m_posX++;
+            //m_posY+=0;
+            break;
+    }
+}
+void Labyrinthe::moveBackward(char dir)
+{
+    switch(dir)
+    {
+        case UP:
+            //m_posX+=0;
+            m_posY--;
+            break;
+        case DOWN:
+            //m_posX+=0;
+            m_posY++;
+            break;
+        case LEFT:
+            m_posX++;
+            //m_posY+=0;
+            break;
+        case RIGHT:
+            m_posX--;
+            //m_posY+=0;
+            break;
+    }    
+}
+void Labyrinthe::moveToLeft(char dir)
+{
+    switch(dir)
+    {
+        case UP:
+            m_posX--;
+            //m_posY+=0;
+            break;
+        case DOWN:
+            m_posX++;
+            //m_posY+=0;
+            break;
+        case LEFT:
+            //m_posX+=0;
+            m_posY--;
+            break;
+        case RIGHT:
+            //m_posX+=0;
+            m_posY++;
+            break;
+    }    
+}
+void Labyrinthe::moveToRight(char dir)
+{
+    switch(dir)
+    {
+        case UP:
+            m_posX++;
+            //m_posY+=0;
+            break;
+        case DOWN:
+            m_posX--;
+            //m_posY+=0;
+            break;
+        case LEFT:
+            //m_posX+=0;
+            m_posY++;
+            break;
+        case RIGHT:
+            //m_posX+=0;
+            m_posY--;
+            break;
+    }    
+}
+case_t Labyrinthe::getC_Foward(char dir)
+{
+    case_t result = error;
+    
+    switch(dir)
+    {
+        case UP:
+            debug("m_posX:%i  m_posY+1:%i\n\r",m_posX,m_posY+1);
+            result = getC(m_posX,m_posY+1);
+            debug("result:%i",result);
+            break;
+        case DOWN:
+            result = getC(m_posX,m_posY-1);
+            break;
+        case LEFT:
+            result = getC(m_posX-1,m_posY);
+            break;
+        case RIGHT:
+            result = getC(m_posX+1,m_posY);
+            break;
+    }
+    return result;
+}
+case_t Labyrinthe::getC_Backward(char dir)
+{
+    case_t result = error;
+    
+    switch(dir)
+    {
+        case UP:
+            result = getC(m_posX,m_posY-1);
+            break;
+        case DOWN:
+            result = getC(m_posX,m_posY+1);
+            break;
+        case LEFT:
+            result = getC(m_posX+1,m_posY);
+            break;
+        case RIGHT:
+            result = getC(m_posX-1,m_posY);
+            break;
+    }
+    return result;  
+}
+case_t Labyrinthe::getC_ToLeft(char dir)
+{
+    case_t result = error;
+    
+    switch(dir)
+    {
+        case UP:
+            result = getC(m_posX-1,m_posY);
+            break;
+        case DOWN:
+            result = getC(m_posX+1,m_posY);
+            break;
+        case LEFT:
+            result = getC(m_posX,m_posY-1);
+            break;
+        case RIGHT:
+            result = getC(m_posX,m_posY+1);
+            break;
+    }
+    return result;   
+}
+case_t Labyrinthe::getC_ToRight(char dir)
+{
+    case_t result = error;
+    
+    switch(dir)
+    {
+        case UP:
+            result = getC(m_posX+1,m_posY);
+            break;
+        case DOWN:
+            result = getC(m_posX-1,m_posY);
+            break;
+        case LEFT:
+            result = getC(m_posX,m_posY+1);
+            break;
+        case RIGHT:
+            result = getC(m_posX,m_posY-1);
+            break;
+    }
+    return result;    
+}
+   
+   
+void Labyrinthe::turnBack(void)
+{
+    switch(direction)
+    {
+        case UP:
+            direction = DOWN;
+            break;
+        case DOWN:
+            direction = UP;
+            break;
+        case LEFT:
+            direction = RIGHT;
+            break;
+        case RIGHT:
+            direction = LEFT;
+            break;
+    }
+
+}
+void Labyrinthe::turnLeft(void)
+{
+    switch(direction)
+    {
+        case UP:
+            direction = LEFT;
+            break;
+        case DOWN:
+            direction = RIGHT;
+            break;
+        case LEFT:
+            direction = DOWN;
+            break;
+        case RIGHT:
+            direction = UP;
+            break;
+    }
+}
+void Labyrinthe::turnRight(void)
+{
+    switch(direction)
+    {
+        case UP:
+            direction = RIGHT;
+            break;
+        case DOWN:
+            direction = LEFT;
+            break;
+        case LEFT:
+            direction = UP;
+            break;
+        case RIGHT:
+            direction = DOWN;
+            break;
+    }
 }

@@ -67,9 +67,9 @@ Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les foi
     ctrDesPattes->calibre();
     
     #ifdef DEBUG_DIRECTIVE_GRAPHICAL_INTERFACE
-    analiseMaze();
-    wait(2);
-    debug("\x1B[2J"); //clear screen
+    //analiseMaze();
+    ///wait(2);
+    //debug("\x1B[2J"); //clear screen
     /*debug("\x1B[25l");//hide cursor
     debug("\x1B[;H");*/ //cursor default position
     
@@ -79,7 +79,65 @@ Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les foi
     setText(1,4,"2) Show Maze");*/
     //createDLbox(16,0,5,15,"Stage");
     
+    myMaze->setC(Labyrinthe::mur,0,0,Labyrinthe::C1);
+    myMaze->setC(Labyrinthe::vide,0,0,Labyrinthe::C2);
+    myMaze->setC(Labyrinthe::mur,0,0,Labyrinthe::C3);
+    myMaze->setC(Labyrinthe::mur,0,0,Labyrinthe::C4);
+    myMaze->setC(Labyrinthe::vide,0,0,Labyrinthe::C5);
+    myMaze->setC(Labyrinthe::vide,0,0,Labyrinthe::C6);
+    myMaze->setC(Labyrinthe::mur,0,0,Labyrinthe::C7);
+    myMaze->setC(Labyrinthe::mur,0,0,Labyrinthe::C8);
+    myMaze->setC(Labyrinthe::mur,0,0,Labyrinthe::C9);
     
+    myMaze->setC(Labyrinthe::vide,3,0,Labyrinthe::C1);
+    myMaze->setC(Labyrinthe::vide,3,0,Labyrinthe::C2);
+    myMaze->setC(Labyrinthe::mur ,3,0,Labyrinthe::C3);
+    myMaze->setC(Labyrinthe::vide,3,0,Labyrinthe::C4);
+    myMaze->setC(Labyrinthe::vide,3,0,Labyrinthe::C5);
+    myMaze->setC(Labyrinthe::vide,3,0,Labyrinthe::C6);
+    myMaze->setC(Labyrinthe::mur ,3,0,Labyrinthe::C7);
+    myMaze->setC(Labyrinthe::mur ,3,0,Labyrinthe::C8);
+    myMaze->setC(Labyrinthe::mur ,3,0,Labyrinthe::C9);
+    
+    myMaze->setC(Labyrinthe::vide,6,0,Labyrinthe::C1);
+    myMaze->setC(Labyrinthe::mur ,6,0,Labyrinthe::C2);
+    myMaze->setC(Labyrinthe::mur ,6,0,Labyrinthe::C3);
+    myMaze->setC(Labyrinthe::vide,6,0,Labyrinthe::C4);
+    myMaze->setC(Labyrinthe::vide,6,0,Labyrinthe::C5);
+    myMaze->setC(Labyrinthe::mur ,6,0,Labyrinthe::C6);
+    myMaze->setC(Labyrinthe::mur ,6,0,Labyrinthe::C7);
+    myMaze->setC(Labyrinthe::mur ,6,0,Labyrinthe::C8);
+    myMaze->setC(Labyrinthe::mur ,6,0,Labyrinthe::C9);
+    
+    myMaze->setC(Labyrinthe::mur ,0,-3,Labyrinthe::C1);
+    myMaze->setC(Labyrinthe::mur ,0,-3,Labyrinthe::C2);
+    myMaze->setC(Labyrinthe::mur ,0,-3,Labyrinthe::C3);
+    myMaze->setC(Labyrinthe::mur ,0,-3,Labyrinthe::C4);
+    myMaze->setC(Labyrinthe::vide,0,-3,Labyrinthe::C5);
+    myMaze->setC(Labyrinthe::mur ,0,-3,Labyrinthe::C6);
+    myMaze->setC(Labyrinthe::mur ,0,-3,Labyrinthe::C7);
+    myMaze->setC(Labyrinthe::vide,0,-3,Labyrinthe::C8);
+    myMaze->setC(Labyrinthe::vide,0,-3,Labyrinthe::C9);
+    
+    myMaze->setC(Labyrinthe::mur ,3,-3,Labyrinthe::C1);
+    myMaze->setC(Labyrinthe::mur ,3,-3,Labyrinthe::C2);
+    myMaze->setC(Labyrinthe::mur ,3,-3,Labyrinthe::C3);
+    myMaze->setC(Labyrinthe::vide,3,-3,Labyrinthe::C4);
+    myMaze->setC(Labyrinthe::vide,3,-3,Labyrinthe::C5);
+    myMaze->setC(Labyrinthe::vide,3,-3,Labyrinthe::C6);
+    myMaze->setC(Labyrinthe::vide,3,-3,Labyrinthe::C7);
+    myMaze->setC(Labyrinthe::mur ,3,-3,Labyrinthe::C8);
+    myMaze->setC(Labyrinthe::vide,3,-3,Labyrinthe::C9);
+    
+    myMaze->setC(Labyrinthe::mur ,6,-3,Labyrinthe::C1);
+    myMaze->setC(Labyrinthe::mur ,6,-3,Labyrinthe::C2);
+    myMaze->setC(Labyrinthe::mur ,6,-3,Labyrinthe::C3);
+    myMaze->setC(Labyrinthe::vide,6,-3,Labyrinthe::C4);
+    myMaze->setC(Labyrinthe::mur ,6,-3,Labyrinthe::C5);
+    myMaze->setC(Labyrinthe::mur ,6,-3,Labyrinthe::C6);
+    myMaze->setC(Labyrinthe::vide,6,-3,Labyrinthe::C7);
+    myMaze->setC(Labyrinthe::vide,6,-3,Labyrinthe::C8);
+    myMaze->setC(Labyrinthe::mur ,6,-3,Labyrinthe::C9);
     #endif
 }
 Directive::~Directive()
@@ -99,6 +157,7 @@ void Directive::task(void)//ALL CODE HERE//
        debug("\x1B[2J"); //clear screen
        debug("\x1B[25l");//hide cursor
        debug("\x1B[;H"); //cursor default position
+       debug("\n\r--------In task directive--------");
        /*
        createDLbox(0,0,10,25,"BrainControle");    
         setText(1,3,"1) Move Up");
@@ -198,7 +257,7 @@ void Directive::task(void)//ALL CODE HERE//
 #endif //DEBUG_DIRECTIVE_LEG_DISABLE
             analiseMaze();
             char nextCase=0;
-            switch(myMaze->getDirection()) {
+            /*switch(myMaze->getDirection()) {
                 case UP:
                     nextCase = myMaze->getC(myMaze->getX(),myMaze->getY()+1);
                     break;
@@ -214,8 +273,11 @@ void Directive::task(void)//ALL CODE HERE//
                 case RIGHT:
                     nextCase = myMaze->getC(myMaze->getX()+1,myMaze->getY());
                     break;
-            }
-
+            }*/
+            
+            nextCase = myMaze->getC_Foward();
+            
+            debug("\n\r nextCase: [%02x]",nextCase);
             switch(nextCase ) {
                 case Labyrinthe::vide :
                     #ifdef DEBUG_DIRECTIVE_LEG_DISABLE
@@ -225,52 +287,114 @@ void Directive::task(void)//ALL CODE HERE//
                     #ifndef DEBUG_DIRECTIVE_LEG_DISABLE
                     addTableauDeCommande(6);
                     #endif
+                    myMaze->moveFoward();
+                    myMaze->setMyPos(Labyrinthe::explorer);
                     break;
 
                 case Labyrinthe::explorer :// ici pt amiliorer
-                    debug(DEBUG_DIRECTIVE_TEST," Javance");
-                    #ifndef DEBUG_DIRECTIVE_LEG_DISABLE
-                    addTableauDeCommande(6);
-                    #endif
+                    debug(DEBUG_DIRECTIVE_TEST," \n\rnext case deja explorer");
+                    if(rand()%2)
+                    {
+                        debug(DEBUG_DIRECTIVE_TEST,"\n\r jeverifie si alternative");
+                    
+                        #ifndef DEBUG_DIRECTIVE_LEG_DISABLE
+                        addTableauDeCommande(6);
+                        #endif
+                        nextCase = checkOtherWay(myMaze->getDirection(),1);
+                        debug("\n\rnextcase: %i",nextCase);
+                        switch(nextCase)// on verifie si on a une direction possible
+                        {
+                            case UP:
+                                debug(DEBUG_DIRECTIVE_TEST,"\n\r Je tourne UP");
+                                myMaze->setDirection(UP);
+                         
+                                break; 
+                            case DOWN:
+                                debug(DEBUG_DIRECTIVE_TEST,"\n\r Je tourne DOWN");
+                                myMaze->setDirection(DOWN);
+                             
+                                break; 
+                            case LEFT:
+                                debug(DEBUG_DIRECTIVE_TEST,"\n\r Je tourne LEFT");
+                                myMaze->setDirection(LEFT);
+                              
+                                break; 
+                            case RIGHT:
+                                debug(DEBUG_DIRECTIVE_TEST,"\n\r Je tourne RIGHT");
+                                myMaze->setDirection(RIGHT);
+                                
+                                break; 
+                            default://aucun autre chemin
+                            debug(DEBUG_DIRECTIVE_TEST,"\n\r aucune autre place alors J'avance");
+                            myMaze->moveFoward();
+                            myMaze->setMyPos(Labyrinthe::explorer);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        debug(DEBUG_DIRECTIVE_TEST,"\n\r jeverifie pas si alternative");
+                        myMaze->moveFoward();
+                    }
+                    //myMaze->moveFoward();
+                    //myMaze->setMyPos(Labyrinthe::explorer);
                     break;
-
+            
                 case Labyrinthe::mur:
-
-                    switch(myMaze->getDirection()) {
+                    
+                    switch(checkOtherWay(myMaze->getDirection()))// on verifie si on a une direction possible
+                    {
                         case UP:
-                            if(rand()%1) {
-                                nextCase = myMaze->getC(myMaze->getX()-1,myMaze->getY());
-                                if(nextCase != Labyrinthe::mur) {
-                                }
-                                nextCase = myMaze->getC(myMaze->getX()+1,myMaze->getY());
-                            } else {
-                                nextCase = myMaze->getC(myMaze->getX()+1,myMaze->getY()+1);
-                            }
-                            break;
-
+                            debug(DEBUG_DIRECTIVE_TEST,"\n\r Je tourne UP ");
+                            myMaze->setDirection(UP);
+                            //myMaze->moveFoward();
+                            break; 
                         case DOWN:
-                            nextCase = myMaze->getC(myMaze->getX(),myMaze->getY()-1);
-                            break;
-
+                            debug(DEBUG_DIRECTIVE_TEST,"\n\r Je tourne DOWN ");
+                            myMaze->setDirection(DOWN);
+                            //myMaze->moveFoward();
+                            break; 
                         case LEFT:
-                            nextCase = myMaze->getC(myMaze->getX()-1,myMaze->getY());
-                            break;
-
+                            debug(DEBUG_DIRECTIVE_TEST,"\n\r Je tourne LEFT");
+                            myMaze->setDirection(LEFT);
+                            //myMaze->moveFoward();
+                            break; 
                         case RIGHT:
-                            nextCase = myMaze->getC(myMaze->getX()+1,myMaze->getY());
+                            debug(DEBUG_DIRECTIVE_TEST,"\n\r Je tourne RIGHT");
+                            myMaze->setDirection(RIGHT);
+                            //myMaze->moveFoward();
+                            break; 
+                        default://aucun autre chemin
+                        debug(DEBUG_DIRECTIVE_TEST,"\n\r Je tourne completement ");
+                            if(myMaze->getDirection() %2)
+                                myMaze->setDirection(myMaze->getDirection()+1);
+                            else
+                                myMaze->setDirection(myMaze->getDirection()-1);
+                            
+                            //myMaze->moveFoward();
                             break;
                     }
-
+                    myMaze->setMyPos(Labyrinthe::explorer);
                     break;
 
-                case Labyrinthe::pasExplorer :
-                    debug(DEBUG_DIRECTIVE_TEST," Javance");
+                case Labyrinthe::pasExplorer ://pas sur
+                    debug(DEBUG_DIRECTIVE_TEST," pasExplorer");
                     #ifndef DEBUG_DIRECTIVE_LEG_DISABLE
                     addTableauDeCommande(6);
                     #endif
                     break;
             }
-
+#ifdef DEBUG_DIRECTIVE_LABYRINTH_USER_CTRL
+    string mymap = myMaze->showMap();
+    //char caseCaract = 0;
+    debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
+    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+6]));
+    debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
+    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+3]));
+    debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
+    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i]));
+    debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
+    #endif
 #ifndef DEBUG_DIRECTIVE_LEG_DISABLE
             /*if((ultrasonicToInch(m_valueCapteurUltrasonic)< 1) && (IRToCm(ADCTomv(m_valueCapteurIR)) <= 80)) //capteur ultrasson embrouiller/imprecis
             {
@@ -416,6 +540,7 @@ void Directive::task(void)//ALL CODE HERE//
                 debug("\n\r\n wait \n\r\n");
                 wait(DBG_MAIN_DELAY_SEC);
                 #endif   
+                debug("\n\r---------------------");
     #endif
 }
 double Directive::IRToCm (double miliVolt)
@@ -474,7 +599,7 @@ void Directive::analiseMaze(void)
     char areaLatt =0;
     char areaVert =0;
     string mymap = myMaze->showMap();
-    debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r  Labyrinthe map: X:%02x Y:%02x \n\r",myMaze->getX(),myMaze->getY());
+    debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r  Labyrinthe map: X:%02i Y:%02i \n\r",(signed char)(myMaze->getX()),(signed char)(myMaze->getY()));
     
     debug("Direction: ");
     switch(myMaze->getDirection()) {
@@ -492,11 +617,11 @@ void Directive::analiseMaze(void)
             break;
         }
     
-    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i+6]);
+    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+6]));
     debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
-    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i+3]);
+    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+3]));
     debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
-    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i]);
+    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i]));
     debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
 
 
@@ -742,7 +867,7 @@ switch(myMaze->getDirection())
     
     if(fieldSet == false)// on a un cas impossible
     {
-      myMaze->setC(Labyrinthe::error,fieldX[1],fieldY[1]);  
+      //myMaze->setC(Labyrinthe::error,fieldX[1],fieldY[1]);  
     }
 
 ////////////////////////////////////
@@ -750,13 +875,254 @@ switch(myMaze->getDirection())
 
     #ifdef DEBUG_DIRECTIVE_LABYRINTH_USER_CTRL
     mymap = myMaze->showMap();
-    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i+6]);
+    //char caseCaract = 0;
+    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+6]));
     debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
-    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i+3]);
+    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+3]));
     debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
-    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%02X] ",mymap[i]);
+    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i]));
     debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
     
     debug("\n\r-------------------\n\r");
     #endif
+}
+
+char Directive::checkOtherWay(char dir, bool checkExplorer)
+{
+    char result = 0;
+    char order[3];
+    
+    
+    
+    bool fini = false;
+    
+    switch(rand() % 6)
+    {
+        case 0://[0],[1],[2]
+            order[0] = 0;
+            order[1] = 1;
+            order[2] = 2;
+            break;
+        case 1://[0],[2],[1]
+            order[0] = 0;
+            order[1] = 2;
+            order[2] = 1;
+            break;
+        case 2://[1],[0],[2]
+            order[0] = 1;
+            order[1] = 0;
+            order[2] = 2;
+            break;
+        case 3://[2],[0],[1]
+            order[0] = 2;
+            order[1] = 0;
+            order[2] = 1;
+            break;
+        case 4://[1],[2],[0]
+            order[0] = 1;
+            order[1] = 2;
+            order[2] = 0;
+            break;
+        case 5://[2],[1],[0]
+            order[0] = 2;
+            order[1] = 1;
+            order[2] = 0;
+            break;
+    }
+    debug("\n\rresult: ");
+    for(int i=0;(i<3)&&(!fini);i++)
+    {
+        switch(order[i])// inclure un état memoir affin que si il a le choix entre une case vide et une explorer il priorise la vide// pt faire de meme avec pas explorer
+        {
+            case 0:
+                result = myMaze->getC_ToLeft();
+                debug("\n\r getC_ToLeft: %i %i ****",result,myMaze->getC_ToLeft());
+                //if(((Labyrinthe::case_t)result != Labyrinthe::error)&&((Labyrinthe::case_t)result != Labyrinthe::mur) &&((checkExplorer)?((Labyrinthe::case_t)result != Labyrinthe::explorer):1) )
+                if(((Labyrinthe::case_t)result == Labyrinthe::vide)&&((Labyrinthe::case_t)result != Labyrinthe::mur) &&((checkExplorer)?((Labyrinthe::case_t)result != Labyrinthe::explorer):1) )
+                {
+                    fini = true; 
+                    result = LEFT;
+                }
+                break;
+            case 1:
+                result = myMaze->getC_Backward();
+                debug("\n\r getC_Backward: %i %i ****",result,myMaze->getC_Backward());
+                if(((Labyrinthe::case_t)result != Labyrinthe::error)&&((Labyrinthe::case_t)result != Labyrinthe::mur)&&((checkExplorer)?((Labyrinthe::case_t)result != Labyrinthe::explorer):1))
+                {
+                    fini = true; 
+                    result = DOWN;
+                }
+                break;
+            case 2:
+                result = myMaze->getC_ToRight();
+                debug("\n\r getC_ToRight: %i %i ****",result,myMaze->getC_ToRight());
+                if(((Labyrinthe::case_t)result != Labyrinthe::error)&&((Labyrinthe::case_t)result != Labyrinthe::mur)&&((checkExplorer)?((Labyrinthe::case_t)result != Labyrinthe::explorer):1))
+                {
+                    fini = true; 
+                    result = RIGHT;
+                }
+                break;
+        }
+    }
+    
+    if(fini)
+    {
+     switch(dir)
+     {
+         /*case UP:
+            break;*/
+        case DOWN:
+            switch(result)
+            {
+                case LEFT:
+                    result = RIGHT;
+                    break;
+                case DOWN:
+                    result = UP;
+                    break;
+                case RIGHT:
+                    result = LEFT;
+                    break;
+            }
+            break;
+        case LEFT:
+            switch(result)
+            {
+                case LEFT:
+                    result = DOWN;
+                    break;
+                case DOWN:
+                    result = RIGHT;
+                    break;
+                case RIGHT:
+                    result = UP;
+                    break;
+            }
+            break;
+        case RIGHT:
+            switch(result)
+            {
+                case LEFT:
+                    result = UP;
+                    break;
+                case DOWN:
+                    result = LEFT;
+                    break;
+                case RIGHT:
+                    result = DOWN;
+                    break;
+            }
+            break;
+     }
+        
+    }
+    else
+    result =0;
+    return result;
+}
+
+bool Directive::searchNewWay(void)
+{
+    bool result=false;
+    string backupMap = myMaze->getAllMap();
+    signed char backupPosX = myMaze->getX();
+    signed char backupPosY = myMaze->getY();
+    string searchMap = backupMap;
+    char tempdir,nextCase=0;
+    positionXY tempPosition;
+    
+    bool noOtherWay = false;//si apres un moment tu est entourer de mur
+    bool wrongWay = false; //si jamais vien un moment que tu est pris /doit rebrousser chemin
+    
+    bufferNewWay.clear();
+    tempPosition.posX = myMaze->getX();
+    tempPosition.posY = myMaze->getY();
+    bufferNewWay.push_back(tempPosition);
+    
+    while(!result)
+    {
+     // nextCase = 0;
+            
+            nextCase = myMaze->getC_Foward();
+            
+            debug("\n\r nextCase: [%02x]",nextCase);
+            switch(nextCase ) {
+                
+                case Labyrinthe::pasExplorer :
+                case Labyrinthe::vide :
+                    result = true;
+                    break;
+
+                case Labyrinthe::explorer :// ici pt amiliorer
+                    //add position a la liste
+                    myMaze->moveFoward();
+                    myMaze->setMyPos(Labyrinthe::error);
+                    break;
+            
+                case Labyrinthe::mur:
+                    if(rand() % 2)
+                    {
+                       tempdir = myMaze->getC_ToLeft();
+                       if((Labyrinthe::case_t)tempdir != Labyrinthe::mur)
+                            myMaze->turnLeft();
+                       else
+                       {
+                           tempdir = myMaze->getC_ToRight();
+                           if((Labyrinthe::case_t)tempdir != Labyrinthe::mur)
+                                myMaze->turnRight();
+                            else
+                            {
+                               wrongWay = true; // verifie dans la liste
+                            }
+                       }
+                       
+                    }
+                    else
+                    {
+                        tempdir = myMaze->getC_ToRight();
+                       if((Labyrinthe::case_t)tempdir != Labyrinthe::mur)
+                            myMaze->turnRight();
+                       else
+                       {
+                           tempdir = myMaze->getC_ToLeft();
+                           if((Labyrinthe::case_t)tempdir != Labyrinthe::mur)
+                                myMaze->turnLeft();
+                            else
+                            {
+                               wrongWay = true; // verifie dans la liste
+                            }
+                       }
+                    }
+        
+                    myMaze->setMyPos(Labyrinthe::error);
+                    break;
+            }
+            
+    tempPosition.posX = myMaze->getX();
+    tempPosition.posY = myMaze->getY();
+    bufferNewWay.push_back(tempPosition);
+            
+        if(wrongWay)
+        {   do{
+            tempPosition.posX = (bufferNewWay.back()).posX;
+            tempPosition.posY = bufferNewWay.back().posY;
+            myMaze->setC(Labyrinthe::error,tempPosition.posX,tempPosition.posY);  
+            
+            
+            }while((wrongWay) && (!noOtherWay));
+        }
+            
+    }
+    
+     myMaze->setX(backupPosX);
+     myMaze->setY(backupPosY);
+     myMaze->setAllMap(backupMap);
+     return result;
+}
+
+bool Directive::isAnotherWay(void)
+{
+    bool result=false;
+    
+    return result;
 }

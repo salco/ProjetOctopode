@@ -75,14 +75,36 @@ signed char getX(void){return m_posX;}
 void setX(signed char x){m_posX = x;}
 
 signed char getY(void){return m_posY;}
-void getY(signed char y){m_posY = y;}
+void setY(signed char y){m_posY = y;}
 
 void goUp(void){m_posY++;}
 void goDown(void){m_posY--;}
 void goLeft(void){m_posX--;}
 void goRight(void){m_posX++;}
 
+void moveFoward(void){moveFoward(direction);}
+void moveFoward(char dir);
+void moveBackward(void){moveBackward(direction);}
+void moveBackward(char dir);
+void moveToLeft(void){moveToLeft(direction);}
+void moveToLeft(char dir);
+void moveToRight(void){moveToRight(direction);}
+void moveToRight(char dir);
 
+void turnBack(void);
+void turnLeft(void);
+void turnRight(void);
+
+char caseToChar(case_t value);
+
+case_t getC_Foward(void){return getC_Foward(direction);}
+case_t getC_Foward(char dir);
+case_t getC_Backward(void){return getC_Backward(direction);}
+case_t getC_Backward(char dir);
+case_t getC_ToLeft(void){return getC_ToLeft(direction);}
+case_t getC_ToLeft(char dir);
+case_t getC_ToRight(void){return getC_ToRight(direction);}
+case_t getC_ToRight(char dir);
 
 case_t getC(coordoner_t cX);
 case_t getC(signed char x, signed char y, coordoner_t cX);
@@ -110,7 +132,8 @@ void setMyPos(case_t value);
        * @return The formated map 3x3 result
        */
         string showMap(signed char x, signed char y);
-
+        string getAllMap(void){return mapDuLabyrinthe;}
+        void setAllMap(string updatedMap){mapDuLabyrinthe = updatedMap;}
 
 
 

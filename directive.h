@@ -25,6 +25,7 @@
 #include "source/Task/TTask.h"
 #include "Motrice/mouvement.h"
 #include <stdlib.h>     /* srand, rand */
+#include <list>
 #include <time.h>       /* time */
 #include "labyrinthe.h"
 #include "settingDebug.h"
@@ -52,10 +53,18 @@ class Directive : public TTask
     //char c;
     Labyrinthe* myMaze;
     
+    struct positionXY
+    {
+        signed char posX;
+        signed char posY;
+    };
+   std::list<positionXY> bufferNewWay;
+    
     int m_valueCapteurUltrasonic,m_valueCapteurIR,m_valueCapteurProximiter;
     unsigned char tableauDeCommange[10];
     unsigned char size_tableauDeCommange;
     void updateModuleValue(void);
+    
     
 protected:
 /*
@@ -63,6 +72,10 @@ protected:
     */
     virtual void task(void);
     void analiseMaze(void);
+    char checkOtherWay(char dir, bool checkExplorer=false);
+    
+    bool searchNewWay(void);
+        bool isAnotherWay(void);
 public:
     Directive();
     virtual~Directive();
