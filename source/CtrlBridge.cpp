@@ -16,7 +16,7 @@ CtrlBridge::CtrlBridge()
     m_regPortUse=0;
     m_regPortLost=0;
     spiLowSpeed.format(8,0);
-    spiLowSpeed.frequency(10000/**/);
+    spiLowSpeed.frequency(/*10000*/10000);
 }
 
 CtrlBridge::~CtrlBridge()

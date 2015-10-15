@@ -8,14 +8,12 @@
 #ifndef HOMEMADESEQUENCE_H_
 #define HOMEMADESEQUENCE_H_
 
-#define DEBUG_HOMEMADE_GETFRAME 0
-#define DEBUG_HOMEMADE_GETTIME 0
-#define DEBUG_HOMEMADE_NEXTFRAME 0
-#define DEBUG_HOMEMADE_PREVFRAME 0
-#define DELAITESTE 1000
+
+
 
 #include "debug.h"
 #include "mbed.h"
+#include "settingDebug.h"
 
 class homemadeSequence
 {
@@ -97,10 +95,10 @@ public:
     int get_msTime(char idLeg){
         int result = timeSequence[idLeg-1];
         
-        debug(DEBUG_HOMEMADE_GETTIME,"\n\r idLeg:%i \n\r timeSequence:%i\n\r delais:%i",idLeg,result,delaisNeed);
-        return (result==255)? DELAITESTE/2:result*10;
+        debug(DEBUG_HOMEMADE_GETTIME,"\n\r idLeg:%i \n\r timeSequence:%i\n\r delais:%i\n\r delais plus define:%i",idLeg,result,delaisNeed,(((result==255)? DELAITESTE/2:result*10)*DEBUG_HOMEMADESEQ_PERCENT_DELAIS)/100);
+        return ((((result==255)? DELAITESTE/2:result*10)*DEBUG_HOMEMADESEQ_PERCENT_DELAIS)/100); //ici je crois quil faut metre le pourcentage vitesse setter avec un define
         }
-    int get_delaisNeed_Ms(){return delaisNeed;}
+    int get_delaisNeed_Ms(){return ((delaisNeed*DEBUG_HOMEMADESEQ_PERCENT_DELAIS_PAUSE)/100);}
     unsigned char* get_frame(/*char idSequence,*/char idOperation,char idLeg);
     unsigned char* get_frame(/*char idSequence,char idOperation,*/char idLeg);
     unsigned char get_frame(){return m_idFrame;}

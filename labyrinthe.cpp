@@ -335,13 +335,15 @@ case_t Labyrinthe::getC(signed char x, signed char y)
     signed char newPosY = y;
     coordonerr maCoordoner;
     maCoordoner=getCoordoner(newPosX,newPosY);
+    #if defined(DEGUG_LABIRINTH_GET_CASE)
     debug("\n\rcoordonerr: %i",maCoordoner);
+    #endif
  return  getC(x, y, maCoordoner);
 }
 
 case_t Labyrinthe::getC(signed char x, signed char y, coordonerr cX)
 {
-    case_t myCoordoner = error;
+    case_t myCoordoner = pasExplorer;
     string result = showMap(x,y);
     if(result.size() != 0) {
         myCoordoner = case_t(result[cX-1]);
@@ -357,13 +359,14 @@ void Labyrinthe::setC(case_t value, signed char x, signed char y, coordonerr cX)
         debug("  X:%i Y:%i \n\r",x,y);
         #endif
     
-    if(value != error){
+    //if(value != error){
         string result = showMap(x,y);
         
-        if(result.size() == 0) {//no map found so we create new tuile
-        #ifdef DEGUG_LABIRINTH_SET_COORDONER
-        debug(" no tuile found\n\r");
-        #endif
+        if(result.size() == 0) 
+        {//no map found so we create new tuile
+            #ifdef DEGUG_LABIRINTH_SET_COORDONER
+            debug(" no tuile found\n\r");
+            #endif
             signed char newPosX = x;
             signed char newPosY = y;   
             
@@ -373,16 +376,17 @@ void Labyrinthe::setC(case_t value, signed char x, signed char y, coordonerr cX)
             #ifdef DEGUG_LABIRINTH_SET_COORDONER
             debug(" result: %i\n\r",result.size());
             #endif
-        }
+       }
         
-        if(result.size() != 0){   
-        #ifdef DEGUG_LABIRINTH_SET_COORDONER
-        debug(" tuile found\n\r");
-        #endif
-        result[cX-1]=value;
-        updateMap(result,x,y);//on remet les case modifier dans le string==map
+        if(result.size() != 0)
+        {   
+            #ifdef DEGUG_LABIRINTH_SET_COORDONER
+            debug(" tuile found\n\r");
+            #endif
+            result[cX-1]=value;
+            updateMap(result,x,y);//on remet les case modifier dans le string==map
         }
-    }
+    //}
         
      #ifdef DEGUG_LABIRINTH_SET_COORDONER
         debug("---------------------\n\r");
@@ -398,7 +402,9 @@ void Labyrinthe::setC(case_t value, signed char x, signed char y)
     signed char newPosY = y;
     coordonerr maCoordoner;
     maCoordoner=getCoordoner(newPosX,newPosY);
-    debug("-setcase tempo newPosX: %i, x: %i\n\r",newPosX,x);
+    #if defined(DEGUG_LABIRINTH_GET_CASE)
+    debug("\n\r-setcase tempo newPosX: %i, x: %i\n\r",newPosX,x);
+    #endif
     setC(value,x,y,maCoordoner);
 }
 void Labyrinthe::setC_Up(case_t value)
@@ -427,9 +433,9 @@ char Labyrinthe::caseToChar(case_t value)
     
     switch(value)
     {
-     case error:
-        result = 'X';
-        break;   
+     //case error:
+     //   result = 'X';
+     //   break;   
      case pasExplorer:
         result = '*';
         break; 
@@ -535,14 +541,18 @@ void Labyrinthe::moveToRight(char dir)
 }
 case_t Labyrinthe::getC_Foward(char dir)
 {
-    case_t result = error;
+    case_t result = pasExplorer;//error;
     
     switch(dir)
     {
         case UP:
+            #if defined(DEGUG_LABIRINTH_GET_CASE)
             debug("m_posX:%i  m_posY+1:%i\n\r",m_posX,m_posY+1);
+            #endif
             result = getC(m_posX,m_posY+1);
+             #if defined(DEGUG_LABIRINTH_GET_CASE)
             debug("result:%i",result);
+            #endif
             break;
         case DOWN:
             result = getC(m_posX,m_posY-1);
@@ -558,7 +568,7 @@ case_t Labyrinthe::getC_Foward(char dir)
 }
 case_t Labyrinthe::getC_Backward(char dir)
 {
-    case_t result = error;
+    case_t result = mur;// error;
     
     switch(dir)
     {
@@ -579,7 +589,7 @@ case_t Labyrinthe::getC_Backward(char dir)
 }
 case_t Labyrinthe::getC_ToLeft(char dir)
 {
-    case_t result = error;
+    case_t result = mur;//error;
     
     switch(dir)
     {
@@ -600,7 +610,7 @@ case_t Labyrinthe::getC_ToLeft(char dir)
 }
 case_t Labyrinthe::getC_ToRight(char dir)
 {
-    case_t result = error;
+    case_t result = pasExplorer;//error;
     
     switch(dir)
     {
@@ -673,6 +683,99 @@ void Labyrinthe::turnRight(void)
             break;
         case RIGHT:
             direction = DOWN;
+            break;
+    }
+}
+
+
+void Labyrinthe::getXY_Foward(signed char &x, signed char &y,char dir)
+{
+    switch(direction)
+    {
+        case UP:
+            x = m_posX;
+            y = m_posY+1;
+            break;
+        case DOWN:
+            x = m_posX;
+            y = m_posY-1;
+            break;
+        case LEFT:
+            x = m_posX-1;
+            y = m_posY;
+            break;
+        case RIGHT:
+            x = m_posX+1;
+            y = m_posY;
+            break;
+    }
+}
+
+void Labyrinthe::getXY_Backward(signed char &x, signed char &y,char dir)
+{
+    switch(direction)
+    {
+        case UP:
+            x = m_posX;
+            y = m_posY-1;
+            break;
+        case DOWN:
+            x = m_posX;
+            y = m_posY+1;
+            break;
+        case LEFT:
+            x = m_posX+1;
+            y = m_posY;
+            break;
+        case RIGHT:
+            x = m_posX-1;
+            y = m_posY;
+            break;
+    }
+}
+
+void Labyrinthe::getXY_Left(signed char &x, signed char &y, char dir)
+{
+    switch(direction)
+    {
+        case UP:
+            x = m_posX-1;
+            y = m_posY;
+            break;
+        case DOWN:
+            x = m_posX+1;
+            y = m_posY;
+            break;
+        case LEFT:
+            x = m_posX;
+            y = m_posY-1;
+            break;
+        case RIGHT:
+            x = m_posX;
+            y = m_posY+1;
+            break;
+    }
+}
+
+void Labyrinthe::getXY_Right(signed char &x, signed char &y, char dir)
+{
+    switch(direction)
+    {
+        case UP:
+            x = m_posX+1;
+            y = m_posY;
+            break;
+        case DOWN:
+            x = m_posX-1;
+            y = m_posY;
+            break;
+        case LEFT:
+            x = m_posX;
+            y = m_posY+1;
+            break;
+        case RIGHT:
+            x = m_posX;
+            y = m_posY-1;
             break;
     }
 }

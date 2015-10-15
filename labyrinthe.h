@@ -58,7 +58,7 @@ enum coordoner_t{
     };
     
     enum case_t{
-        error       =-1,
+        //error       =-1,
         pasExplorer = 0,
         explorer    = 1,
         mur         = 2,
@@ -90,6 +90,15 @@ void moveToLeft(void){moveToLeft(direction);}
 void moveToLeft(char dir);
 void moveToRight(void){moveToRight(direction);}
 void moveToRight(char dir);
+
+void getXY_Foward(signed char &x, signed char &y){getXY_Foward(x,y,direction);}
+void getXY_Foward(signed char &x, signed char &y,char dir);
+void getXY_Backward(signed char &x, signed char &y){getXY_Backward(x,y,direction);}
+void getXY_Backward(signed char &x, signed char &y,char dir);
+void getXY_Left(signed char &x, signed char &y){getXY_Left(x,y,direction);}
+void getXY_Left(signed char &x, signed char &y, char dir);
+void getXY_Right(signed char &x, signed char &y){getXY_Right(x,y,direction);}
+void getXY_Right(signed char &x, signed char &y, char dir);
 
 void turnBack(void);
 void turnLeft(void);

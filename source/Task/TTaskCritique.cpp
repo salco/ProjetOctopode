@@ -19,9 +19,12 @@ TTaskCritique::TTaskCritique(int priority):TTask(priority)
         {
             debug(DEBUG_INIT_TASKCRITT, "\n\r Init Fail");
             forceShutDown(false);
-            wait(1);
             m_CtrlBridge->clearALL();
+            wait(1);
+            
+            
             forceShutDown(true);
+            m_CtrlBridge->initCom();
         }
     }while(m_ListDesModules.size() != 11);
     #endif

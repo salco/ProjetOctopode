@@ -302,7 +302,7 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
             counterTotale = counterTotale+(settingSlave>>6)+abs((settingMaster & 0x0F) - (settingSlave & 0x0F));
             debug(DEBUG_COMPACT, "\n\r    -Calcule: %02X=((2+(%02X))+1)+(%02X)+abs((%02X)-(%02X))",(((2+(settingMaster>>6))+1)+(settingSlave>>6)+abs((settingMaster & 0x0F) - (settingSlave & 0x0F))),(settingMaster>>6),(settingSlave>>6),(settingMaster & 0x0F),(settingSlave & 0x0F));
             //debug( "\n\r    -size : %02X",counterTotale);
-            debug( "\n\r    -size : %02X ,  %02X",formatedDataSend.size(),counterTotale);
+            debug( DEBUG_COMPACT,"\n\r    -size : %02X ,  %02X",formatedDataSend.size(),counterTotale);
             if(retryLoop == 0) {
                 
                 if(formatedDataSend.size()<=counterTotale) {
@@ -316,7 +316,7 @@ bool ComSpi::send(char portID,unsigned char adresseModule,string *flag,string *d
                     }
             }
 
-            debug( "\n\r    -size : %02X ,  %02X",formatedDataSend.size(),counterTotale);
+            debug(DEBUG_COMPACT, "\n\r    -size : %02X ,  %02X",formatedDataSend.size(),counterTotale);
             switch(bufferFlag) { //plus facile pour savoir ce que tu doit tatenre a recevoire
                 case 1://Request Init Info
                     if(retryLoop == 0) {

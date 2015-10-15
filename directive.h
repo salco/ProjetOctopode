@@ -8,14 +8,14 @@
 #ifndef DIRECTIVE_H
 #define DIRECTIVE_H
 
-#define DEBUG_DIRECTIVE_TEST 1
-#define DEBUG_DIRECTIVE_LABYRINTH 1
+
                                     
 
 #define mvToADC(value)((value*1.023)/5)
 #define ADCTomv(value)((value*5)/1.023)
 #define ultrasonicToInch(value)(ADCTomv(value)/9.8)
 
+#define inchToCm(value)(value*2.54)
 #define mvToInch(value)(value/9.8)
 
 
@@ -44,6 +44,19 @@
     // 10 - Crabe  Droite       // Dont use Crabe because it's really anoying
     // 11 - Position naturel    //
     //////////////////////////////
+    #define TBL_CMD_NOTHING     0
+    #define TBL_CMD_CALIBRATION 1
+    #define TBL_CMD_DEBOUT      2
+    #define TBL_CMD_COUCHER     3
+    #define TBL_CMD_TURN_LEFT   4
+    #define TBL_CMD_TURN_RIGHT  5
+    #define TBL_CMD_MARCHE      6
+    #define TBL_CMD_RECULE      7
+    #define TBL_CMD_REPOSITIONE 8
+    #define TBL_CMD_CRAB_LEFT   9
+    #define TBL_CMD_CRAB_RIGHT  10
+    #define TBL_CMD_DEFAULT_POS 11
+    
 class Directive : public TTask
 {
     //CtrlBridge* m_CtrlBridge;
@@ -52,18 +65,22 @@ class Directive : public TTask
     string m_capteurUltrasonic,m_capteurIR,m_capteurProximiter;
     //char c;
     Labyrinthe* myMaze;
+    bool followThePath;
     
     struct positionXY
     {
         signed char posX;
         signed char posY;
+        char direction;
     };
    std::list<positionXY> bufferNewWay;
     
-    int m_valueCapteurUltrasonic,m_valueCapteurIR,m_valueCapteurProximiter;
+    double m_valueCapteurUltrasonic,m_valueCapteurIR;
+    int m_valueCapteurProximiter;
     unsigned char tableauDeCommange[10];
     unsigned char size_tableauDeCommange;
     void updateModuleValue(void);
+    void turnRightDirection(char currentDir, char nextDir);
     
     
 protected:
@@ -73,8 +90,10 @@ protected:
     virtual void task(void);
     void analiseMaze(void);
     char checkOtherWay(char dir, bool checkExplorer=false);
+    void checkOtherWay(char &caseFront, char &caseBack, char &caseLeft, char &caseRight);
     
     bool searchNewWay(void);
+    
         bool isAnotherWay(void);
 public:
     Directive();
