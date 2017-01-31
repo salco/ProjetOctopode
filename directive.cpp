@@ -15,6 +15,7 @@ int tabIR[12][2]= {
 
 Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les fois que TTaskGen sexecute.
 {
+    
     /* initialize random seed: */
     srand (time(NULL));
     myMaze = new Labyrinthe();
@@ -26,7 +27,7 @@ Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les foi
     m_valueCapteurUltrasonic = 0;
     m_valueCapteurIR = 0;
     m_valueCapteurProximiter = 0;
-    for(int i =0; i<10; i++)tableauDeCommange[i]= 0;
+    for(int i =0; i < DIRECTIVE_TABLEAUDECOMMANDE_SIZE; i++)tableauDeCommange[i]= 0;
     size_tableauDeCommange=0;
     debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r set explorer \n\r");
     myMaze->setMyPos(Labyrinthe::explorer);
@@ -168,9 +169,10 @@ Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les foi
     while(idCommand != 9)
     {
         
-         debug("\x1B[;H"); //cursor default position
+         
              debug("\n\r press any key");
             idCommand = fgetc(pc) - '0';
+            debug("\x1B[;H"); //cursor default position
         debug("\x1B[2J"); //clear screen
         
         updateModuleValue();
@@ -198,7 +200,7 @@ Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les foi
         } 
         else if(inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)) <= DIRECTIVE_ULTRASONIC_LIMIT_SHORT)
         { //plus proche que 1 case
-            debug("\n\r        -Objet proche %g <= %g cm",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)),DIRECTIVE_ULTRASONIC_LIMIT_SHORT);
+            debug("\n\r        -Objet proche %g <= %i cm",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)),DIRECTIVE_ULTRASONIC_LIMIT_SHORT);
             
             areaLatt =0;
             
@@ -229,7 +231,7 @@ Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les foi
         }
         else if(inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)) <= DIRECTIVE_ULTRASONIC_LIMIT_MIDDLE)
         { //plus proche que 2 case
-             debug("\n\r        -Objet proche %g <= %g cm",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)),DIRECTIVE_ULTRASONIC_LIMIT_MIDDLE);
+             debug("\n\r        -Objet proche %g <= %i cm",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)),DIRECTIVE_ULTRASONIC_LIMIT_MIDDLE);
             //modifier vue que il ne detecte pas asser loin
                     /*
                     /-M-\
@@ -243,7 +245,7 @@ Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les foi
         } 
         else if(inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)) <= DIRECTIVE_ULTRASONIC_LIMIT_LONG)
         { //plus proche que 2 case
-            debug("\n\r        -Objet proche %g <= %g cm",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)),DIRECTIVE_ULTRASONIC_LIMIT_LONG);
+            debug("\n\r        -Objet proche %g <= %i cm",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)),DIRECTIVE_ULTRASONIC_LIMIT_LONG);
             //modifier vue que il ne detecte pas asser loin
             /*
                     /-M-\
@@ -257,7 +259,7 @@ Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les foi
         } 
         else if(inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)) > DIRECTIVE_ULTRASONIC_LIMIT_LONG)
         { //plus proche que 2 case
-        debug("\n\r        -Objet proche %g >= %g cm",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)),DIRECTIVE_ULTRASONIC_LIMIT_LONG);
+        debug("\n\r        -Objet proche %g >= %i cm",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)),DIRECTIVE_ULTRASONIC_LIMIT_LONG);
         //modifier vue que il ne detecte pas asser loin
         /*
                             /?V?\
@@ -422,6 +424,7 @@ Directive::Directive():TTask(0)//on veux que cette tache sois exec toute les foi
         debug(DEBUG_DIRECTIVE_TEST,": %i",IRToCm(ADCTomv(m_valueCapteurIR)));*/
     }
     #endif
+    
 }
 Directive::~Directive()
 {
@@ -435,12 +438,62 @@ Directive::~Directive()
 }
 void Directive::task(void)//ALL CODE HERE//
 {
+    #ifdef DEBUG_DIRECTIVE_MINIMAL_PRESENTATION
+     if(pc.readable())
+     {
+            int idCommand=0;
+            idCommand = fgetc(pc) - '0';
+            string mymap;
+            switch(idCommand)
+            {
+                case 1:
+                    debug("\n\r 1: Show Map ");
+                    
+                    mymap = myMaze->showMap();
+                    debug("\n\r  Labyrinthe map: X:%02i Y:%02i \n\r",(signed char)(myMaze->getX()),(signed char)(myMaze->getY()));
+                    //char caseCaract = 0;
+                    debug("\n\r");
+                    for(int i=0; i<3; i++) debug(" [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+6]));
+                    debug("\n\r");
+                    for(int i=0; i<3; i++) debug(" [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+3]));
+                    debug("\n\r");
+                    for(int i=0; i<3; i++) debug(" [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i]));
+                    debug("\n\r");
+                    break;
+                    
+                case 2:
+                    debug("\n\r  *2: Show tableauDeCommange[]");
+                    debug("\n\r        -TAB:");
+                    for(int i =0; i<DIRECTIVE_TABLEAUDECOMMANDE_SIZE; i++) debug("[%02x]",tableauDeCommange[i]);
+                    if(followThePath == true)
+                    debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r EN MODE FOLLOW THE PATH");
+                    else
+                    debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r HORS MODE FOLLOW THE PATH");
+                    break;
+                    
+                case 3:
+                    debug("\n\r  *3: Show value Capteurs");
+                    debug("\n\r        -IRToCm(%02f): %02f",ADCTomv(m_valueCapteurIR),IRToCm(ADCTomv(m_valueCapteurIR)));
+                    debug("\n\r        -ultrasonicToInch to cm: %02f",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)));
+                    debug("\n\r        -m_valueCapteurProximiter: %02d",m_valueCapteurProximiter);
+                    break;
+                    
+                default:
+                    debug("\n\n\r Press key 0-9 to select an option");
+                    debug("\n\r  *1: Show Map");
+                    debug("\n\r  *2: Show tableauDeCommange[]");
+                    debug("\n\r  *3: Show value Capteurs");
+                    break;
+            }
+    }
+    #endif
     
     #ifdef DEBUG_BOOT_GRAPHICAL_INTERFACE
         debug("\x1B[2J"); //clear screen
         debug("\x1B[25l");//hide cursor
         debug("\x1B[;H"); //cursor default position
         debug("\n\r--------In task directive--------");
+        for(int i = 0; i<size_tableauDeCommange; i++) debug("\n\r tableauDeCommange[%i]: %x",i,tableauDeCommange[i]);
         
         /*
             createDLbox(0,0,10,25,"BrainControle");
@@ -499,10 +552,11 @@ void Directive::task(void)//ALL CODE HERE//
     #ifndef DEBUG_DIRECTIVE_LEG_DISABLE
         if(ctrDesPattes->isSeqComplet()) 
         {
+            
             ////////////////
             // Inspection //
             ////////////////
-            updateModuleValue();
+            //updateModuleValue();
             
             if((tableauDeCommange[0] == TBL_CMD_MARCHE) && (size_tableauDeCommange == 1)) 
             {
@@ -542,9 +596,11 @@ void Directive::task(void)//ALL CODE HERE//
                 //////////////////////////////
                 // Traitement du Labyrinthe //
                 //////////////////////////////
-                debug(DEBUG_DIRECTIVE_TRAITEMENT,"\n\r        -IRToCm(%02f): %02f",ADCTomv(m_valueCapteurIR),IRToCm(ADCTomv(m_valueCapteurIR)));
-                debug(DEBUG_DIRECTIVE_TRAITEMENT,"\n\r        -ultrasonicToInch: %02f",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)));
-                debug(DEBUG_DIRECTIVE_TRAITEMENT,"\n\r        -m_valueCapteurProximiter: %02d",m_valueCapteurProximiter);
+                #ifdef DEBUG_DIRECTIVE_LABYRINTH
+                debug("\n\r        -IRToCm(%02f): %02f",ADCTomv(m_valueCapteurIR),IRToCm(ADCTomv(m_valueCapteurIR)));
+                debug("\n\r        -ultrasonicToInch: %02f",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)));
+                debug("\n\r        -m_valueCapteurProximiter: %02d",m_valueCapteurProximiter);
+                #endif
     #endif //DEBUG_DIRECTIVE_LEG_DISABLE
                 if(followThePath == true)
                 debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r EN MODE FOLLOW THE PATH");
@@ -570,7 +626,7 @@ void Directive::task(void)//ALL CODE HERE//
                     nextCase = myMaze->getC(myMaze->getX()+1,myMaze->getY());
                     break;
                 }*/
-                if( myMaze->getC_Foward() == Labyrinthe::vide )
+                if(( myMaze->getC_Foward() == Labyrinthe::vide ) ||  (myMaze->getC_Foward() == Labyrinthe::pasExplorer ))
                     followThePath = false;
                 
                 
@@ -602,10 +658,12 @@ void Directive::task(void)//ALL CODE HERE//
                             {
                                 debug(DEBUG_DIRECTIVE_TEST,"\n\r jeverifie si alternative");
                                 
-                                #ifndef DEBUG_DIRECTIVE_LEG_DISABLE
+                                /*#ifndef DEBUG_DIRECTIVE_LEG_DISABLE
                                 addTableauDeCommande(TBL_CMD_MARCHE);
-                                #endif
+                                #endif*/
                                 nextCase = checkOtherWay(myMaze->getDirection(),1);
+                                
+                                turnRightDirection(myMaze->getDirection(),nextCase);
                                 debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\rnextcase: %i",nextCase);
                                 switch(nextCase) 
                                 { // on verifie si on a une direction possible
@@ -715,6 +773,7 @@ void Directive::task(void)//ALL CODE HERE//
                 { // on suis un chemin
                     debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\rmode follow the path\n\n\r");
                     positionXY tempPosition;
+                    
                     //std::list<positionXY>::iterator it=bufferNewWay.begin();
                     for (std::list<positionXY>::iterator it=bufferNewWay.begin(); it != bufferNewWay.end(); ++it) 
                     {
@@ -730,6 +789,8 @@ void Directive::task(void)//ALL CODE HERE//
                         debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r     current dir : %i",myMaze->getDirection());
                         debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r     next dir : %i",(bufferNewWay.front()).direction);
                         
+                        addTableauDeCommande(TBL_CMD_RECULE);
+                        addTableauDeCommande(TBL_CMD_RECULE);
                         turnRightDirection(myMaze->getDirection(),(bufferNewWay.front()).direction);
                         switch((bufferNewWay.front()).direction) 
                         {
@@ -780,6 +841,17 @@ void Directive::task(void)//ALL CODE HERE//
                         debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r     buffer Y: %i",(bufferNewWay.front()).posY);
                         if((tempPosition.posX == (bufferNewWay.front()).posX) && (tempPosition.posY == (bufferNewWay.front()).posY)) 
                         {
+                            updateMaze();
+                            
+                            nextCase = myMaze->getC_Foward();
+                            
+                            if(nextCase == Labyrinthe::mur)
+                            {
+                                debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r     problem");
+                                followThePath = false;
+                            }
+                            else
+                            {
                             debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r     aucun problem");
                             #ifndef DEBUG_DIRECTIVE_LEG_DISABLE
                                 addTableauDeCommande(TBL_CMD_MARCHE);
@@ -787,7 +859,7 @@ void Directive::task(void)//ALL CODE HERE//
                             myMaze->moveFoward();
                             myMaze->setMyPos(Labyrinthe::explorer);
                             bufferNewWay.pop_front();
-                            
+                            }
                         } 
                         else
                             debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r     problem");
@@ -798,6 +870,13 @@ void Directive::task(void)//ALL CODE HERE//
                     
                     if(bufferNewWay.empty())
                         followThePath = false;
+                        
+                       
+   
+        
+         
+             
+            
                     /*do{
                         //tempPosition.posX = (bufferNewWay.front()).posX;
                         //tempPosition.posY = (bufferNewWay.front()).posY;
@@ -868,7 +947,10 @@ void Directive::task(void)//ALL CODE HERE//
                         
                         //addTableauDeCommande(6);
                     }*/
-                    
+                     #ifdef DEBUG_DIRECTIVE_TASK_PAUSE
+                        debug("\n\r press any 9 key");
+                        for(int idCmd=0; idCmd != 9; idCmd = fgetc(pc) - '0');
+                        #endif
                     ///////////////
                     // Mouvement //
                     ///////////////
@@ -943,9 +1025,9 @@ void Directive::task(void)//ALL CODE HERE//
                         break;
                 }
                 debug(DEBUG_DIRECTIVE_TEST,"\n\r        -TAB:");
-                for(int i =0; i<10; i++) debug(DEBUG_DIRECTIVE_TEST,"[%02x]",tableauDeCommange[i]);
-                for(int i =0; i<9; i++)tableauDeCommange[i]= tableauDeCommange[i+1];
-                tableauDeCommange[9]=0;
+                for(int i =0; i<DIRECTIVE_TABLEAUDECOMMANDE_SIZE; i++) debug(DEBUG_DIRECTIVE_TEST,"[%02x]",tableauDeCommange[i]);
+                for(int i =0; i<DIRECTIVE_TABLEAUDECOMMANDE_SIZE; i++) tableauDeCommange[i]= tableauDeCommange[i+1];
+                tableauDeCommange[DIRECTIVE_TABLEAUDECOMMANDE_SIZE-1] = 0;
                 if(size_tableauDeCommange != 0) size_tableauDeCommange--;
             }
             
@@ -991,7 +1073,7 @@ double Directive::IRToCm (double miliVolt)
 }
 void Directive::addTableauDeCommande(unsigned char value)
 {
-    if(size_tableauDeCommange!=10) 
+    if(size_tableauDeCommange!=DIRECTIVE_TABLEAUDECOMMANDE_SIZE) 
     {
         tableauDeCommange[size_tableauDeCommange]=value;
         size_tableauDeCommange++;
@@ -1021,11 +1103,22 @@ void Directive::updateModuleValue(void)
         else
         tempValue = data[0];
         
-        m_valueCapteurUltrasonic = m_valueCapteurUltrasonic+((tempValue -m_valueCapteurUltrasonic)/DIRECTIVE_ULTRASONIC_BUFFER_LENGHT);
+        if(data.size() != 0)
+            m_valueCapteurUltrasonic = m_valueCapteurUltrasonic+((tempValue -m_valueCapteurUltrasonic)/DIRECTIVE_ULTRASONIC_BUFFER_LENGHT);
     }
     #ifdef DEBUG_DIRECTIVE_UPDATE_MODULE
+    debug("\n\r m_valueCapteurUltrasonic");
     debug("\n\n\r  data size:%i \n\r",data.size());
-    debug("\n\r        -data(value):%i         ",data[0]);
+    switch(data.size())
+    {
+        case 1:
+            debug("\n\r        -data(value):%i         ",data[0]);
+            break;
+        case 2:
+            debug("\n\r        -data(value):%i         ",(data[0]<<8) + data[1]);
+            break;
+    }
+    //debug("\n\r        -data(value):%i         ",data[0]);
     debug("\n\r        -tempValue(value):%02f         ",tempValue);
     #endif
     tempValue=0;
@@ -1048,11 +1141,22 @@ void Directive::updateModuleValue(void)
         else
         tempValue = data[0];
         
-        m_valueCapteurIR=m_valueCapteurIR+((tempValue-m_valueCapteurIR)/DIRECTIVE_IR_BUFFER_LENGHT);
+        if(data.size() != 0)
+            m_valueCapteurIR=m_valueCapteurIR+((tempValue-m_valueCapteurIR)/DIRECTIVE_IR_BUFFER_LENGHT);
     }
     #ifdef DEBUG_DIRECTIVE_UPDATE_MODULE
+    debug("\n\r m_valueCapteurIR");
     debug("\n\n\r  data size:%i \n\r",data.size());
-    debug("\n\r        -data(value):%i         ",data[0]);
+    switch(data.size())
+    {
+        case 1:
+            debug("\n\r        -data(value):%i         ",data[0]);
+            break;
+        case 2:
+            debug("\n\r        -data(value):%i         ",(data[0]<<8) + data[1]);
+            break;
+    }
+    //debug("\n\r        -data(value):%i         ",data[0]);
     debug("\n\r        -tempValue(value):%02f         ",tempValue);
     #endif
     //debug("\n\n\r  data size:%i \n\r",data.size());
@@ -1064,6 +1168,7 @@ void Directive::updateModuleValue(void)
     flag.append(1,7);
     //debug("\n\n\r  flag size:%i \n\r",flag.size());
     if(m_CtrlBridge->send(m_capteurProximiter[0],flag,data))
+    
         m_valueCapteurProximiter = data[0];
         
        // debug("\n\n\r  data size:%i \n\r",data.size());
@@ -1072,34 +1177,43 @@ void Directive::updateModuleValue(void)
 
 void Directive::analiseMaze(void)
 {
-    char areaLatt =0;
-    char areaVert =0;
-    string mymap = myMaze->showMap();
-    debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r  Labyrinthe map: X:%02i Y:%02i \n\r",(signed char)(myMaze->getX()),(signed char)(myMaze->getY()));
-    
-    debug(DEBUG_DIRECTIVE_LABYRINTH,"Direction: ");
+     string mymap = myMaze->showMap();
+     
+     #ifdef DEBUG_DIRECTIVE_LABYRINTH
+     debug("\n\r ----------------analiseMaze--------------\n\r");
+     debug("\n\r  Labyrinthe map: X:%02i Y:%02i \n\r",(signed char)(myMaze->getX()),(signed char)(myMaze->getY()));
+     
+     debug("Direction: ");
     switch(myMaze->getDirection()) 
     {
         case UP:
-            debug(DEBUG_DIRECTIVE_LABYRINTH,"Up \n\r");
+            debug("Up \n\r");
             break;
         case DOWN:
-            debug(DEBUG_DIRECTIVE_LABYRINTH,"Down \n\r");
+            debug("Down \n\r");
             break;
         case LEFT:
-            debug(DEBUG_DIRECTIVE_LABYRINTH,"Left \n\r");
+            debug("Left \n\r");
             break;
         case RIGHT:
-            debug(DEBUG_DIRECTIVE_LABYRINTH,"Right \n\r");
+            debug("Right \n\r");
             break;
     }
     
-    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+6]));
-    debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
-    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+3]));
-    debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
-    for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i]));
-    debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
+    for(int i=0; i<3; i++) debug(" [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+6]));
+    debug("\n\r");
+    for(int i=0; i<3; i++) debug(" [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+3]));
+    debug("\n\r");
+    for(int i=0; i<3; i++) debug(" [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i]));
+    debug("\n\r");
+     #endif
+     
+    
+    
+    
+    
+    
+    
     
     
     #ifndef DEBUG_DIRECTIVE_LABYRINTH_USER_CTRL
@@ -1133,16 +1247,173 @@ void Directive::analiseMaze(void)
             areaVert =1;
         }
         debug(DEBUG_DIRECTIVE_TEST,": %i",IRToCm(ADCTomv(m_valueCapteurIR)));*///old one
-        if((inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic))<= 1) /*&& (IRToCm(ADCTomv(m_valueCapteurIR)) <= 80)*/)//enlever parce que il est lock avec des limites 
+        
+    updateMaze();
+    
+    #ifdef DEBUG_DIRECTIVE_LABYRINTH
+        mymap = myMaze->showMap();
+        //char caseCaract = 0;
+        debug("\n\r");
+        for(int i=0; i<3; i++) debug(" [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+6]));
+        debug("\n\r");
+        for(int i=0; i<3; i++) debug(" [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+3]));
+        debug("\n\r");
+        for(int i=0; i<3; i++) debug(" [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i]));
+        debug("\n\r");
+        
+        debug("\n\r-------------------\n\r");
+    #endif
+    
+}
+
+char Directive::checkOtherWay(char dir, bool checkExplorer)
+{
+    char result = 0;
+    char order[3];
+    
+    
+    
+    bool fini = false;
+    
+    switch(rand() % 6) 
+    {
+        case 0://[0],[1],[2]
+            order[0] = 0;
+            order[1] = 1;
+            order[2] = 2;
+            break;
+        case 1://[0],[2],[1]
+            order[0] = 0;
+            order[1] = 2;
+            order[2] = 1;
+            break;
+        case 2://[1],[0],[2]
+            order[0] = 1;
+            order[1] = 0;
+            order[2] = 2;
+            break;
+        case 3://[2],[0],[1]
+            order[0] = 2;
+            order[1] = 0;
+            order[2] = 1;
+            break;
+        case 4://[1],[2],[0]
+            order[0] = 1;
+            order[1] = 2;
+            order[2] = 0;
+            break;
+        case 5://[2],[1],[0]
+            order[0] = 2;
+            order[1] = 1;
+            order[2] = 0;
+            break;
+    }
+    debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\rresult: ");
+    for(int i=0; (i<3)&&(!fini); i++) 
+    {
+        switch(order[i]) 
+        { // inclure un état memoir affin que si il a le choix entre une case vide et une explorer il priorise la vide// pt faire de meme avec pas explorer
+            case 0:
+                result = myMaze->getC_ToLeft();
+                debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r getC_ToLeft: %i %i ****",result,myMaze->getC_ToLeft());
+                //if(((Labyrinthe::case_t)result != Labyrinthe::error)&&((Labyrinthe::case_t)result != Labyrinthe::mur) &&((checkExplorer)?((Labyrinthe::case_t)result != Labyrinthe::explorer):1) )
+                if(((Labyrinthe::case_t)result == Labyrinthe::vide)&&((Labyrinthe::case_t)result != Labyrinthe::mur) &&((checkExplorer)?((Labyrinthe::case_t)result != Labyrinthe::explorer):1) ) 
+                {
+                    fini = true;
+                    result = LEFT;
+                }
+                break;
+            case 1:
+                result = myMaze->getC_Backward();
+                debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r getC_Backward: %i %i ****",result,myMaze->getC_Backward());
+                if(/*((Labyrinthe::case_t)result != Labyrinthe::error)&&*/((Labyrinthe::case_t)result != Labyrinthe::mur)&&((checkExplorer)?((Labyrinthe::case_t)result != Labyrinthe::explorer):1)) 
+                {
+                    fini = true;
+                    result = DOWN;
+                }
+                break;
+            case 2:
+                result = myMaze->getC_ToRight();
+                debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r getC_ToRight: %i %i ****",result,myMaze->getC_ToRight());
+                if(/*((Labyrinthe::case_t)result != Labyrinthe::error)&&*/((Labyrinthe::case_t)result != Labyrinthe::mur)&&((checkExplorer)?((Labyrinthe::case_t)result != Labyrinthe::explorer):1)) 
+                {
+                    fini = true;
+                    result = RIGHT;
+                }
+                break;
+        }
+    }
+    
+    if(fini) 
+    {
+        switch(dir) 
+        {
+            /*case UP:
+            break;*/
+            case DOWN:
+                switch(result) 
+                {
+                    case LEFT:
+                        result = RIGHT;
+                        break;
+                    case DOWN:
+                        result = UP;
+                        break;
+                    case RIGHT:
+                        result = LEFT;
+                        break;
+                }
+                break;
+            case LEFT:
+                switch(result) 
+                {
+                    case LEFT:
+                        result = DOWN;
+                        break;
+                    case DOWN:
+                        result = RIGHT;
+                        break;
+                    case RIGHT:
+                        result = UP;
+                        break;
+                }
+                break;
+            case RIGHT:
+                switch(result) 
+                {
+                    case LEFT:
+                        result = UP;
+                        break;
+                    case DOWN:
+                        result = LEFT;
+                        break;
+                    case RIGHT:
+                        result = DOWN;
+                        break;
+                }
+                break;
+        }
+    } 
+    else
+        result =0;
+    return result;
+}
+
+void Directive::updateMaze(void)
+{
+   char areaLatt =0;
+    char areaVert =0;
+    
+   if((inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic))<= 1) /*&& (IRToCm(ADCTomv(m_valueCapteurIR)) <= 80)*/)//enlever parce que il est lock avec des limites 
         { //capteur ultrasson embrouiller/imprecis
         
             debug(DEBUG_DIRECTIVE_TEST,"\n\r        -Capteur Ultrasson brouiller");
             //addTableauDeCommande(6);
         } 
-        else if(inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)) <= DIRECTIVE_ULTRASONIC_LIMIT_SHORT)
+        else if((inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic))) <= DIRECTIVE_ULTRASONIC_LIMIT_SHORT)
         { //plus proche que 1 case
         #ifdef DEBUG_DIRECTIVE_UPDATE_MODULE
-            debug("\n\r        -Objet proche %g <= %i cm",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)),DIRECTIVE_ULTRASONIC_LIMIT_SHORT);
+            debug("\n\r        -Objet proche %02f <= %i cm",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)),DIRECTIVE_ULTRASONIC_LIMIT_SHORT);
             #endif
             areaLatt =0;
             
@@ -1172,7 +1443,7 @@ void Directive::analiseMaze(void)
         else if(inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)) <= DIRECTIVE_ULTRASONIC_LIMIT_MIDDLE)
         { //plus proche que 2 case
         #ifdef DEBUG_DIRECTIVE_UPDATE_MODULE
-             debug("\n\r        -Objet proche %g <= %g cm",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)),DIRECTIVE_ULTRASONIC_LIMIT_MIDDLE);
+             debug("\n\r        -Objet proche %g <= %i cm",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)),DIRECTIVE_ULTRASONIC_LIMIT_MIDDLE);
              #endif
             //modifier vue que il ne detecte pas asser loin
                     /*
@@ -1188,7 +1459,7 @@ void Directive::analiseMaze(void)
         else if(inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)) <= DIRECTIVE_ULTRASONIC_LIMIT_LONG)
         { //plus proche que 2 case
         #ifdef DEBUG_DIRECTIVE_UPDATE_MODULE
-            debug("\n\r        -Objet proche %g <= %g cm",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)),DIRECTIVE_ULTRASONIC_LIMIT_LONG);
+            debug("\n\r        -Objet proche %g <= %i cm",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)),DIRECTIVE_ULTRASONIC_LIMIT_LONG);
             #endif
             //modifier vue que il ne detecte pas asser loin
             /*
@@ -1204,7 +1475,7 @@ void Directive::analiseMaze(void)
         else if(inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)) > DIRECTIVE_ULTRASONIC_LIMIT_LONG)
         { //plus proche que 2 case
         #ifdef DEBUG_DIRECTIVE_UPDATE_MODULE
-            debug("\n\r        -Objet proche %g >= %g cm",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)),DIRECTIVE_ULTRASONIC_LIMIT_LONG);
+            debug("\n\r        -Objet proche %g >= %i cm",inchToCm(ultrasonicToInch(m_valueCapteurUltrasonic)),DIRECTIVE_ULTRASONIC_LIMIT_LONG);
             #endif
             //modifier vue que il ne detecte pas asser loin
             /*
@@ -1290,6 +1561,9 @@ void Directive::analiseMaze(void)
     */
     //vertical==0 latt==0 //mur devant
     //vertical==1 latt==1
+    #ifdef DEBUG_DIRECTIVE_UPDATE_MODULE
+            debug("\n\r   vertical:%i \n\r   latt: %i",areaVert,areaLatt);
+    #endif
     ////////////////////////////////////
     //345  
     //012  | numerotation des case
@@ -1447,153 +1721,6 @@ void Directive::analiseMaze(void)
     }
     
     ////////////////////////////////////
-    
-    
-    #ifdef DEBUG_DIRECTIVE_LABYRINTH_USER_CTRL
-        mymap = myMaze->showMap();
-        //char caseCaract = 0;
-        for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+6]));
-        debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
-        for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+3]));
-        debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
-        for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i]));
-        debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
-        
-        debug("\n\r-------------------\n\r");
-    #endif
-}
-
-char Directive::checkOtherWay(char dir, bool checkExplorer)
-{
-    char result = 0;
-    char order[3];
-    
-    
-    
-    bool fini = false;
-    
-    switch(rand() % 6) 
-    {
-        case 0://[0],[1],[2]
-            order[0] = 0;
-            order[1] = 1;
-            order[2] = 2;
-            break;
-        case 1://[0],[2],[1]
-            order[0] = 0;
-            order[1] = 2;
-            order[2] = 1;
-            break;
-        case 2://[1],[0],[2]
-            order[0] = 1;
-            order[1] = 0;
-            order[2] = 2;
-            break;
-        case 3://[2],[0],[1]
-            order[0] = 2;
-            order[1] = 0;
-            order[2] = 1;
-            break;
-        case 4://[1],[2],[0]
-            order[0] = 1;
-            order[1] = 2;
-            order[2] = 0;
-            break;
-        case 5://[2],[1],[0]
-            order[0] = 2;
-            order[1] = 1;
-            order[2] = 0;
-            break;
-    }
-    debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\rresult: ");
-    for(int i=0; (i<3)&&(!fini); i++) 
-    {
-        switch(order[i]) 
-        { // inclure un état memoir affin que si il a le choix entre une case vide et une explorer il priorise la vide// pt faire de meme avec pas explorer
-            case 0:
-                result = myMaze->getC_ToLeft();
-                debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r getC_ToLeft: %i %i ****",result,myMaze->getC_ToLeft());
-                //if(((Labyrinthe::case_t)result != Labyrinthe::error)&&((Labyrinthe::case_t)result != Labyrinthe::mur) &&((checkExplorer)?((Labyrinthe::case_t)result != Labyrinthe::explorer):1) )
-                if(((Labyrinthe::case_t)result == Labyrinthe::vide)&&((Labyrinthe::case_t)result != Labyrinthe::mur) &&((checkExplorer)?((Labyrinthe::case_t)result != Labyrinthe::explorer):1) ) 
-                {
-                    fini = true;
-                    result = LEFT;
-                }
-                break;
-            case 1:
-                result = myMaze->getC_Backward();
-                debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r getC_Backward: %i %i ****",result,myMaze->getC_Backward());
-                if(/*((Labyrinthe::case_t)result != Labyrinthe::error)&&*/((Labyrinthe::case_t)result != Labyrinthe::mur)&&((checkExplorer)?((Labyrinthe::case_t)result != Labyrinthe::explorer):1)) 
-                {
-                    fini = true;
-                    result = DOWN;
-                }
-                break;
-            case 2:
-                result = myMaze->getC_ToRight();
-                debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r getC_ToRight: %i %i ****",result,myMaze->getC_ToRight());
-                if(/*((Labyrinthe::case_t)result != Labyrinthe::error)&&*/((Labyrinthe::case_t)result != Labyrinthe::mur)&&((checkExplorer)?((Labyrinthe::case_t)result != Labyrinthe::explorer):1)) 
-                {
-                    fini = true;
-                    result = RIGHT;
-                }
-                break;
-        }
-    }
-    
-    if(fini) 
-    {
-        switch(dir) 
-        {
-            /*case UP:
-            break;*/
-            case DOWN:
-                switch(result) 
-                {
-                    case LEFT:
-                        result = RIGHT;
-                        break;
-                    case DOWN:
-                        result = UP;
-                        break;
-                    case RIGHT:
-                        result = LEFT;
-                        break;
-                }
-                break;
-            case LEFT:
-                switch(result) 
-                {
-                    case LEFT:
-                        result = DOWN;
-                        break;
-                    case DOWN:
-                        result = RIGHT;
-                        break;
-                    case RIGHT:
-                        result = UP;
-                        break;
-                }
-                break;
-            case RIGHT:
-                switch(result) 
-                {
-                    case LEFT:
-                        result = UP;
-                        break;
-                    case DOWN:
-                        result = LEFT;
-                        break;
-                    case RIGHT:
-                        result = DOWN;
-                        break;
-                }
-                break;
-        }
-    } 
-    else
-        result =0;
-    return result;
 }
 void Directive::checkOtherWay(char &caseFront, char &caseBack, char &caseLeft, char &caseRight)
 {
@@ -2018,25 +2145,31 @@ bool Directive::searchNewWay(void)
                     debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r pop back");
                     bufferNewWay.pop_back();//on enleve pour pouvoir lire le dernier
                 }
+                #ifdef DEBUG_DIRECTIVE_LABYRINTH
                 string mymap = myMaze->showMap();
-                debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r  Labyrinthe map: X:%02i Y:%02i \n\r",(signed char)(myMaze->getX()),(signed char)(myMaze->getY()));
+                debug("\n\r  Labyrinthe map: X:%02i Y:%02i \n\r",(signed char)(myMaze->getX()),(signed char)(myMaze->getY()));
                 //char caseCaract = 0;
                 debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r direction: %i",myMaze->getDirection());
-                debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
-                for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+6]));
-                debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
-                for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+3]));
-                debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r");
-                for(int i=0; i<3; i++) debug(DEBUG_DIRECTIVE_LABYRINTH," [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i]));
+                debug("\n\r");
+                for(int i=0; i<3; i++) debug(" [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+6]));
+                debug("\n\r");
+                for(int i=0; i<3; i++) debug(" [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i+3]));
+                debug("\n\r");
+                for(int i=0; i<3; i++) debug(" [%c] ",myMaze->caseToChar((Labyrinthe::case_t)mymap[i]));
+                #endif
+                
+                #ifdef DEBUG_DIRECTIVE_TASK_PAUSE
                 debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r press any key...\n\r");
                 
                 fgetc(pc);
-                
+                #endif
                 
             } while((wrongWay) && (!noOtherWay));
             debug(DEBUG_DIRECTIVE_MAZE_GRAPHICAL_INTERFACE_ENABLE,"\n\r Fin Boucle");
         }
-        debug(DEBUG_DIRECTIVE_LABYRINTH,"\n\r press any key...\n\r"); fgetc(pc);
+        #ifdef DEBUG_DIRECTIVE_TASK_PAUSE
+        debug("\n\r press any key...\n\r"); fgetc(pc);
+        #endif
     }
     
     myMaze->setX(backupPosX);
@@ -2080,13 +2213,15 @@ void Directive::turnRightDirection(char currentDir, char nextDir)
     {
         if(rand()%2)
         {
-            addTableauDeCommande(TBL_CMD_TURN_LEFT);
-            addTableauDeCommande(TBL_CMD_TURN_LEFT);
+            for(int loop=0; loop < DIRECTIVE_NUMBER_TURN_90_DEG; loop++) addTableauDeCommande(TBL_CMD_TURN_LEFT);
+            for(int loop=0; loop < DIRECTIVE_NUMBER_TURN_90_DEG; loop++) addTableauDeCommande(TBL_CMD_TURN_LEFT);
+            //addTableauDeCommande(TBL_CMD_TURN_LEFT);
         }
         else
         {
-            addTableauDeCommande(TBL_CMD_TURN_RIGHT);
-            addTableauDeCommande(TBL_CMD_TURN_RIGHT);
+            for(int loop=0; loop < DIRECTIVE_NUMBER_TURN_90_DEG; loop++) addTableauDeCommande(TBL_CMD_TURN_RIGHT);
+            for(int loop=0; loop < DIRECTIVE_NUMBER_TURN_90_DEG; loop++) addTableauDeCommande(TBL_CMD_TURN_RIGHT);
+            //addTableauDeCommande(TBL_CMD_TURN_RIGHT);
         }
     }
     else
@@ -2096,41 +2231,41 @@ void Directive::turnRightDirection(char currentDir, char nextDir)
         case UP:
             if(nextDir == LEFT) 
             {
-                addTableauDeCommande(TBL_CMD_TURN_LEFT);
+                for(int loop=0; loop < DIRECTIVE_NUMBER_TURN_90_DEG; loop++) addTableauDeCommande(TBL_CMD_TURN_LEFT);
             }
             else if(nextDir == RIGHT)
             {
-                addTableauDeCommande(TBL_CMD_TURN_RIGHT);
+                for(int loop=0; loop < DIRECTIVE_NUMBER_TURN_90_DEG; loop++) addTableauDeCommande(TBL_CMD_TURN_RIGHT);
             }
             break;
         case DOWN:
             if(nextDir == LEFT) 
             {
-                addTableauDeCommande(TBL_CMD_TURN_RIGHT);
+                for(int loop=0; loop < DIRECTIVE_NUMBER_TURN_90_DEG; loop++) addTableauDeCommande(TBL_CMD_TURN_RIGHT);
             }
             else if(nextDir == LEFT)
             {
-                addTableauDeCommande(TBL_CMD_TURN_LEFT);
+                for(int loop=0; loop < DIRECTIVE_NUMBER_TURN_90_DEG; loop++) addTableauDeCommande(TBL_CMD_TURN_LEFT);
             }
             break;
         case LEFT:
             if(nextDir == UP)   
             {
-                addTableauDeCommande(TBL_CMD_TURN_RIGHT);
+                for(int loop=0; loop < DIRECTIVE_NUMBER_TURN_90_DEG; loop++) addTableauDeCommande(TBL_CMD_TURN_RIGHT);
             }
             else if(nextDir == DOWN)
             {
-                addTableauDeCommande(TBL_CMD_TURN_LEFT);
+                for(int loop=0; loop < DIRECTIVE_NUMBER_TURN_90_DEG; loop++) addTableauDeCommande(TBL_CMD_TURN_LEFT);
             }
             break;
         case RIGHT:
              if(nextDir == UP)  
             {
-                addTableauDeCommande(TBL_CMD_TURN_LEFT);
+                for(int loop=0; loop < DIRECTIVE_NUMBER_TURN_90_DEG; loop++) addTableauDeCommande(TBL_CMD_TURN_LEFT);
             }
             else if(nextDir == DOWN)
             {
-                addTableauDeCommande(TBL_CMD_TURN_RIGHT);
+                for(int loop=0; loop < DIRECTIVE_NUMBER_TURN_90_DEG; loop++) addTableauDeCommande(TBL_CMD_TURN_RIGHT);
             }
             break;
      }

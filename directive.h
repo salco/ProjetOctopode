@@ -77,7 +77,7 @@ class Directive : public TTask
     
     double m_valueCapteurUltrasonic,m_valueCapteurIR;
     int m_valueCapteurProximiter;
-    unsigned char tableauDeCommange[10];
+    unsigned char tableauDeCommange[DIRECTIVE_TABLEAUDECOMMANDE_SIZE];
     unsigned char size_tableauDeCommange;
     void updateModuleValue(void);
     void turnRightDirection(char currentDir, char nextDir);
@@ -88,6 +88,7 @@ protected:
     * Tache principale de la classe
     */
     virtual void task(void);
+    void updateMaze(void);
     void analiseMaze(void);
     char checkOtherWay(char dir, bool checkExplorer=false);
     void checkOtherWay(char &caseFront, char &caseBack, char &caseLeft, char &caseRight);
